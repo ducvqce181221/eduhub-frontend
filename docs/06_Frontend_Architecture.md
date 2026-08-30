@@ -110,7 +110,18 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
   ```
 - All endpoint parameters, request bodies, and response envelopes are derived directly from this generated contract.
 
-### 5.8 Testing Suite (`vitest` + `@testing-library/react`)
+### 5.8 Client-side Media & Direct Upload Strategy (Cloudinary + Cloudflare R2)
+- **Image Uploads (Avatars & Course Thumbnails):**
+  - Uses `react-dropzone` / file input for image selection.
+  - Sends multipart payload to `POST /upload/image` (NestJS proxy) or directly with Cloudinary signature for automatic WebP optimization and facial/center cropping.
+- **Video & File Uploads (Lesson Videos & Downloadable Resources):**
+  - High-volume uploads bypass the NestJS API server completely:
+    1. Client calls `POST /upload/presigned-url` with `{ fileName, fileType, folder: 'videos' | 'resources' }`.
+    2. Backend returns an S3 Presigned PUT URL targeting Cloudflare R2.
+    3. Client uploads the raw binary file directly to Cloudflare R2 using `fetch(uploadUrl, { method: 'PUT', body: file })` or Axios with `onUploadProgress` to render dynamic upload progress bars (0–100%).
+    4. Upon successful upload, client submits the resulting `fileUrl` to the respective domain endpoint (`PUT /lessons/:id/video` or `POST /lessons/:id/resources`).
+
+### 5.9 Testing Suite (`vitest` + `@testing-library/react`)
 - Executes the **Learn - Build - Test** discipline established in `07_Development_Roadmap.md`:
   - Unit tests for helpers, date formatting, and token lifecycle logic.
   - Component tests for Route Guards, Auth forms, Publish Checklist rendering (against mocked 422 payloads), and Quiz option selection.

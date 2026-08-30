@@ -21,7 +21,7 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 ## 2. Authenticated — Any Role
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
-| **Profile** | FR-A08, FR-A09, FR-A10 | View/edit full name, avatar URL; no email change here per backend rules unless Admin does it via User Management. |
+| **Profile** | FR-A08, FR-A09, FR-A10, FR-M01 | View/edit full name, upload/change avatar image (Cloudinary); no email change here per backend rules unless Admin does it via User Management. |
 | **Change password** | FR-A07 | Requires current password. |
 | **Notifications dropdown/page** | FR-N03, FR-N04, FR-N05 | Same component for all roles; unread badge count. |
 
@@ -29,7 +29,7 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
 | **My enrollments** | FR-E02 | List of enrolled courses with progress bars. |
-| **Learning player** | FR-E04, FR-E05, FR-E06 | Video player with periodic heartbeat sync (`PUT /lessons/:id/progress`); shows quiz section if the lesson has one. |
+| **Learning player** | FR-E04, FR-E05, FR-E06 | Video player streaming Cloudflare R2 / external media with periodic heartbeat sync (`PUT /lessons/:id/progress`); shows quiz section if the lesson has one. |
 | **Quiz take screen** | FR-Q04 | Single-choice questions, submit-all pattern (not per-question); no indication of correct answers before submit. |
 | **Quiz result screen** | FR-Q06, FR-Q08 | Shows score/pass-fail and, per BR-QZ-06, only reveals `isCorrect` for *this* submitted attempt — historical attempts in the list view stay score-only. |
 | **Course progress view** | FR-E06 | Percentage + completed/total lesson counts. |
@@ -38,7 +38,7 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
 | **Teacher dashboard (`/me/courses`)** | FR-CO14 | All owned courses across Draft/Published/Archived, with status badges. |
-| **Course builder** | FR-CO01, FR-CO03, FR-CO08–FR-CO13 | Create/edit metadata, chapter/lesson tree with drag-and-drop reorder, video URL + duration form, resource list, quiz editor. |
+| **Course builder** | FR-CO01, FR-CO03, FR-CO08–FR-CO13, FR-M01–FR-M03 | Create/edit metadata with Cloudinary thumbnail dropzone, chapter/lesson tree with drag-and-drop reorder, direct lesson video upload (Cloudflare R2 presigned PUT with progress bar) + duration, resource file uploader, quiz editor. |
 | **Publish flow** | FR-CO05 | On `422`, render the backend's detailed checklist errors as a literal checklist UI (see `09_UX_Notes_on_Business_Rules.md`) rather than a generic error toast. |
 | **Archive / Unpublish** | FR-CO04, FR-CO06 | Confirm dialogs; explain that Archive is terminal (can't come back from it — BR-CRS-04). |
 | **Enrolled students & progress** | FR-E03 | Table of learners with per-learner completion %. |
