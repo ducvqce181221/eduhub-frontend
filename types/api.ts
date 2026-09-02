@@ -150,3 +150,93 @@ export interface CoursesListResponse {
   items: Course[];
   meta: PaginationMeta;
 }
+
+export interface QuizAnswer {
+  id: string;
+  content: string;
+  isCorrect?: boolean;
+}
+
+export interface QuizQuestion {
+  id: string;
+  quizId?: string;
+  content: string;
+  points: number;
+  order: number;
+  answers: QuizAnswer[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface QuizDetail {
+  id: string;
+  lessonId: string;
+  title: string;
+  description?: string | null;
+  passScore: number;
+  questions: QuizQuestion[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface SubmitQuizAnswerPayload {
+  questionId: string;
+  selectedAnswerId: string;
+}
+
+export interface SubmitQuizAttemptPayload {
+  answers: SubmitQuizAnswerPayload[];
+}
+
+export interface QuizAttemptResult {
+  attemptId: string;
+  quizId: string;
+  earnedPoints: number;
+  totalPoints: number;
+  score: number;
+  passScore: number;
+  isPassed: boolean;
+  isLessonCompleted: boolean;
+  submittedAt: string;
+}
+
+export interface QuizAttemptSummary {
+  id: string;
+  score: number;
+  passScore: number;
+  isPassed: boolean;
+  earnedPoints: number;
+  totalPoints: number;
+  startedAt?: string;
+  submittedAt: string;
+}
+
+export interface LessonProgressResponse {
+  id?: string;
+  studentId?: string;
+  lessonId: string;
+  watchedSeconds: number;
+  isCompleted: boolean;
+  completedAt?: string | null;
+}
+
+export interface CourseProgressResponse {
+  courseId: string;
+  status: EnrollmentStatus;
+  completedLessons: number;
+  totalLessons: number;
+  progressPercentage: number;
+  isCompleted: boolean;
+  completedLessonIds: string[];
+  enrolledAt?: string;
+  completedAt?: string | null;
+}
+
+export interface EnrolledCourseItem {
+  id: string;
+  studentId: string;
+  courseId: string;
+  status: EnrollmentStatus;
+  enrolledAt: string;
+  course: Course;
+}

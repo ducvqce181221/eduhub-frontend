@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { RoleGuard } from "@/components/auth/role-guard";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
@@ -27,10 +28,13 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get("returnUrl") || "/";
+  const returnUrl =
+    searchParams.get("returnUrl") ||
+    searchParams.get("redirect") ||
+    "/";
   const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,102 +67,118 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
-      <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-xl">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight text-ink">
-            Sign in to EduHub
-          </CardTitle>
-          <CardDescription className="text-ink-muted text-sm">
-            Enter your email and password to access your courses
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {errorMessage && (
-            <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-sm text-sticker-orange-deep">
-              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-sticker-orange" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
+    <RoleGuard guestOnly>
+      <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
+        <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-xl">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-2xl font-bold tracking-tight text-ink">
+              Sign in to EduHub
+            </CardTitle>
+            <CardDescription className="text-ink-muted text-sm">
+              Enter your email and password to access your courses
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {errorMessage && (
+              <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-sm text-sticker-orange-deep">
+                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-sticker-orange" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-semibold text-ink-secondary">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="name@example.com"
-                        autoComplete="email"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-semibold text-ink-secondary">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="name@example.com"
+                          autoComplete="email"
+                          disabled={isLoading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel className="text-xs font-semibold text-ink-secondary">Password</FormLabel>
-                      <Link
-                        href="/forgot-password"
-                        className="text-xs text-notion-blue hover:underline"
-                      >
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        autoComplete="current-password"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel className="text-xs font-semibold text-ink-secondary">Password</FormLabel>
+                        <Link
+                          href="/forgot-password"
+                          className="text-xs text-notion-blue hover:underline"
+                        >
+                          Forgot password?
+                        </Link>
+                      </div>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          autoComplete="current-password"
+                          disabled={isLoading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <Button
-                type="submit"
-                className="w-full h-9.5"
-                disabled={isLoading}
+                <Button
+                  type="submit"
+                  className="w-full h-9.5"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </form>
+            </Form>
+
+            <div className="mt-6 text-center text-sm text-ink-muted">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/register"
+                className="font-medium text-notion-blue hover:underline"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  "Sign In"
-                )}
-              </Button>
-            </form>
-          </Form>
+                Sign up as a student
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </RoleGuard>
+  );
+}
 
-          <div className="mt-6 text-center text-sm text-ink-muted">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-medium text-notion-blue hover:underline"
-            >
-              Sign up as a student
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[80vh] flex items-center justify-center bg-canvas-soft">
+          <div className="size-8 border-2 border-hairline border-t-notion-blue rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <LoginFormContent />
+    </Suspense>
   );
 }

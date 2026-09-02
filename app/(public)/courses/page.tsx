@@ -1,18 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useQueryState, parseAsString, parseAsInteger } from "nuqs";
 import { useCoursesQuery, useCategoriesQuery } from "@/hooks/use-course-catalog";
 import { CourseFilters } from "@/components/courses/course-filters";
 import { CourseGrid } from "@/components/courses/course-grid";
 import { Pagination } from "@/components/common/pagination";
 import { Badge } from "@/components/ui/badge";
-import { Compass, Sparkles } from "lucide-react";
+import { Compass } from "lucide-react";
 import type { CourseLevel } from "@/types/api";
 
 const LIMIT = 9;
 
-export default function CoursesPage() {
+function CoursesContent() {
   const [search, setSearch] = useQueryState(
     "search",
     parseAsString.withDefault("").withOptions({ shallow: true, throttleMs: 300 }),
@@ -30,7 +30,7 @@ export default function CoursesPage() {
     parseAsInteger.withDefault(1).withOptions({ shallow: true }),
   );
 
-  const { data: categories = [], isLoading: isLoadingCategories } = useCategoriesQuery();
+  const { data: categories = [] } = useCategoriesQuery();
 
   const { data: coursesData, isLoading: isLoadingCourses } = useCoursesQuery({
     page,
@@ -131,5 +131,19 @@ export default function CoursesPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-col flex-1 bg-canvas-soft min-h-[60vh] items-center justify-center">
+          <div className="size-8 border-2 border-hairline border-t-notion-blue rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <CoursesContent />
+    </Suspense>
   );
 }

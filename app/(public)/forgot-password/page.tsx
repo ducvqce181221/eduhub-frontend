@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { RoleGuard } from "@/components/auth/role-guard";
 import { AlertCircle, CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 
 const forgotPasswordSchema = z.object({
@@ -58,97 +59,102 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
-      <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-xl">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight text-ink">
-            Reset Password
-          </CardTitle>
-          <CardDescription className="text-ink-muted text-sm">
-            Enter your email to receive password reset instructions
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isSubmitted ? (
-            <div className="text-center py-4 space-y-4">
-              <div className="w-12 h-12 bg-sticker-green/15 text-sticker-green rounded-full flex items-center justify-center mx-auto border border-sticker-green/30">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-semibold text-ink">Check your email</h3>
-              <p className="text-sm text-ink-muted">
-                If an account exists for <span className="font-medium text-ink">{form.getValues("email")}</span>, we have sent password reset instructions.
-              </p>
-              <div className="pt-2">
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-notion-blue hover:underline"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back to Sign In
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <>
-              {errorMessage && (
-                <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-sm text-sticker-orange-deep">
-                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-sticker-orange" />
-                  <span>{errorMessage}</span>
+    <RoleGuard guestOnly>
+      <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
+        <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-xl">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-2xl font-bold tracking-tight text-ink">
+              Reset Your Password
+            </CardTitle>
+            <CardDescription className="text-ink-muted text-sm">
+              Enter your email address and we&apos;ll send you instructions to reset your password
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isSubmitted ? (
+              <div className="space-y-6 text-center py-4">
+                <div className="w-12 h-12 rounded-full bg-sticker-teal/20 text-sticker-teal flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-6 h-6" />
                 </div>
-              )}
-
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs font-semibold text-ink-secondary">Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="email"
-                            placeholder="name@example.com"
-                            autoComplete="email"
-                            disabled={isLoading}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button
-                    type="submit"
-                    className="w-full h-9.5"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Sending instructions...
-                      </>
-                    ) : (
-                      "Send Reset Instructions"
-                    )}
-                  </Button>
-                </form>
-              </Form>
-
-              <div className="mt-6 text-center text-sm text-ink-muted">
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-1.5 font-medium text-notion-blue hover:underline"
+                <div className="space-y-2">
+                  <h3 className="text-base font-semibold text-ink">Check your email</h3>
+                  <p className="text-sm text-ink-muted leading-relaxed">
+                    If an account exists for <span className="font-semibold text-ink">{form.getValues("email")}</span>, you will receive password reset instructions shortly.
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  asChild
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  Back to Sign In
-                </Link>
+                  <Link href="/login">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Sign In
+                  </Link>
+                </Button>
               </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            ) : (
+              <>
+                {errorMessage && (
+                  <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-sm text-sticker-orange-deep">
+                    <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-sticker-orange" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-semibold text-ink-secondary">Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="name@example.com"
+                              autoComplete="email"
+                              disabled={isLoading}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="w-full h-9.5"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Sending instructions...
+                        </>
+                      ) : (
+                        "Send Reset Instructions"
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+
+                <div className="mt-6 text-center text-sm text-ink-muted">
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center gap-1.5 font-medium text-notion-blue hover:underline"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Back to Sign In
+                  </Link>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </RoleGuard>
   );
 }
