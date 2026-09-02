@@ -64,11 +64,15 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
 
 ## 5. Client State, Forms, and Component Ecosystem
 
+### 5.0 UI Component Architecture (`shadcn/ui` CLI)
+- All UI components are scaffolded and managed via the official CLI: `pnpm dlx shadcn@latest add <component>` based on `components.json` (`radix-nova` style with unified `radix-ui` runtime).
+- Do not manually install or import discrete `@radix-ui/react-*` primitive packages. All UI source files live in `components/ui/` and adhere to `docs/DESIGN.md`.
+
 ### 5.1 Server State & Caching (`@tanstack/react-query`)
 - Used for all Client Component data fetching, cache invalidation, and mutations.
 - **Optimistic Updates:** Applied during drag-and-drop chapter/lesson reordering, status toggles, or quiz submissions so the UI responds instantaneously before backend confirmation.
 - **Cache Invalidation:** After mutations (creating/editing/deleting lessons, updating profile), invoke `queryClient.invalidateQueries()` to re-synchronize the freshest data from the backend.
-- Centralized management of Loading states (Skeleton loaders per `DESIGN-cal-optimize.md` §7) and Error states.
+- Centralized management of Loading states (Skeleton loaders per `docs/DESIGN.md`) and Error states.
 
 ### 5.2 URL State Management (`nuqs`)
 - Manages search, filter, and pagination states on the URL query string (`searchParams`) via a type-safe hook (similar to `useState`).
@@ -93,13 +97,13 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
 ### 5.5 Course Builder Drag-and-Drop (`@dnd-kit/react`)
 - Employs `@dnd-kit/react` (latest) for the Chapter & Lesson tree in the Teacher Dashboard.
 - Handles multi-level reordering: rearranging Chapter order, reordering Lessons within a Chapter, or transferring Lessons across Chapters.
-- Integrates the `GripVertical` icon (`dnd-drag-handle`) and horizontal drop line `dnd-drop-indicator` per `DESIGN-cal-optimize.md` §8.
+- Integrates the `GripVertical` icon (`dnd-drag-handle`) and horizontal drop line `dnd-drop-indicator` styled with Notion hairline dividers and blue drop indicator.
 
 ### 5.6 Headless Data Tables (`@tanstack/react-table`)
 - Decouples table logic (pagination, column sorting, filtering, row selection) for administration views:
   - Admin: User Management, Category Management.
   - Teacher: Enrolled learners & progress tracking, Quiz aggregated analytics.
-  - Bound to the Cal-design styling (`data-table-container`, 48px row height, subtle 40px gray header) defined in `DESIGN-cal-optimize.md` §7.
+  - Bound to the Notion-inspired styling (warm `canvas-soft` header `#f6f5f4`, hairline borders `#e6e6e6`, eyebrow typography) defined in `docs/DESIGN.md`.
 
 ### 5.7 API Type Generation Contract (`openapi-typescript`)
 - Hand-crafting DTO interfaces is avoided to eliminate drift against the backend.
