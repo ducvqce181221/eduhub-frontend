@@ -215,15 +215,33 @@ function ResetPasswordContent() {
   );
 }
 
+function AuthCardSkeleton() {
+  return (
+    <div className="flex min-h-[80vh] items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
+      <div className="w-full max-w-md rounded-2xl border border-hairline bg-surface p-8 shadow-notion-soft space-y-6">
+        <div className="space-y-2 text-center">
+          <div className="h-7 w-48 mx-auto rounded-md bg-neutral-200/80 animate-pulse" />
+          <div className="h-4 w-64 mx-auto rounded-md bg-neutral-200/60 animate-pulse" />
+        </div>
+        <div className="space-y-4 pt-2">
+          <div className="space-y-2">
+            <div className="h-4 w-20 rounded-md bg-neutral-200/70 animate-pulse" />
+            <div className="h-10 w-full rounded-lg bg-neutral-200/60 animate-pulse" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-4 w-20 rounded-md bg-neutral-200/70 animate-pulse" />
+            <div className="h-10 w-full rounded-lg bg-neutral-200/60 animate-pulse" />
+          </div>
+          <div className="h-10 w-full rounded-full bg-neutral-200/80 animate-pulse mt-4" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ResetPasswordPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-[80vh] flex items-center justify-center bg-canvas-soft">
-          <div className="size-8 border-2 border-hairline border-t-notion-blue rounded-full animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<AuthCardSkeleton />}>
       <ResetPasswordContent />
     </Suspense>
   );

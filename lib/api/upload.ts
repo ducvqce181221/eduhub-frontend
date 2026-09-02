@@ -1,0 +1,74 @@
+import { apiClient } from "./client";
+import type {
+  GetPresignedUrlPayload,
+  PresignedUrlResponse,
+  UploadImageResponse,
+} from "@/types/api";
+
+export async function uploadImage(file: File): Promise<UploadImageResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await apiClient.post<UploadImageResponse>("/upload/image", formData);
+  return response.data;
+}
+
+export async function getPresignedUrl(
+  payload: GetPresignedUrlPayload
+): Promise<PresignedUrlResponse> {
+  const response = await apiClient.post<PresignedUrlResponse>(
+    "/upload/presigned-url",
+    payload
+  );
+  return response.data;
+}
+
+export async function uploadDirectToR2(
+  uploadUrl: string,
+  file: File,
+  onProgress?: (percent: number) => void
+): Promise<void> {
+  if (typeof XMLHttpRequest !== "undefined") {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", uploadUrl);
+      xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+
+      if (xhr.upload && onProgress) {
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            onProgress(percent);
+          }
+        };
+      }
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          if (onProgress) onProgress(100);
+          resolve();
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}`));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error("Network error during upload"));
+      xhr.send(file);
+    });
+  }
+
+  // Fallback to fetch
+  const response = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type || "application/octet-stream",
+    },
+    body: file,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Upload failed with status ${response.status}`);
+  }
+
+  if (onProgress) onProgress(100);
+}

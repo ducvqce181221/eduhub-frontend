@@ -17,9 +17,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { User as UserIcon, KeyRound, LogOut, BookOpen, LayoutDashboard, Shield } from "lucide-react";
 
-export function UserMenu() {
+import type { User } from "@/types/api";
+
+export function UserMenu({ initialUser }: { initialUser?: User | null }) {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user: authUser, logout } = useAuth();
+  const user = authUser || initialUser;
 
   if (!user) return null;
 

@@ -8,9 +8,13 @@ import { UserMenu } from "@/components/layout/user-menu";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { Button } from "@/components/ui/button";
 
-export function Header() {
+import type { User } from "@/types/api";
+
+export function Header({ initialUser = null }: { initialUser?: User | null }) {
   const pathname = usePathname();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const currentUser = user || initialUser;
+  const isAuthed = isAuthenticated || Boolean(currentUser);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-hairline bg-surface/95 backdrop-blur supports-backdrop-filter:bg-surface/80">
@@ -36,7 +40,7 @@ export function Header() {
               Courses
             </Link>
 
-            {isAuthenticated && (
+            {isAuthed && (
               <Link
                 href="/me/enrollments"
                 className={`px-3 py-1.5 rounded-md transition-colors ${
@@ -49,7 +53,7 @@ export function Header() {
               </Link>
             )}
 
-            {(user?.role === "TEACHER" || user?.role === "ADMIN") && (
+            {isAuthed && (currentUser?.role === "TEACHER" || currentUser?.role === "ADMIN") && (
               <Link
                 href="/teacher"
                 className={`px-3 py-1.5 rounded-md transition-colors ${
@@ -62,7 +66,7 @@ export function Header() {
               </Link>
             )}
 
-            {user?.role === "ADMIN" && (
+            {isAuthed && currentUser?.role === "ADMIN" && (
               <Link
                 href="/admin"
                 className={`px-3 py-1.5 rounded-md transition-colors ${
@@ -79,10 +83,10 @@ export function Header() {
 
         {/* Right: Auth State / Actions */}
         <div className="flex items-center gap-3">
-          {isLoading ? (
+          {isLoading && !currentUser ? (
             <div className="w-8 h-8 rounded-full bg-hairline animate-pulse" />
-          ) : isAuthenticated ? (
-            <UserMenu />
+          ) : isAuthed ? (
+            <UserMenu initialUser={currentUser} />
           ) : (
             <div className="hidden sm:flex items-center gap-2">
               <Button variant="ghost" size="sm" asChild>
@@ -101,7 +105,7 @@ export function Header() {
           )}
 
           {/* Mobile Navigation Trigger */}
-          <MobileNav />
+          <MobileNav initialUser={currentUser} />
         </div>
       </div>
     </header>

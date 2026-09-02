@@ -38,11 +38,17 @@ export default function CourseLearnRedirectPage() {
   }, [course, progress, isLoadingCourse, isLoadingProgress, courseId, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 min-h-[60vh] gap-4 p-8 text-center bg-canvas-soft">
-      <Loader2 className="w-8 h-8 animate-spin text-notion-blue" />
-      <p className="text-sm font-medium text-ink-muted">
-        Loading learning workspace...
-      </p>
+    <div className="flex flex-col flex-1 bg-canvas-soft min-h-[85vh] p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          <Skeleton className="aspect-video w-full rounded-2xl" />
+          <Skeleton className="h-8 w-3/4 rounded-lg" />
+          <Skeleton className="h-24 w-full rounded-xl" />
+        </div>
+        <div className="lg:col-span-1">
+          <Skeleton className="h-[550px] w-full rounded-2xl" />
+        </div>
+      </div>
     </div>
   );
 }

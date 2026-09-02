@@ -7,7 +7,13 @@ import { Toaster } from "sonner";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  initialUser = null,
+}: {
+  children: React.ReactNode;
+  initialUser?: import("@/types/api").User | null;
+}) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -24,7 +30,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+        <AuthProvider initialUser={initialUser}>
           {children}
           <Toaster position="top-right" richColors closeButton />
         </AuthProvider>

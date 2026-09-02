@@ -42,13 +42,44 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({
+  children,
+  initialUser = null,
+}: {
+  children: React.ReactNode;
+  initialUser?: User | null;
+}) {
+  const [user, setUser] = useState<User | null>(initialUser);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const tokenRef = useRef<string | null>(null);
   tokenRef.current = accessToken;
+
+  // Helper to persist or clear user cache in cookie and localStorage
+  const persistUser = useCallback((userData: User | null) => {
+    setUser(userData);
+    if (typeof window !== "undefined") {
+      try {
+        if (userData) {
+          const minimal = {
+            id: userData.id,
+            fullName: userData.fullName,
+            email: userData.email,
+            role: userData.role,
+            avatarUrl: userData.avatarUrl || null,
+          };
+          localStorage.setItem("eduhub_auth_user", JSON.stringify(userData));
+          document.cookie = `eduhub_user=${encodeURIComponent(JSON.stringify(minimal))}; path=/; max-age=2592000; SameSite=Lax`;
+        } else {
+          localStorage.removeItem("eduhub_auth_user");
+          document.cookie = "eduhub_user=; path=/; max-age=0; SameSite=Lax";
+        }
+      } catch {
+        // Ignore localStorage quota/access errors
+      }
+    }
+  }, []);
 
   // Sync token getter and setter with apiClient
   useEffect(() => {
@@ -60,9 +91,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setOnUnauthorizedCallback(() => {
       tokenRef.current = null;
       setAccessToken(null);
-      setUser(null);
+      persistUser(null);
     });
-  }, []);
+  }, [persistUser]);
 
   const refreshSession = useCallback(async (): Promise<boolean> => {
     try {
@@ -77,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         const profileRes = await apiClient.get<User>("/auth/me");
         if (profileRes.data) {
-          setUser(profileRes.data);
+          persistUser(profileRes.data);
           return true;
         }
       }
@@ -85,14 +116,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       tokenRef.current = null;
       setAccessToken(null);
-      setUser(null);
+      persistUser(null);
       return false;
     }
-  }, []);
+  }, [persistUser]);
 
   // Bootstrap session on mount
   useEffect(() => {
     let mounted = true;
+
+    // Synchronously hydrate cached user snapshot on client mount if not already populated
+    try {
+      const saved = localStorage.getItem("eduhub_auth_user");
+      if (saved && mounted) {
+        const parsed = JSON.parse(saved);
+        setUser((prev) => prev || parsed);
+        if (typeof document !== "undefined" && !document.cookie.includes("eduhub_user=")) {
+          const minimal = {
+            id: parsed.id,
+            fullName: parsed.fullName,
+            email: parsed.email,
+            role: parsed.role,
+            avatarUrl: parsed.avatarUrl || null,
+          };
+          document.cookie = `eduhub_user=${encodeURIComponent(JSON.stringify(minimal))}; path=/; max-age=2592000; SameSite=Lax`;
+        }
+      }
+    } catch {
+      // Ignore
+    }
 
     async function initAuth() {
       setIsLoading(true);
@@ -118,9 +170,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const authData = response.data;
     tokenRef.current = authData.accessToken;
     setAccessToken(authData.accessToken);
-    setUser(authData.user);
+    persistUser(authData.user);
     return authData;
-  }, []);
+  }, [persistUser]);
 
   const register = useCallback(async (credentials: RegisterCredentials): Promise<User> => {
     const response = await apiClient.post<User>("/auth/register", {
@@ -138,12 +190,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       tokenRef.current = null;
       setAccessToken(null);
-      setUser(null);
+      persistUser(null);
     }
-  }, []);
+  }, [persistUser]);
 
   const updateUser = useCallback((updatedFields: Partial<User>) => {
-    setUser((prev) => (prev ? { ...prev, ...updatedFields } : null));
+    setUser((prev) => {
+      const updated = prev ? { ...prev, ...updatedFields } : null;
+      if (typeof window !== "undefined") {
+        try {
+          if (updated) {
+            localStorage.setItem("eduhub_auth_user", JSON.stringify(updated));
+          } else {
+            localStorage.removeItem("eduhub_auth_user");
+          }
+        } catch {
+          // Ignore
+        }
+      }
+      return updated;
+    });
   }, []);
 
   const value = useMemo(

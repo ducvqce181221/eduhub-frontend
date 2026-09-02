@@ -8,12 +8,16 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Button } from "@/components/ui/button";
 import { Menu, BookOpen, Compass, LayoutDashboard, Shield, LogIn, UserPlus } from "lucide-react";
 
-export function MobileNav() {
+import type { User } from "@/types/api";
+
+export function MobileNav({ initialUser = null }: { initialUser?: User | null }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuth();
 
   const close = () => setOpen(false);
+  const currentUser = user || initialUser;
+  const isAuthed = isAuthenticated || Boolean(currentUser);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -48,7 +52,7 @@ export function MobileNav() {
             Browse Courses
           </Link>
 
-          {isAuthenticated ? (
+          {isAuthed ? (
             <>
               <Link
                 href="/me/enrollments"
@@ -63,7 +67,7 @@ export function MobileNav() {
                 My Enrollments
               </Link>
 
-              {(user?.role === "TEACHER" || user?.role === "ADMIN") && (
+              {(currentUser?.role === "TEACHER" || currentUser?.role === "ADMIN") && (
                 <Link
                   href="/teacher"
                   onClick={close}
@@ -78,7 +82,7 @@ export function MobileNav() {
                 </Link>
               )}
 
-              {user?.role === "ADMIN" && (
+              {currentUser?.role === "ADMIN" && (
                 <Link
                   href="/admin"
                   onClick={close}

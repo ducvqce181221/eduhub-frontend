@@ -134,15 +134,58 @@ function CoursesContent() {
   );
 }
 
+function CoursesCatalogSkeleton() {
+  return (
+    <div className="flex flex-col flex-1 bg-canvas-soft">
+      {/* Header Banner Skeleton */}
+      <section className="w-full bg-surface border-b border-hairline py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+          <div className="h-6 w-36 rounded-full bg-neutral-200/80 animate-pulse mb-4" />
+          <div className="h-10 w-96 max-w-full rounded-lg bg-neutral-200/80 animate-pulse mb-3" />
+          <div className="h-5 w-full max-w-xl rounded-md bg-neutral-200/60 animate-pulse" />
+        </div>
+      </section>
+
+      {/* Main Content Skeleton */}
+      <main className="w-full max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
+        {/* Filter Bar Skeleton */}
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+          <div className="h-10 w-full max-w-sm rounded-lg bg-neutral-200/70 animate-pulse" />
+          <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
+            <div className="h-9 w-20 rounded-full bg-neutral-200/80 animate-pulse" />
+            <div className="h-9 w-24 rounded-full bg-neutral-200/80 animate-pulse" />
+            <div className="h-9 w-24 rounded-full bg-neutral-200/80 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Grid Cards Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-2xl border border-hairline bg-surface p-5 flex flex-col gap-4 shadow-notion-soft"
+            >
+              <div className="aspect-video w-full rounded-xl bg-neutral-200/70 animate-pulse" />
+              <div className="flex flex-col gap-2">
+                <div className="h-4 w-24 rounded-full bg-neutral-200/80 animate-pulse" />
+                <div className="h-5 w-full rounded-md bg-neutral-200/80 animate-pulse" />
+                <div className="h-4 w-3/4 rounded-md bg-neutral-200/60 animate-pulse" />
+              </div>
+              <div className="pt-2 mt-auto border-t border-hairline flex justify-between items-center">
+                <div className="h-4 w-20 rounded-md bg-neutral-200/60 animate-pulse" />
+                <div className="h-8 w-24 rounded-full bg-neutral-200/80 animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
+
 export default function CoursesPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex flex-col flex-1 bg-canvas-soft min-h-[60vh] items-center justify-center">
-          <div className="size-8 border-2 border-hairline border-t-notion-blue rounded-full animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<CoursesCatalogSkeleton />}>
       <CoursesContent />
     </Suspense>
   );

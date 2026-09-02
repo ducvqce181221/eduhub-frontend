@@ -199,15 +199,52 @@ async function request<T = unknown>(
   return data as ApiResponse<T>;
 }
 
+function normalizeOptions(
+  bodyOrOptions?: unknown,
+  customOptions?: RequestOptions,
+): RequestOptions {
+  if (bodyOrOptions === undefined) {
+    return customOptions || {};
+  }
+
+  if (
+    bodyOrOptions &&
+    typeof bodyOrOptions === "object" &&
+    !(bodyOrOptions instanceof FormData) &&
+    ("body" in bodyOrOptions || "skipAuth" in bodyOrOptions || "params" in bodyOrOptions)
+  ) {
+    return {
+      ...(bodyOrOptions as RequestOptions),
+      ...customOptions,
+    };
+  }
+
+  return {
+    ...customOptions,
+    body: bodyOrOptions,
+  };
+}
+
 export const apiClient = {
   get: <T = unknown>(endpoint: string, options?: RequestOptions) =>
     request<T>(endpoint, { ...options, method: "GET" }),
-  post: <T = unknown>(endpoint: string, options?: RequestOptions) =>
-    request<T>(endpoint, { ...options, method: "POST" }),
-  patch: <T = unknown>(endpoint: string, options?: RequestOptions) =>
-    request<T>(endpoint, { ...options, method: "PATCH" }),
-  put: <T = unknown>(endpoint: string, options?: RequestOptions) =>
-    request<T>(endpoint, { ...options, method: "PUT" }),
+  post: <T = unknown>(endpoint: string, bodyOrOptions?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...normalizeOptions(bodyOrOptions, options),
+      method: "POST",
+    }),
+  patch: <T = unknown>(endpoint: string, bodyOrOptions?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...normalizeOptions(bodyOrOptions, options),
+      method: "PATCH",
+    }),
+  put: <T = unknown>(endpoint: string, bodyOrOptions?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...normalizeOptions(bodyOrOptions, options),
+      method: "PUT",
+    }),
   delete: <T = unknown>(endpoint: string, options?: RequestOptions) =>
     request<T>(endpoint, { ...options, method: "DELETE" }),
 };
+
+

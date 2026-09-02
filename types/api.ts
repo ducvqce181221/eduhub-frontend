@@ -240,3 +240,163 @@ export interface EnrolledCourseItem {
   enrolledAt: string;
   course: Course;
 }
+
+// Teacher & Course Builder Payloads
+export interface CreateCoursePayload {
+  title: string;
+  categoryId: string;
+  level: CourseLevel;
+  description?: string;
+  thumbnailUrl?: string;
+}
+
+export interface UpdateCoursePayload {
+  title?: string;
+  categoryId?: string;
+  level?: CourseLevel;
+  description?: string;
+  thumbnailUrl?: string;
+}
+
+export interface CreateChapterPayload {
+  title: string;
+  description?: string;
+  order?: number;
+}
+
+export interface UpdateChapterPayload {
+  title?: string;
+  description?: string;
+}
+
+export interface ReorderItem {
+  id: string;
+  order: number;
+}
+
+export interface ReorderPayload {
+  orders: ReorderItem[];
+}
+
+export interface CreateLessonPayload {
+  title: string;
+  description?: string;
+  order?: number;
+}
+
+export interface UpdateLessonPayload {
+  title?: string;
+  description?: string;
+}
+
+export interface UpsertVideoPayload {
+  videoUrl: string;
+  durationSeconds: number;
+}
+
+export interface CreateResourcePayload {
+  name: string;
+  fileUrl: string;
+  fileType?: string;
+  fileSize?: number;
+}
+
+export interface UpdateResourcePayload {
+  name?: string;
+  fileUrl?: string;
+  fileType?: string;
+  fileSize?: number;
+}
+
+export interface CreateQuizPayload {
+  title: string;
+  description?: string;
+  passScore?: number;
+}
+
+export interface UpdateQuizPayload {
+  title?: string;
+  description?: string;
+  passScore?: number;
+}
+
+export interface CreateQuizAnswerOption {
+  content: string;
+  isCorrect: boolean;
+}
+
+export interface CreateQuestionPayload {
+  content: string;
+  points?: number;
+  answers: CreateQuizAnswerOption[];
+}
+
+export interface UpdateQuestionPayload {
+  content?: string;
+  points?: number;
+  answers?: CreateQuizAnswerOption[];
+}
+
+// Media & Uploads
+export interface GetPresignedUrlPayload {
+  fileName: string;
+  fileType: string;
+  folder: "videos" | "resources";
+}
+
+export interface PresignedUrlResponse {
+  uploadUrl: string;
+  fileUrl: string;
+  key: string;
+  expiresIn: number;
+}
+
+export interface UploadImageResponse {
+  url: string;
+  publicId?: string;
+}
+
+// Analytics & Reports
+export interface EnrolledStudentProgressItem {
+  studentId: string;
+  fullName: string;
+  email: string;
+  avatarUrl?: string | null;
+  enrolledAt: string;
+  completedLessons: number;
+  totalLessons: number;
+  progressPercentage: number;
+  isCompleted: boolean;
+}
+
+export interface CourseAggregateProgress {
+  totalEnrollments: number;
+  completedCount: number;
+  averageProgressPercentage: number;
+  activeStudentsCount?: number;
+}
+
+export interface CourseQuizStudentResult {
+  studentId: string;
+  fullName: string;
+  email: string;
+  quizId: string;
+  quizTitle: string;
+  attemptsCount: number;
+  highestScore: number;
+  isPassed: boolean;
+  latestSubmittedAt: string;
+}
+
+export interface CourseQuizResultItem {
+  lessonId?: string;
+  lessonTitle?: string;
+  quizId: string;
+  quizTitle: string;
+  passScore?: number;
+  totalAttempts?: number;
+  passRate?: number;
+  averageScore?: number;
+}
+
+
