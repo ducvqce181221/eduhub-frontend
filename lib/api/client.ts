@@ -51,7 +51,7 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   _retry?: boolean;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string | null) => void> = [];
