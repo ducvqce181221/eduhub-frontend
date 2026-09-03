@@ -4,12 +4,16 @@ import React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/lib/auth/auth-context";
 import {
+  ArrowLeft,
   BookOpen,
   Calendar,
   ChevronRight,
   Clock,
   Layers,
+  Shield,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -51,16 +55,38 @@ export function CourseHero({ course }: CourseHeroProps) {
     ? format(new Date(course.updatedAt || course.createdAt!), "MMMM d, yyyy")
     : "Recently";
 
+  const searchParams = useSearchParams();
+  const { user } = useAuth();
+  const isAdminFrom =
+    searchParams?.get("from") === "admin" || user?.role === "ADMIN";
+
   return (
     <div className="w-full bg-surface border-b border-hairline pt-8 pb-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex flex-col gap-6">
+        {/* Admin Navigation Banner / Return Link */}
+        {isAdminFrom && (
+          <div className="flex items-center justify-between pb-3 border-b border-hairline">
+            <Link
+              href="/admin/courses"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-notion-blue hover:underline"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Course Oversight</span>
+            </Link>
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-ink-muted bg-canvas-soft border border-hairline px-2 py-0.5 rounded-md">
+              <Shield className="w-3 h-3 text-ink-secondary" />
+              Admin Preview
+            </span>
+          </div>
+        )}
+
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-ink-muted">
           <Link href="/" className="hover:text-ink transition-colors">
             Home
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />
-          <Link href="/courses" className="hover:text-ink transition-colors">
+          <Link href="/#catalog" className="hover:text-ink transition-colors">
             Courses
           </Link>
           {course.category?.name && (

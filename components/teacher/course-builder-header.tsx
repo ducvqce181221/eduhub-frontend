@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/lib/auth/auth-context";
 import {
   ArrowLeft,
   UploadCloud,
@@ -8,6 +10,7 @@ import {
   BarChart2,
   Check,
   Loader2,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -31,6 +34,11 @@ export function CourseBuilderHeader({
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [showUnpublishDialog, setShowUnpublishDialog] = useState(false);
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+
+  const searchParams = useSearchParams();
+  const { user } = useAuth();
+  const isAdminContext =
+    searchParams?.get("from") === "admin" || user?.role === "ADMIN";
 
   const getStatusBadge = (status: Course["status"]) => {
     switch (status) {
@@ -68,9 +76,15 @@ export function CourseBuilderHeader({
               size="icon"
               className="h-8 w-8 text-neutral-500 hover:text-neutral-900"
             >
-              <Link href="/teacher/courses">
+              <Link
+                href={isAdminContext ? "/admin/courses" : "/teacher/courses"}
+              >
                 <ArrowLeft className="h-4 w-4" />
-                <span className="sr-only">Back to Courses</span>
+                <span className="sr-only">
+                  {isAdminContext
+                    ? "Back to Course Oversight"
+                    : "Back to Courses"}
+                </span>
               </Link>
             </Button>
 
@@ -82,6 +96,15 @@ export function CourseBuilderHeader({
                 {getStatusBadge(course.status)}
               </div>
               <div className="flex items-center gap-2 text-xs text-neutral-400">
+                {isAdminContext && (
+                  <>
+                    <span className="inline-flex items-center gap-1 font-semibold text-amber-800 bg-amber-100/80 px-1.5 py-0.5 rounded text-[10px]">
+                      <Shield className="w-3 h-3 text-amber-700" />
+                      Admin Mode
+                    </span>
+                    <span>•</span>
+                  </>
+                )}
                 <span>{course.category?.name}</span>
                 <span>•</span>
                 <span>{course.level}</span>

@@ -114,7 +114,7 @@ export default function CourseDetailPage() {
         </p>
 
         <Button variant="pill" size="default" asChild>
-          <Link href="/courses">
+          <Link href="/#catalog">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Course Catalog
           </Link>

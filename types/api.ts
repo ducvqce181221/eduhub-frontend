@@ -401,4 +401,57 @@ export interface CourseQuizResultItem {
   averageScore?: number;
 }
 
+// Admin Management Interfaces
+export interface QueryUsersParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: Role;
+  isActive?: boolean;
+}
 
+export interface UserListResponse {
+  users: User[];
+  meta: PaginationMeta;
+}
+
+export interface CreateUserPayload {
+  email: string;
+  password: string;
+  fullName: string;
+  role?: Role;
+  isActive?: boolean;
+}
+
+export interface UpdateUserRolePayload {
+  role: Role;
+}
+
+export interface UpdateUserStatusPayload {
+  isActive: boolean;
+}
+
+export interface CreateCategoryPayload {
+  name: string;
+  slug?: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface UpdateCategoryPayload {
+  name?: string;
+  slug?: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface SendSystemNotificationPayload {
+  title: string;
+  message: string;
+}
+
+export interface SystemNotificationResponse {
+  success: boolean;
+  message: string;
+  recipientCount?: number;
+}

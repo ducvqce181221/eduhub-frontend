@@ -2,11 +2,21 @@
 
 import React from "react";
 import { RoleGuard } from "@/components/auth/role-guard";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <RoleGuard requireAuth allowedRoles={["ADMIN"]}>
-      {children}
+      <div className="flex h-screen w-full overflow-hidden bg-white text-neutral-900 antialiased">
+        <AdminSidebar />
+        <main className="flex flex-1 flex-col overflow-y-auto bg-[#faf9f8]">
+          {children}
+        </main>
+      </div>
     </RoleGuard>
   );
 }

@@ -133,6 +133,16 @@ describe("CourseSmartCTA Component", () => {
 
     const editLink = screen.getByRole("link", { name: /Edit in Course Builder/i });
     expect(editLink).toBeInTheDocument();
+    expect(editLink).toHaveAttribute(
+      "href",
+      `/teacher/courses/${mockCourseId}/builder?from=admin`,
+    );
+
+    const backBtn = screen.getByRole("link", {
+      name: /Back to Course Oversight/i,
+    });
+    expect(backBtn).toBeInTheDocument();
+    expect(backBtn).toHaveAttribute("href", "/admin/courses");
   });
 
   it("renders preview indicator for non-owner Teachers", () => {

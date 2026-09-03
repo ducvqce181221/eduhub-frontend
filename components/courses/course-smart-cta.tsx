@@ -2,9 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  ArrowLeft,
   ArrowRight,
   CheckCircle2,
   Edit3,
@@ -66,6 +68,8 @@ export function CourseSmartCTA({
   // 2. Teacher (Owner) or Platform Admin
   const isOwner = user.role === "TEACHER" && user.id === teacherId;
   const isAdmin = user.role === "ADMIN";
+  const searchParams = useSearchParams();
+  const fromAdmin = searchParams?.get("from") === "admin" || isAdmin;
 
   if (isOwner || isAdmin) {
     return (
@@ -90,11 +94,31 @@ export function CourseSmartCTA({
           className="w-full text-sm font-semibold h-12 rounded-xl bg-ink text-white hover:bg-ink/90 shadow-md"
           asChild
         >
-          <Link href={`/teacher/courses/${courseId}/builder`}>
+          <Link
+            href={
+              fromAdmin
+                ? `/teacher/courses/${courseId}/builder?from=admin`
+                : `/teacher/courses/${courseId}/builder`
+            }
+          >
             <Edit3 className="w-4 h-4 mr-2" />
             <span>Edit in Course Builder</span>
           </Link>
         </Button>
+
+        {fromAdmin && (
+          <Button
+            size="default"
+            variant="outline"
+            className="w-full text-xs font-semibold h-10 rounded-xl border-neutral-200 text-neutral-700 hover:bg-neutral-100/70"
+            asChild
+          >
+            <Link href="/admin/courses">
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              <span>Back to Course Oversight</span>
+            </Link>
+          </Button>
+        )}
 
         <p className="text-xs text-ink-muted text-center leading-relaxed">
           Manage curriculum, upload lesson videos, and update publish status.

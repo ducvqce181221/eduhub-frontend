@@ -51,6 +51,7 @@ vi.mock("next/navigation", () => ({
   useParams: () => ({
     id: "course-123",
   }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("@/lib/auth/auth-context", () => ({
