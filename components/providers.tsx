@@ -6,26 +6,35 @@ import { AuthProvider } from "@/lib/auth/auth-context";
 import { Toaster } from "sonner";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import type { Category, User } from "@/types/api";
+import { COURSE_QUERY_KEYS } from "@/hooks/use-course-catalog";
 
 export function Providers({
   children,
   initialUser = null,
+  initialCategories = [],
 }: {
   children: React.ReactNode;
-  initialUser?: import("@/types/api").User | null;
+  initialUser?: User | null;
+  initialCategories?: Category[];
 }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000,
-            refetchOnWindowFocus: false,
-            retry: 1,
-          },
+  const [queryClient] = useState(() => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 60 * 1000,
+          refetchOnWindowFocus: false,
+          retry: 1,
         },
-      }),
-  );
+      },
+    });
+
+    if (initialCategories && initialCategories.length > 0) {
+      client.setQueryData(COURSE_QUERY_KEYS.categories, initialCategories);
+    }
+
+    return client;
+  });
 
   return (
     <NuqsAdapter>

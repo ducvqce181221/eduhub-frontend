@@ -6,7 +6,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 
 import { cookies } from "next/headers";
-import type { User } from "@/types/api";
+import type { User, Category } from "@/types/api";
+import { getCategories } from "@/lib/api/courses";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,10 +37,17 @@ export default async function RootLayout({
     }
   }
 
+  let initialCategories: Category[] = [];
+  try {
+    initialCategories = await getCategories(true);
+  } catch {
+    initialCategories = [];
+  }
+
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-canvas-soft text-ink font-sans selection:bg-notion-blue/20 selection:text-notion-blue">
-        <Providers initialUser={initialUser}>
+        <Providers initialUser={initialUser} initialCategories={initialCategories}>
           <Header initialUser={initialUser} />
           <main className="flex-1 flex flex-col">{children}</main>
           <Footer />

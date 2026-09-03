@@ -371,6 +371,8 @@ export interface EnrolledStudentProgressItem {
 
 export interface CourseAggregateProgress {
   totalEnrollments: number;
+  totalEnrolled?: number;
+  totalLessons?: number;
   completedCount: number;
   averageProgressPercentage: number;
   activeStudentsCount?: number;

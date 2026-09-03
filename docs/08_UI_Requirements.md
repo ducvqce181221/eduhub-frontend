@@ -13,7 +13,7 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 ## 1. Public Pages (no auth required)
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
-| **Course catalog / discovery** | FR-CO07, FR-C01 | Search, category/level filter, pagination. Calls `GET /courses` (Redis-cached on the backend, no FE-side caching needed). |
+| **Home & Course Discovery (`/`)** | FR-CO07, FR-C01 | Unified landing and catalog portal: Hero banner, specialized tracks with course counts, full course catalog with category/level filter and pagination. Global search and Explore categories popover in Header. `/courses` redirected (308) to `/`. Calls `GET /courses` (Redis-cached) and `GET /categories`. |
 | **Course detail (published)** | FR-CO02 | Shows curriculum outline; "Enroll" CTA swaps to "Continue learning" if the visitor is an enrolled Student. |
 | **Login / Register** | FR-A01, FR-A02 | Register is Student-only — no role selector in the form (see BR-USR-01 in `09_UX_Notes_on_Business_Rules.md`). |
 | **Forgot / Reset password** | FR-A05, FR-A06 | Two-step flow: request email → set new password via token link. |

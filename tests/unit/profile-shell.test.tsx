@@ -12,6 +12,14 @@ const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, replace: vi.fn() }),
   usePathname: () => "/profile",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+vi.mock("@/hooks/use-course-catalog", () => ({
+  useCategoriesQuery: () => ({
+    data: [],
+    isLoading: false,
+  }),
 }));
 
 describe("Slice 6: Frontend App Shell & Navigation & Profile / Change Password", () => {

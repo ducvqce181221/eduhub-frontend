@@ -43,7 +43,7 @@ export function EnrolledStudentsTable({
                   Total Enrollments
                 </p>
                 <h3 className="text-2xl font-bold text-neutral-900">
-                  {metrics.totalEnrollments}
+                  {metrics.totalEnrollments ?? metrics.totalEnrolled ?? 0}
                 </h3>
               </div>
             </div>
@@ -59,7 +59,7 @@ export function EnrolledStudentsTable({
                   Completed Learners
                 </p>
                 <h3 className="text-2xl font-bold text-neutral-900">
-                  {metrics.completedCount}
+                  {metrics.completedCount ?? 0}
                 </h3>
               </div>
             </div>
@@ -75,7 +75,7 @@ export function EnrolledStudentsTable({
                   Average Progress
                 </p>
                 <h3 className="text-2xl font-bold text-neutral-900">
-                  {Math.round(metrics.averageProgressPercentage)}%
+                  {Math.round(metrics.averageProgressPercentage ?? 0)}%
                 </h3>
               </div>
             </div>

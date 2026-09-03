@@ -67,9 +67,9 @@ tests written within the phase rather than deferred. UI behavior should conform 
 - **Test:** Protected-route redirect tests (unauthenticated → `/login`, wrong role → not-authorized page); token refresh-on-401 test; avatar upload preview test.
 
 ### Phase 11b — Public Catalog & Course Detail
-- **Learn:** Data fetching patterns for public/cached endpoints, pagination UI, responsive grid/list layouts.
-- **Build:** Course catalog with search/filter/pagination (`08_UI_Requirements.md` §1); course detail page with curriculum outline and role-aware CTA (Enroll vs Continue learning vs Edit).
-- **Test:** Filter/pagination interaction tests; CTA-state tests per auth/role/enrollment combination.
+- **Learn:** Data fetching patterns for public/cached endpoints, pagination UI, responsive grid/list layouts, headless URL query state (`nuqs`).
+- **Build:** Unified Home page (`/`) serving as the central Course Discovery and Catalog Portal (Hero banner, specialized tracks with course counts, full course catalog with category/level filters and pagination); Header Search with global debounce/sync; Header "Explore" popover menu with 2-column category grid; `/courses` permanently redirected (308) to `/`; course detail page with curriculum outline and role-aware CTA (Enroll vs Continue learning vs Edit).
+- **Test:** Filter/pagination interaction tests; Header search & Explore menu tests; CTA-state tests per auth/role/enrollment combination.
 
 ### Phase 11c — Student Learning Experience
 - **Learn:** Video player event handling with Cloudflare R2 streaming, heartbeat sync intervals, optimistic vs server-confirmed progress state.

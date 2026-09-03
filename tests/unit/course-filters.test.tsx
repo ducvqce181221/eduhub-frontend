@@ -12,7 +12,7 @@ const mockCategories: Category[] = [
 ];
 
 describe("CourseFilters Component", () => {
-  it("renders search input, category filters, and level selectors", () => {
+  it("renders search input when showSearch is true, category filters, and level selectors", () => {
     render(
       <CourseFilters
         categories={mockCategories}
@@ -23,6 +23,7 @@ describe("CourseFilters Component", () => {
         onCategoryChange={vi.fn()}
         onLevelChange={vi.fn()}
         onReset={vi.fn()}
+        showSearch={true}
       />,
     );
 
@@ -30,6 +31,26 @@ describe("CourseFilters Component", () => {
     expect(screen.getByText("All Categories")).toBeInTheDocument();
     expect(screen.getByText("Backend Development")).toBeInTheDocument();
     expect(screen.getByText("Frontend & UI")).toBeInTheDocument();
+    expect(screen.getByText("All Levels")).toBeInTheDocument();
+  });
+
+  it("hides search input by default (showSearch=false)", () => {
+    render(
+      <CourseFilters
+        categories={mockCategories}
+        selectedCategory=""
+        selectedLevel=""
+        searchValue=""
+        onSearchChange={vi.fn()}
+        onCategoryChange={vi.fn()}
+        onLevelChange={vi.fn()}
+        onReset={vi.fn()}
+        showSearch={false}
+      />,
+    );
+
+    expect(screen.queryByPlaceholderText(/search courses/i)).not.toBeInTheDocument();
+    expect(screen.getByText("All Categories")).toBeInTheDocument();
     expect(screen.getByText("All Levels")).toBeInTheDocument();
   });
 
@@ -47,6 +68,7 @@ describe("CourseFilters Component", () => {
         onCategoryChange={vi.fn()}
         onLevelChange={vi.fn()}
         onReset={vi.fn()}
+        showSearch={true}
       />,
     );
 
@@ -102,7 +124,7 @@ describe("CourseFilters Component", () => {
     expect(handleLevelChange).toHaveBeenCalledWith("BEGINNER");
   });
 
-  it("shows reset button when filters are active and triggers onReset when clicked", async () => {
+  it("shows active filter chips and reset button when filters are active", async () => {
     const user = userEvent.setup();
     const handleReset = vi.fn();
 
@@ -119,7 +141,11 @@ describe("CourseFilters Component", () => {
       />,
     );
 
-    const resetBtn = screen.getByRole("button", { name: /Reset filters/i });
+    expect(screen.getByText(/Keyword: “Microservices”/i)).toBeInTheDocument();
+    expect(screen.getByText(/Category: Backend Development/i)).toBeInTheDocument();
+    expect(screen.getByText(/Level: INTERMEDIATE/i)).toBeInTheDocument();
+
+    const resetBtn = screen.getByRole("button", { name: /Reset All/i });
     expect(resetBtn).toBeInTheDocument();
 
     await user.click(resetBtn);
