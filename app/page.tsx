@@ -135,6 +135,24 @@ function HomeContent() {
             >
               <Link href="/register">Get Started Free</Link>
             </Button>
+          ) : user?.role === "ADMIN" ? (
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-11 px-7 rounded-full border-hairline bg-surface hover:bg-canvas-soft text-ink"
+              asChild
+            >
+              <Link href="/admin">Admin Panel</Link>
+            </Button>
+          ) : user?.role === "TEACHER" ? (
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-11 px-7 rounded-full border-hairline bg-surface hover:bg-canvas-soft text-ink"
+              asChild
+            >
+              <Link href="/teacher">Teacher Dashboard</Link>
+            </Button>
           ) : (
             <Button
               size="lg"

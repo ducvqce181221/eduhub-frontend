@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useMyEnrollmentsQuery } from "@/hooks/use-course-catalog";
 import { useCourseProgressQuery } from "@/hooks/use-student-learning";
@@ -14,9 +15,7 @@ import {
   BookOpen,
   Compass,
   GraduationCap,
-  LayoutDashboard,
   Search,
-  ShieldCheck,
 } from "lucide-react";
 import type { Enrollment } from "@/types/api";
 
@@ -34,12 +33,22 @@ function EnrolledCourseItemWrapper({ enrollment }: { enrollment: Enrollment }) {
 }
 
 export default function MyEnrollmentsPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const [search, setSearch] = useState("");
 
   const isStudent = user?.role === "STUDENT";
   const isTeacher = user?.role === "TEACHER";
   const isAdmin = user?.role === "ADMIN";
+
+  // Redirect Admin and Teacher to their dedicated workspace
+  useEffect(() => {
+    if (isAdmin) {
+      router.replace("/admin");
+    } else if (isTeacher) {
+      router.replace("/teacher");
+    }
+  }, [isAdmin, isTeacher, router]);
 
   const { data: enrollments = [], isLoading } = useMyEnrollmentsQuery(
     Boolean(user && isStudent),
@@ -54,6 +63,10 @@ export default function MyEnrollmentsPage() {
       e.course?.teacher?.fullName.toLowerCase().includes(term)
     );
   });
+
+  if (isAdmin || isTeacher) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col flex-1 bg-canvas-soft">
@@ -102,44 +115,7 @@ export default function MyEnrollmentsPage() {
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto w-full py-8 px-4 sm:px-6 lg:px-8 flex-1">
-        {/* Role-specific Notice for Teacher/Admin */}
-        {isAdmin ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-hairline bg-surface shadow-notion-soft max-w-xl mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-sticker-purple/20 border border-transparent flex items-center justify-center text-sticker-purple-deep mb-4 shadow-2xs">
-              <ShieldCheck className="w-7 h-7" />
-            </div>
-            <h3 className="text-lg font-bold text-ink mb-1.5">
-              Administrator Account
-            </h3>
-            <p className="text-sm text-ink-muted mb-6 max-w-md leading-relaxed">
-              You are signed in with an Administrator profile. Enrollments are specific to student accounts. You can inspect platform courses and users in the Admin Panel.
-            </p>
-            <Button variant="pill" size="default" asChild className="px-6">
-              <Link href="/admin">
-                <LayoutDashboard className="w-4 h-4 mr-2" />
-                Open Admin Panel
-              </Link>
-            </Button>
-          </div>
-        ) : isTeacher ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-hairline bg-surface shadow-notion-soft max-w-xl mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-sticker-sky/20 border border-transparent flex items-center justify-center text-notion-blue-active mb-4 shadow-2xs">
-              <BookOpen className="w-7 h-7" />
-            </div>
-            <h3 className="text-lg font-bold text-ink mb-1.5">
-              Teacher Profile
-            </h3>
-            <p className="text-sm text-ink-muted mb-6 max-w-md leading-relaxed">
-              You are signed in as an Instructor. You can create curriculum, upload lessons, and view student progress in the Teacher Dashboard.
-            </p>
-            <Button variant="pill" size="default" asChild className="px-6">
-              <Link href="/teacher">
-                <LayoutDashboard className="w-4 h-4 mr-2" />
-                Open Teacher Dashboard
-              </Link>
-            </Button>
-          </div>
-        ) : isLoading ? (
+        {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <div

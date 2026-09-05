@@ -35,7 +35,7 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
+    window.location.href = "/login";
   };
 
   const getRoleBadgeVariant = (role: string) => {
@@ -99,12 +99,14 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuItem asChild>
-            <Link href="/me/enrollments" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">
-              <BookOpen className="mr-2 h-4 w-4 text-ink-muted" />
-              <span>My Enrollments</span>
-            </Link>
-          </DropdownMenuItem>
+          {user.role === "STUDENT" && (
+            <DropdownMenuItem asChild>
+              <Link href="/me/enrollments" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">
+                <BookOpen className="mr-2 h-4 w-4 text-ink-muted" />
+                <span>My Enrollments</span>
+              </Link>
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem asChild>
             <Link href="/profile" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">

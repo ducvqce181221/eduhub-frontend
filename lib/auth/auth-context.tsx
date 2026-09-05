@@ -28,12 +28,21 @@ interface RegisterCredentials {
   fullName: string;
 }
 
+export interface GoogleAuthPayload {
+  googleId?: string;
+  credential?: string;
+  email?: string;
+  fullName?: string;
+  avatarUrl?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
+  loginWithGoogle: (payload: GoogleAuthPayload) => Promise<AuthResponse>;
   register: (credentials: RegisterCredentials) => Promise<User>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<boolean>;
@@ -174,6 +183,19 @@ export function AuthProvider({
     return authData;
   }, [persistUser]);
 
+  const loginWithGoogle = useCallback(async (payload: GoogleAuthPayload): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>("/auth/google", {
+      body: payload,
+      skipAuth: true,
+    });
+
+    const authData = response.data;
+    tokenRef.current = authData.accessToken;
+    setAccessToken(authData.accessToken);
+    persistUser(authData.user);
+    return authData;
+  }, [persistUser]);
+
   const register = useCallback(async (credentials: RegisterCredentials): Promise<User> => {
     const response = await apiClient.post<User>("/auth/register", {
       body: credentials,
@@ -219,12 +241,13 @@ export function AuthProvider({
       isAuthenticated: !!user && !!accessToken,
       isLoading,
       login,
+      loginWithGoogle,
       register,
       logout,
       refreshSession,
       updateUser,
     }),
-    [user, accessToken, isLoading, login, register, logout, refreshSession, updateUser],
+    [user, accessToken, isLoading, login, loginWithGoogle, register, logout, refreshSession, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

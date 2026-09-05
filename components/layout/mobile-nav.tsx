@@ -119,18 +119,20 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
 
           {isAuthed ? (
             <>
-              <Link
-                href="/me/enrollments"
-                onClick={close}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  pathname === "/me/enrollments"
-                    ? "bg-black/5 text-ink font-semibold"
-                    : "text-ink-secondary hover:bg-black/5 hover:text-ink"
-                }`}
-              >
-                <BookOpen className="h-4 w-4" />
-                My Enrollments
-              </Link>
+              {currentUser?.role === "STUDENT" && (
+                <Link
+                  href="/me/enrollments"
+                  onClick={close}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/me/enrollments"
+                      ? "bg-black/5 text-ink font-semibold"
+                      : "text-ink-secondary hover:bg-black/5 hover:text-ink"
+                  }`}
+                >
+                  <BookOpen className="h-4 w-4" />
+                  My Enrollments
+                </Link>
+              )}
 
               {(currentUser?.role === "TEACHER" || currentUser?.role === "ADMIN") && (
                 <Link

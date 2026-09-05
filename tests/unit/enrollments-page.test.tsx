@@ -69,3 +69,67 @@ describe("EnrolledCourseCard Component", () => {
     expect(resumeLink).toHaveAttribute("href", "/learn/course-1");
   });
 });
+
+let mockCurrentUser: any = null;
+const mockReplace = vi.fn();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    replace: mockReplace,
+    push: vi.fn(),
+  }),
+}));
+
+vi.mock("@/lib/auth/auth-context", () => ({
+  useAuth: () => ({
+    user: mockCurrentUser,
+    isAuthenticated: Boolean(mockCurrentUser),
+    isLoading: false,
+  }),
+}));
+
+vi.mock("@/hooks/use-course-catalog", () => ({
+  useMyEnrollmentsQuery: () => ({
+    data: [mockEnrollment],
+    isLoading: false,
+  }),
+}));
+
+vi.mock("@/hooks/use-student-learning", () => ({
+  useCourseProgressQuery: () => ({
+    data: { progressPercentage: 50, completedLessons: 2, totalLessons: 4 },
+    isLoading: false,
+  }),
+}));
+
+import MyEnrollmentsPage from "@/app/(student)/me/enrollments/page";
+
+describe("MyEnrollmentsPage Role Redirects", () => {
+  it("redirects ADMIN to /admin and renders nothing", () => {
+    mockReplace.mockClear();
+    mockCurrentUser = { id: "a1", role: "ADMIN", email: "admin@test.com" };
+
+    const { container } = render(<MyEnrollmentsPage />);
+    expect(mockReplace).toHaveBeenCalledWith("/admin");
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("redirects TEACHER to /teacher and renders nothing", () => {
+    mockReplace.mockClear();
+    mockCurrentUser = { id: "t1", role: "TEACHER", email: "teacher@test.com" };
+
+    const { container } = render(<MyEnrollmentsPage />);
+    expect(mockReplace).toHaveBeenCalledWith("/teacher");
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders enrolled courses for STUDENT", () => {
+    mockReplace.mockClear();
+    mockCurrentUser = { id: "s1", role: "STUDENT", email: "student@test.com" };
+
+    render(<MyEnrollmentsPage />);
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(screen.getByText("My Enrolled Courses")).toBeInTheDocument();
+    expect(screen.getByText("Fullstack NestJS Masterclass")).toBeInTheDocument();
+  });
+});

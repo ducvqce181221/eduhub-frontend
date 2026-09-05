@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RoleGuard } from "@/components/auth/role-guard";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 // Password regex matching backend: min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
@@ -207,6 +208,19 @@ export default function RegisterPage() {
                 </Button>
               </form>
             </Form>
+
+            <div className="relative my-5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-hairline" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-surface px-2.5 text-ink-muted font-medium">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <GoogleSignInButton mode="signup" />
 
             <div className="mt-6 text-center text-sm text-ink-muted">
               Already have an account?{" "}

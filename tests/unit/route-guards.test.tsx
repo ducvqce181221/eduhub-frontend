@@ -34,6 +34,7 @@ describe("Slice 4: Frontend Route Guards & Layouts", () => {
       logout: vi.fn(),
       refreshSession: vi.fn(),
       updateUser: vi.fn(),
+      loginWithGoogle: vi.fn(),
     });
 
     render(
@@ -57,6 +58,7 @@ describe("Slice 4: Frontend Route Guards & Layouts", () => {
       logout: vi.fn(),
       refreshSession: vi.fn(),
       updateUser: vi.fn(),
+      loginWithGoogle: vi.fn(),
     });
 
     render(
@@ -88,6 +90,7 @@ describe("Slice 4: Frontend Route Guards & Layouts", () => {
       logout: vi.fn(),
       refreshSession: vi.fn(),
       updateUser: vi.fn(),
+      loginWithGoogle: vi.fn(),
     });
 
     render(
@@ -119,6 +122,7 @@ describe("Slice 4: Frontend Route Guards & Layouts", () => {
       logout: vi.fn(),
       refreshSession: vi.fn(),
       updateUser: vi.fn(),
+      loginWithGoogle: vi.fn(),
     });
 
     render(
@@ -149,6 +153,7 @@ describe("Slice 4: Frontend Route Guards & Layouts", () => {
       logout: vi.fn(),
       refreshSession: vi.fn(),
       updateUser: vi.fn(),
+      loginWithGoogle: vi.fn(),
     });
 
     render(

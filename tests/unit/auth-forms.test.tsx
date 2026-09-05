@@ -37,6 +37,7 @@ describe("Slice 5: Frontend Auth Forms", () => {
       logout: vi.fn(),
       refreshSession: vi.fn(),
       updateUser: vi.fn(),
+      loginWithGoogle: vi.fn(),
     });
   });
 
@@ -45,12 +46,12 @@ describe("Slice 5: Frontend Auth Forms", () => {
       render(<LoginPage />);
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /^sign in$/i })).toBeInTheDocument();
     });
 
     it("should show validation errors when submitted with empty fields", async () => {
       render(<LoginPage />);
-      fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
+      fireEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
 
       await waitFor(() => {
         expect(screen.getByText(/please enter a valid email/i)).toBeInTheDocument();
@@ -69,7 +70,7 @@ describe("Slice 5: Frontend Auth Forms", () => {
         target: { value: "Password123!" },
       });
 
-      fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
+      fireEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
 
       await waitFor(() => {
         expect(mockLogin).toHaveBeenCalledWith({
@@ -77,6 +78,24 @@ describe("Slice 5: Frontend Auth Forms", () => {
           password: "Password123!",
         });
         expect(mockPush).toHaveBeenCalledWith("/");
+      });
+    });
+
+    it("should redirect ADMIN to /admin on successful login without returnUrl", async () => {
+      mockLogin.mockResolvedValue({ accessToken: "token", user: { id: "admin-1", role: "ADMIN" } });
+      render(<LoginPage />);
+
+      fireEvent.change(screen.getByLabelText(/email/i), {
+        target: { value: "admin@eduhub.dev" },
+      });
+      fireEvent.change(screen.getByLabelText(/password/i), {
+        target: { value: "Password123!" },
+      });
+
+      fireEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/admin");
       });
     });
   });

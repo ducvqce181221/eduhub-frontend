@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RoleGuard } from "@/components/auth/role-guard";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import { getPostLoginRedirect } from "@/lib/auth/redirect-utils";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
@@ -39,6 +41,13 @@ function LoginFormContent() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      setErrorMessage(decodeURIComponent(errorParam));
+    }
+  }, [searchParams]);
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -51,8 +60,9 @@ function LoginFormContent() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      await login(values);
-      router.push(returnUrl);
+      const authData = await login(values);
+      const destination = getPostLoginRedirect(authData.user.role, returnUrl);
+      router.push(destination);
     } catch (err: any) {
       if (err?.statusCode === 429) {
         setErrorMessage("Too many login attempts. Please try again in a minute.");
@@ -152,6 +162,19 @@ function LoginFormContent() {
                 </Button>
               </form>
             </Form>
+
+            <div className="relative my-5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-hairline" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-surface px-2.5 text-ink-muted font-medium">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <GoogleSignInButton mode="signin" returnUrl={returnUrl} />
 
             <div className="mt-6 text-center text-sm text-ink-muted">
               Don&apos;t have an account?{" "}

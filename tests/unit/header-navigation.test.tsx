@@ -87,4 +87,56 @@ describe("Header Navigation", () => {
 
     expect(searchInput).toHaveValue("Docker");
   });
+
+  it("renders 'My Enrollments' for STUDENT role, but hides it for TEACHER and ADMIN", () => {
+    // 1. Student
+    const { unmount: unmountStudent } = render(
+      <Header
+        initialUser={{
+          id: "s1",
+          email: "student@test.com",
+          fullName: "Student One",
+          role: "STUDENT",
+          isActive: true,
+        }}
+      />
+    );
+    expect(screen.getByText("My Enrollments")).toBeInTheDocument();
+    expect(screen.queryByText("Teacher Dashboard")).not.toBeInTheDocument();
+    expect(screen.queryByText("Admin Panel")).not.toBeInTheDocument();
+    unmountStudent();
+
+    // 2. Teacher
+    const { unmount: unmountTeacher } = render(
+      <Header
+        initialUser={{
+          id: "t1",
+          email: "teacher@test.com",
+          fullName: "Teacher One",
+          role: "TEACHER",
+          isActive: true,
+        }}
+      />
+    );
+    expect(screen.queryByText("My Enrollments")).not.toBeInTheDocument();
+    expect(screen.getByText("Teacher Dashboard")).toBeInTheDocument();
+    expect(screen.queryByText("Admin Panel")).not.toBeInTheDocument();
+    unmountTeacher();
+
+    // 3. Admin
+    render(
+      <Header
+        initialUser={{
+          id: "a1",
+          email: "admin@test.com",
+          fullName: "Admin One",
+          role: "ADMIN",
+          isActive: true,
+        }}
+      />
+    );
+    expect(screen.queryByText("My Enrollments")).not.toBeInTheDocument();
+    expect(screen.getByText("Teacher Dashboard")).toBeInTheDocument();
+    expect(screen.getByText("Admin Panel")).toBeInTheDocument();
+  });
 });

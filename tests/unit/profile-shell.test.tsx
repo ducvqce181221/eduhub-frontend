@@ -40,6 +40,7 @@ describe("Slice 6: Frontend App Shell & Navigation & Profile / Change Password",
         logout: vi.fn(),
         refreshSession: vi.fn(),
         updateUser: vi.fn(),
+        loginWithGoogle: vi.fn(),
       });
 
       render(<Header />);
@@ -67,6 +68,7 @@ describe("Slice 6: Frontend App Shell & Navigation & Profile / Change Password",
         logout: vi.fn(),
         refreshSession: vi.fn(),
         updateUser: vi.fn(),
+        loginWithGoogle: vi.fn(),
       });
 
       render(<Header />);
@@ -93,6 +95,7 @@ describe("Slice 6: Frontend App Shell & Navigation & Profile / Change Password",
         logout: vi.fn(),
         refreshSession: vi.fn(),
         updateUser: vi.fn(),
+        loginWithGoogle: vi.fn(),
       });
 
       render(<Header />);
@@ -123,6 +126,7 @@ describe("Slice 6: Frontend App Shell & Navigation & Profile / Change Password",
         logout: vi.fn(),
         refreshSession: vi.fn(),
         updateUser: mockUpdateUser,
+        loginWithGoogle: vi.fn(),
       });
 
       vi.spyOn(apiClient, "patch").mockResolvedValue({

@@ -28,10 +28,12 @@ vi.mock("nuqs", () => ({
   },
 }));
 
+let mockAuthUser: any = null;
+
 vi.mock("@/lib/auth/auth-context", () => ({
   useAuth: () => ({
-    user: null,
-    isAuthenticated: false,
+    user: mockAuthUser,
+    isAuthenticated: Boolean(mockAuthUser),
     isLoading: false,
   }),
 }));
@@ -132,5 +134,31 @@ describe("HomePage (Unified Catalog)", () => {
     expect(
       screen.getByRole("link", { name: /Start Teaching Today/i }),
     ).toBeInTheDocument();
+  });
+
+  it("renders role-aware secondary CTA button in Hero for Admin, Teacher, and Student", () => {
+    // 1. Unauthenticated -> Get Started Free
+    mockAuthUser = null;
+    const { unmount: u1 } = render(<HomePage />);
+    expect(screen.getByRole("link", { name: /Get Started Free/i })).toHaveAttribute("href", "/register");
+    u1();
+
+    // 2. Admin -> Admin Panel (/admin)
+    mockAuthUser = { id: "a1", role: "ADMIN", fullName: "Admin User" };
+    const { unmount: u2 } = render(<HomePage />);
+    expect(screen.getByRole("link", { name: /Admin Panel/i })).toHaveAttribute("href", "/admin");
+    u2();
+
+    // 3. Teacher -> Teacher Dashboard (/teacher)
+    mockAuthUser = { id: "t1", role: "TEACHER", fullName: "Teacher User" };
+    const { unmount: u3 } = render(<HomePage />);
+    expect(screen.getByRole("link", { name: /^Teacher Dashboard$/i })).toHaveAttribute("href", "/teacher");
+    u3();
+
+    // 4. Student -> My Learning Dashboard (/me/enrollments)
+    mockAuthUser = { id: "s1", role: "STUDENT", fullName: "Student User" };
+    const { unmount: u4 } = render(<HomePage />);
+    expect(screen.getByRole("link", { name: /My Learning Dashboard/i })).toHaveAttribute("href", "/me/enrollments");
+    u4();
   });
 });
