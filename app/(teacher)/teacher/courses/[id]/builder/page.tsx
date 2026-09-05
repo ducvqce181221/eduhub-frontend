@@ -166,8 +166,13 @@ export default function CourseBuilderPage({ params }: PageProps) {
   };
 
   const handleReorderChapters = async (payload: ReorderPayload) => {
-    await reorderChapters(courseId, payload);
-    await loadCourseData();
+    setIsSaving(true);
+    try {
+      await reorderChapters(courseId, payload);
+      await loadCourseData();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Lesson Handlers
@@ -189,8 +194,38 @@ export default function CourseBuilderPage({ params }: PageProps) {
   };
 
   const handleReorderLessons = async (chapterId: string, payload: ReorderPayload) => {
-    await reorderLessons(chapterId, payload);
-    await loadCourseData();
+    setIsSaving(true);
+    try {
+      await reorderLessons(chapterId, payload);
+      await loadCourseData();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveAllReorder = async ({
+    chapterOrders,
+    lessonOrders,
+  }: {
+    chapterOrders?: ReorderPayload;
+    lessonOrders?: { chapterId: string; payload: ReorderPayload }[];
+  }) => {
+    setIsSaving(true);
+    try {
+      if (chapterOrders && chapterOrders.orders.length > 0) {
+        await reorderChapters(courseId, chapterOrders);
+      }
+      if (lessonOrders && lessonOrders.length > 0) {
+        for (const item of lessonOrders) {
+          if (item.payload.orders.length > 0) {
+            await reorderLessons(item.chapterId, item.payload);
+          }
+        }
+      }
+      await loadCourseData();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSelectLesson = (lesson: Lesson) => {
@@ -308,6 +343,7 @@ export default function CourseBuilderPage({ params }: PageProps) {
             onDeleteLesson={handleDeleteLesson}
             onReorderLessons={handleReorderLessons}
             onSelectLesson={handleSelectLesson}
+            onSaveAllReorder={handleSaveAllReorder}
           />
         )}
 

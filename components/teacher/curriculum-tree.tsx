@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   GripVertical,
   Plus,
@@ -9,6 +9,7 @@ import {
   FileText,
   ChevronDown,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DragDropProvider } from "@dnd-kit/react";
-import { useSortable } from "@dnd-kit/react/sortable";
+import { useSortable, isSortable } from "@dnd-kit/react/sortable";
+import { toast } from "sonner";
 import type {
   Chapter,
   Lesson,
@@ -44,6 +46,10 @@ interface CurriculumTreeProps {
   onDeleteLesson: (lessonId: string) => Promise<void>;
   onReorderLessons: (chapterId: string, payload: ReorderPayload) => Promise<void>;
   onSelectLesson: (lesson: Lesson) => void;
+  onSaveAllReorder?: (payload: {
+    chapterOrders?: ReorderPayload;
+    lessonOrders?: { chapterId: string; payload: ReorderPayload }[];
+  }) => Promise<void>;
 }
 
 const FLOOR_PROTECTION_TOOLTIP =
@@ -59,36 +65,37 @@ function formatDuration(seconds?: number) {
 // Chapter Sortable Item
 function ChapterRow({
   chapter,
+  index,
   isPublished,
   isSoleChapter,
   onUpdateChapter,
   onDeleteChapter,
   onAddLesson,
-  onUpdateLesson,
   onDeleteLesson,
-  onReorderLessons,
   onSelectLesson,
+  onLocalLessonReorder,
 }: {
   chapter: Chapter;
+  index: number;
   isPublished: boolean;
   isSoleChapter: boolean;
   onUpdateChapter: (chapterId: string, payload: UpdateChapterPayload) => Promise<void>;
   onDeleteChapter: (chapterId: string) => Promise<void>;
   onAddLesson: (chapterId: string, payload: CreateLessonPayload) => Promise<void>;
-  onUpdateLesson: (lessonId: string, payload: UpdateLessonPayload) => Promise<void>;
   onDeleteLesson: (lessonId: string) => Promise<void>;
-  onReorderLessons: (chapterId: string, payload: ReorderPayload) => Promise<void>;
   onSelectLesson: (lesson: Lesson) => void;
+  onLocalLessonReorder: (chapterId: string, reorderedLessons: Lesson[]) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editTitle, setEditTitle] = useState(chapter.title);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // useSortable without restricting handleRef allows dragging from anywhere on the header!
-  const { ref } = useSortable({
+  // useSortable: ref is attached to outer card container, handleRef is attached to the Grip handle button
+  const { ref, handleRef } = useSortable({
     id: chapter.id,
-    index: chapter.order || 0,
+    index,
+    group: "chapters",
   });
 
   const handleSaveTitle = async () => {
@@ -98,26 +105,41 @@ function ChapterRow({
     setIsEditingTitle(false);
   };
 
-  const handleLessonDragEnd = async (event: any) => {
+  const handleLessonDragEnd = (event: any) => {
+    if (event.canceled) return;
     const { operation } = event;
     if (!operation) return;
     const { source, target } = operation;
-    if (!source || !target || source.id === target.id) return;
+    if (!source) return;
 
     const lessons = chapter.lessons || [];
-    const sourceIndex = lessons.findIndex((l) => l.id === source.id);
-    const targetIndex = lessons.findIndex((l) => l.id === target.id);
+    let fromIndex = -1;
+    let toIndex = -1;
 
-    if (sourceIndex !== -1 && targetIndex !== -1) {
+    if (typeof isSortable === "function" && isSortable(source)) {
+      const currentIdx = lessons.findIndex((l) => l.id === source.id);
+      if (currentIdx !== -1 && typeof source.index === "number") {
+        fromIndex = currentIdx;
+        toIndex = source.index;
+      }
+    }
+
+    // Fallback for synthetic events or direct target drops
+    if ((fromIndex === -1 || fromIndex === toIndex) && target && source.id !== target.id) {
+      fromIndex = lessons.findIndex((l) => l.id === source.id);
+      toIndex = lessons.findIndex((l) => l.id === target.id);
+    }
+
+    if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
       const newLessons = Array.from(lessons);
-      const [removed] = newLessons.splice(sourceIndex, 1);
-      newLessons.splice(targetIndex, 0, removed);
+      const [removed] = newLessons.splice(fromIndex, 1);
+      newLessons.splice(toIndex, 0, removed);
 
-      const orders = newLessons.map((l, index) => ({
-        id: l.id,
-        order: index + 1,
+      const reindexed = newLessons.map((l, idx) => ({
+        ...l,
+        order: idx + 1,
       }));
-      await onReorderLessons(chapter.id, { orders });
+      onLocalLessonReorder(chapter.id, reindexed);
     }
   };
 
@@ -125,25 +147,32 @@ function ChapterRow({
 
   return (
     <>
-      <div className="rounded-xl border border-neutral-200 bg-white shadow-2xs transition-all overflow-hidden">
-        {/* Chapter Header Bar - Entire header is draggable */}
-        <div
-          ref={ref}
-          className="flex cursor-grab active:cursor-grabbing items-center justify-between border-b border-neutral-100 bg-neutral-50/70 p-3 sm:px-4 select-none hover:bg-neutral-100/60 transition-colors"
-        >
+      {/* Root Card Container receives sortable ref so entire card moves together */}
+      <div
+        ref={ref}
+        data-testid={`chapter-card-${chapter.id}`}
+        className="rounded-xl border border-neutral-200 bg-white shadow-2xs transition-all overflow-hidden"
+      >
+        {/* Chapter Header Bar */}
+        <div className="flex items-center justify-between border-b border-neutral-100 bg-neutral-50/70 p-3 sm:px-4 select-none hover:bg-neutral-100/60 transition-colors">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
-            <span className="text-neutral-400">
+            {/* Grip handle button exclusively controls drag */}
+            <button
+              ref={handleRef}
+              type="button"
+              className="cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700 p-1 -ml-1 rounded transition-colors"
+              title="Drag to reorder chapter"
+              aria-label="Drag to reorder chapter"
+              data-testid={`drag-chapter-${chapter.id}`}
+            >
               <GripVertical className="h-4 w-4" />
-            </span>
+            </button>
 
             <button
               type="button"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded(!isExpanded);
-              }}
+              onClick={() => setIsExpanded(!isExpanded)}
               className="text-neutral-500 hover:text-neutral-900 cursor-pointer p-0.5 rounded"
+              aria-label={isExpanded ? "Collapse chapter" : "Expand chapter"}
             >
               {isExpanded ? (
                 <ChevronDown className="h-4 w-4" />
@@ -153,11 +182,7 @@ function ChapterRow({
             </button>
 
             {isEditingTitle ? (
-              <div
-                className="flex items-center gap-2 flex-1 max-w-sm"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={(e) => e.stopPropagation()}
-              >
+              <div className="flex items-center gap-2 flex-1 max-w-sm">
                 <Input
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
@@ -169,11 +194,7 @@ function ChapterRow({
               </div>
             ) : (
               <span
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsEditingTitle(true);
-                }}
+                onClick={() => setIsEditingTitle(true)}
                 className="cursor-pointer truncate text-sm font-semibold text-neutral-900 hover:text-[#0075de]"
                 title="Click to rename chapter"
               >
@@ -186,11 +207,7 @@ function ChapterRow({
             </span>
           </div>
 
-          <div
-            className="flex items-center gap-1 shrink-0"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex items-center gap-1 shrink-0">
             <Button
               type="button"
               variant="ghost"
@@ -240,14 +257,16 @@ function ChapterRow({
                   No lessons in this chapter. Click &quot;Add Lesson&quot; to create one.
                 </div>
               ) : (
-                chapter.lessons.map((lesson) => {
+                chapter.lessons.map((lesson, lessonIndex) => {
                   const isSoleLesson = chapter.lessons.length <= 1;
                   const isDeleteLessonBlocked = isPublished && isSoleLesson;
 
                   return (
                     <LessonRow
                       key={lesson.id}
+                      chapterId={chapter.id}
                       lesson={lesson}
+                      index={lessonIndex}
                       isDeleteBlocked={isDeleteLessonBlocked}
                       onDeleteLesson={onDeleteLesson}
                       onSelectLesson={onSelectLesson}
@@ -280,23 +299,29 @@ function ChapterRow({
   );
 }
 
-// Lesson Sortable Row - entire row is draggable
+// Lesson Sortable Row
 function LessonRow({
+  chapterId,
   lesson,
+  index,
   isDeleteBlocked,
   onDeleteLesson,
   onSelectLesson,
 }: {
+  chapterId: string;
   lesson: Lesson;
+  index: number;
   isDeleteBlocked: boolean;
   onDeleteLesson: (lessonId: string) => Promise<void>;
   onSelectLesson: (lesson: Lesson) => void;
 }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { ref } = useSortable({
+  // useSortable: ref is attached to row, handleRef is attached to Grip handle button
+  const { ref, handleRef } = useSortable({
     id: lesson.id,
-    index: lesson.order || 0,
+    index,
+    group: `chapter-${chapterId}-lessons`,
   });
 
   const durationStr = formatDuration(lesson.video?.durationSeconds);
@@ -305,15 +330,27 @@ function LessonRow({
     <>
       <div
         ref={ref}
-        onClick={() => onSelectLesson(lesson)}
-        className="group flex cursor-grab active:cursor-grabbing items-center justify-between p-2.5 pl-6 pr-4 transition-colors hover:bg-neutral-50/90 select-none"
+        data-testid={`lesson-row-${lesson.id}`}
+        className="group flex items-center justify-between p-2.5 pl-4 sm:pl-6 pr-4 transition-colors hover:bg-neutral-50/90 select-none"
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <span className="text-neutral-300 group-hover:text-neutral-500">
+          {/* Grip handle button exclusively controls drag */}
+          <button
+            ref={handleRef}
+            type="button"
+            className="cursor-grab active:cursor-grabbing text-neutral-300 hover:text-neutral-600 p-1 -ml-1 rounded transition-colors"
+            title="Drag to reorder lesson"
+            aria-label="Drag to reorder lesson"
+            data-testid={`drag-lesson-${lesson.id}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <GripVertical className="h-3.5 w-3.5" />
-          </span>
+          </button>
 
-          <span className="truncate text-xs font-medium text-neutral-800 group-hover:text-[#0075de]">
+          <span
+            onClick={() => onSelectLesson(lesson)}
+            className="truncate text-xs font-medium text-neutral-800 hover:text-[#0075de] cursor-pointer"
+          >
             {lesson.title}
           </span>
 
@@ -346,11 +383,7 @@ function LessonRow({
           </div>
         </div>
 
-        <div
-          className="flex items-center gap-1 shrink-0"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             type="button"
             variant="ghost"
@@ -412,9 +445,20 @@ export function CurriculumTree({
   onDeleteLesson,
   onReorderLessons,
   onSelectLesson,
+  onSaveAllReorder,
 }: CurriculumTreeProps) {
+  const [localChapters, setLocalChapters] = useState<Chapter[]>(chapters);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isSavingReorder, setIsSavingReorder] = useState(false);
   const [isAddingChapter, setIsAddingChapter] = useState(false);
   const [newChapterTitle, setNewChapterTitle] = useState("");
+
+  // Sync with incoming server chapters if there are no unsaved changes
+  useEffect(() => {
+    if (!hasUnsavedChanges) {
+      setLocalChapters(chapters);
+    }
+  }, [chapters, hasUnsavedChanges]);
 
   const handleCreateChapter = async () => {
     if (!newChapterTitle.trim()) return;
@@ -423,37 +467,104 @@ export function CurriculumTree({
     setIsAddingChapter(false);
   };
 
-  const handleChapterDragEnd = async (event: any) => {
+  const handleChapterDragEnd = (event: any) => {
+    if (event.canceled) return;
     const { operation } = event;
     if (!operation) return;
     const { source, target } = operation;
-    if (!source || !target || source.id === target.id) return;
+    if (!source) return;
 
-    const sourceChapterIndex = chapters.findIndex((c) => c.id === source.id);
-    const targetChapterIndex = chapters.findIndex((c) => c.id === target.id);
+    let fromIndex = -1;
+    let toIndex = -1;
 
-    if (sourceChapterIndex !== -1 && targetChapterIndex !== -1) {
-      const newChapters = Array.from(chapters);
-      const [removed] = newChapters.splice(sourceChapterIndex, 1);
-      newChapters.splice(targetChapterIndex, 0, removed);
+    if (typeof isSortable === "function" && isSortable(source)) {
+      const currentIdx = localChapters.findIndex((c) => c.id === source.id);
+      if (currentIdx !== -1 && typeof source.index === "number") {
+        fromIndex = currentIdx;
+        toIndex = source.index;
+      }
+    }
 
-      const orders = newChapters.map((c, index) => ({
-        id: c.id,
+    // Fallback for synthetic test events or direct target drops
+    if ((fromIndex === -1 || fromIndex === toIndex) && target && source.id !== target.id) {
+      fromIndex = localChapters.findIndex((c) => c.id === source.id);
+      toIndex = localChapters.findIndex((c) => c.id === target.id);
+    }
+
+    if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
+      const updated = Array.from(localChapters);
+      const [removed] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, removed);
+
+      const reindexed = updated.map((c, index) => ({
+        ...c,
         order: index + 1,
       }));
-      await onReorderChapters({ orders });
+
+      setLocalChapters(reindexed);
+      setHasUnsavedChanges(true);
     }
   };
 
+  const handleLocalLessonReorder = (chapterId: string, reorderedLessons: Lesson[]) => {
+    setLocalChapters((prev) =>
+      prev.map((ch) => (ch.id === chapterId ? { ...ch, lessons: reorderedLessons } : ch))
+    );
+    setHasUnsavedChanges(true);
+  };
+
+  const handleSaveChanges = async () => {
+    setIsSavingReorder(true);
+    try {
+      if (onSaveAllReorder) {
+        const chapterOrders = {
+          orders: localChapters.map((c, i) => ({ id: c.id, order: i + 1 })),
+        };
+        const lessonOrders = localChapters.map((c) => ({
+          chapterId: c.id,
+          payload: {
+            orders: (c.lessons || []).map((l, i) => ({ id: l.id, order: i + 1 })),
+          },
+        }));
+        await onSaveAllReorder({ chapterOrders, lessonOrders });
+      } else {
+        // Fallback calling individual handlers
+        const chapterOrders = {
+          orders: localChapters.map((c, i) => ({ id: c.id, order: i + 1 })),
+        };
+        await onReorderChapters(chapterOrders);
+        for (const c of localChapters) {
+          if (c.lessons && c.lessons.length > 0) {
+            await onReorderLessons(c.id, {
+              orders: c.lessons.map((l, i) => ({ id: l.id, order: i + 1 })),
+            });
+          }
+        }
+      }
+      setHasUnsavedChanges(false);
+      toast.success("Curriculum order saved successfully");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to save curriculum order. Please try again.");
+    } finally {
+      setIsSavingReorder(false);
+    }
+  };
+
+  const handleDiscard = () => {
+    setLocalChapters(chapters);
+    setHasUnsavedChanges(false);
+    toast.info("Curriculum changes discarded");
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6 pb-12">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-bold text-neutral-900">
             Curriculum Structure
           </h2>
           <p className="text-xs text-neutral-500">
-            Organize chapters and lessons. Click and drag anywhere on cards to reorder sections.
+            Organize chapters and lessons. Drag the grip handles to reorder sections.
           </p>
         </div>
 
@@ -470,7 +581,7 @@ export function CurriculumTree({
       {/* Chapters list wrapped in DragDropProvider */}
       <DragDropProvider onDragEnd={handleChapterDragEnd}>
         <div className="space-y-4">
-          {chapters.length === 0 ? (
+          {localChapters.length === 0 ? (
             <div className="rounded-xl border border-dashed border-neutral-200 bg-white p-12 text-center">
               <h3 className="text-sm font-semibold text-neutral-900">
                 No chapters added yet
@@ -488,24 +599,72 @@ export function CurriculumTree({
               </Button>
             </div>
           ) : (
-            chapters.map((ch) => (
+            localChapters.map((ch, chapterIndex) => (
               <ChapterRow
                 key={ch.id}
                 chapter={ch}
+                index={chapterIndex}
                 isPublished={isPublished}
-                isSoleChapter={chapters.length <= 1}
+                isSoleChapter={localChapters.length <= 1}
                 onUpdateChapter={onUpdateChapter}
                 onDeleteChapter={onDeleteChapter}
                 onAddLesson={onAddLesson}
-                onUpdateLesson={onUpdateLesson}
                 onDeleteLesson={onDeleteLesson}
-                onReorderLessons={onReorderLessons}
                 onSelectLesson={onSelectLesson}
+                onLocalLessonReorder={handleLocalLessonReorder}
               />
             ))
           )}
         </div>
       </DragDropProvider>
+
+      {/* Option 2: Floating Sticky Action Bar when there are unsaved reorder changes */}
+      {hasUnsavedChanges && (
+        <div
+          data-testid="unsaved-reorder-bar"
+          className="sticky bottom-6 z-40 mx-auto max-w-2xl rounded-2xl border border-neutral-200/90 bg-white/95 p-3.5 px-5 shadow-xl backdrop-blur-md transition-all animate-in fade-in slide-in-from-bottom-4"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+              <p className="text-xs font-semibold text-neutral-800">
+                You have unsaved curriculum changes
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isSavingReorder}
+                onClick={handleDiscard}
+                data-testid="discard-reorder-btn"
+                className="h-8 rounded-lg border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+              >
+                Discard
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                disabled={isSavingReorder}
+                onClick={handleSaveChanges}
+                data-testid="save-reorder-btn"
+                className="h-8 rounded-lg bg-[#0075de] px-4 text-xs font-semibold text-white hover:bg-[#005bab] shadow-xs"
+              >
+                {isSavingReorder ? (
+                  <>
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Chapter Dialog */}
       <Dialog open={isAddingChapter} onOpenChange={setIsAddingChapter}>
@@ -522,7 +681,7 @@ export function CurriculumTree({
             <Input
               value={newChapterTitle}
               onChange={(e) => setNewChapterTitle(e.target.value)}
-              placeholder={`Chapter ${chapters.length + 1}: Introduction`}
+              placeholder={`Chapter ${localChapters.length + 1}: Introduction`}
               onKeyDown={(e) => e.key === "Enter" && handleCreateChapter()}
               className="mt-1.5 text-xs bg-white border-neutral-200"
               autoFocus
@@ -551,3 +710,4 @@ export function CurriculumTree({
     </div>
   );
 }
+

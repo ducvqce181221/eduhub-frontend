@@ -139,4 +139,59 @@ describe("CurriculumTree & Sortable Reordering (BR-CRS-05, BR-CRS-06)", () => {
       "Cannot delete the last lesson/chapter of a published course. Please unpublish first."
     );
   });
+
+  it("renders dedicated drag handles with correct accessible labels for chapters and lessons", () => {
+    render(
+      <CurriculumTree
+        chapters={mockChapters}
+        isPublished={false}
+        onAddChapter={vi.fn()}
+        onUpdateChapter={vi.fn()}
+        onDeleteChapter={vi.fn()}
+        onReorderChapters={vi.fn()}
+        onAddLesson={vi.fn()}
+        onUpdateLesson={vi.fn()}
+        onDeleteLesson={vi.fn()}
+        onReorderLessons={vi.fn()}
+        onSelectLesson={vi.fn()}
+      />
+    );
+
+    // Dedicated drag handle for Chapter 1
+    const chapter1Handle = screen.getByTestId("drag-chapter-ch-1");
+    expect(chapter1Handle).toBeInTheDocument();
+    expect(chapter1Handle).toHaveAttribute("aria-label", "Drag to reorder chapter");
+
+    // Dedicated drag handle for Lesson 1
+    const lesson1Handle = screen.getByTestId("drag-lesson-les-1");
+    expect(lesson1Handle).toBeInTheDocument();
+    expect(lesson1Handle).toHaveAttribute("aria-label", "Drag to reorder lesson");
+
+    // Chapter Card container contains both the header and its lessons as a single unit
+    const chapterCard = screen.getByTestId("chapter-card-ch-1");
+    expect(chapterCard).toContainElement(chapter1Handle);
+    expect(chapterCard).toContainElement(screen.getByText("1.1 Installation"));
+    expect(chapterCard).toContainElement(screen.getByText("1.2 Project Setup"));
+  });
+
+  it("does not display the unsaved reorder bar when no changes have been made", () => {
+    render(
+      <CurriculumTree
+        chapters={mockChapters}
+        isPublished={false}
+        onAddChapter={vi.fn()}
+        onUpdateChapter={vi.fn()}
+        onDeleteChapter={vi.fn()}
+        onReorderChapters={vi.fn()}
+        onAddLesson={vi.fn()}
+        onUpdateLesson={vi.fn()}
+        onDeleteLesson={vi.fn()}
+        onReorderLessons={vi.fn()}
+        onSelectLesson={vi.fn()}
+      />
+    );
+
+    expect(screen.queryByTestId("unsaved-reorder-bar")).not.toBeInTheDocument();
+  });
 });
+
