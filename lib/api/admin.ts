@@ -13,11 +13,18 @@ import type {
   SendSystemNotificationPayload,
   SystemNotificationResponse,
   QueryCoursesParams,
+  UserStats,
+  CourseStats,
 } from "@/types/api";
 
 // -------------------------------------------------------------
 // 1. User Management APIs
 // -------------------------------------------------------------
+
+export async function getUserStats(): Promise<UserStats> {
+  const response = await apiClient.get<UserStats>("/users/stats");
+  return response.data;
+}
 
 export async function getUsers(
   params: QueryUsersParams = {},
@@ -111,6 +118,7 @@ export async function getAllCourses(
     categoryId: params.categoryId,
     level: params.level,
     search: params.search,
+    status: params.status,
   };
 
   const response = await apiClient.get<CoursesListResponse | Course[]>("/courses", {
@@ -148,6 +156,11 @@ export async function getAllCourses(
     items: [],
     meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
   };
+}
+
+export async function getCourseStats(): Promise<CourseStats> {
+  const response = await apiClient.get<CourseStats>("/courses/stats");
+  return response.data;
 }
 
 export async function archiveCourse(id: string): Promise<Course> {

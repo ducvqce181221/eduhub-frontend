@@ -3,6 +3,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/ui/search-input";
 import { Search, X, SlidersHorizontal, RotateCcw } from "lucide-react";
 import type { Category, CourseLevel } from "@/types/api";
 import { cn } from "@/lib/utils";
@@ -51,25 +52,13 @@ export function CourseFilters({
       {/* Optional Search Bar if showSearch is true */}
       {showSearch && (
         <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="relative w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint pointer-events-none" />
-            <Input
-              type="text"
+          <div className="w-full">
+            <SearchInput
               placeholder="Search courses by title or keyword..."
               value={searchValue}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10 pr-9 h-10 bg-canvas-soft border-hairline rounded-md text-sm focus:border-notion-blue focus:ring-1 focus:ring-notion-blue"
+              onSearch={onSearchChange}
+              className="h-10 pl-10 pr-9 bg-canvas-soft border-hairline rounded-md text-sm"
             />
-            {searchValue && (
-              <button
-                type="button"
-                onClick={() => onSearchChange("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-ink-muted hover:text-ink rounded-full cursor-pointer"
-                aria-label="Clear search input"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
           </div>
         </div>
       )}

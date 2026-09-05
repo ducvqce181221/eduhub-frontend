@@ -11,6 +11,7 @@ import {
   type PublishChecklistState,
 } from "@/components/teacher/publish-checklist-modal";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -148,13 +149,12 @@ export default function TeacherCoursesPage() {
           </div>
 
           {/* Search Input */}
-          <div className="relative w-full max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-muted" />
-            <Input
+          <div className="w-full max-w-xs">
+            <SearchInput
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onSearch={setSearchQuery}
               placeholder="Search your courses..."
-              className="h-9 rounded-md bg-surface pl-9 text-xs border-hairline shadow-2xs"
+              size="sm"
             />
           </div>
         </div>

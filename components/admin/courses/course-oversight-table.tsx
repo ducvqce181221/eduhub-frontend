@@ -6,6 +6,7 @@ import { Search, BookOpen, ExternalLink, Archive } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   Table,
   TableHeader,
@@ -23,8 +24,10 @@ interface CourseOversightTableProps {
   categories?: Category[];
   searchQuery?: string;
   selectedCategory?: string;
+  selectedStatus?: string;
   onSearchChange: (query: string) => void;
   onCategoryChange: (categoryId: string) => void;
+  onStatusChange?: (status: string) => void;
   onPageChange: (page: number) => void;
   onArchiveCourse: (course: Course) => void;
   isLoading?: boolean;
@@ -36,12 +39,43 @@ export function CourseOversightTable({
   categories = [],
   searchQuery = "",
   selectedCategory = "ALL",
+  selectedStatus = "ALL",
   onSearchChange,
   onCategoryChange,
+  onStatusChange,
   onPageChange,
   onArchiveCourse,
   isLoading = false,
 }: CourseOversightTableProps) {
+  const getLevelBadge = (level: string) => {
+    switch (level) {
+      case "BEGINNER":
+        return (
+          <Badge variant="teal" className="text-[10px] px-2 py-0.5 font-medium">
+            BEGINNER
+          </Badge>
+        );
+      case "INTERMEDIATE":
+        return (
+          <Badge variant="sky" className="text-[10px] px-2 py-0.5 font-medium">
+            INTERMEDIATE
+          </Badge>
+        );
+      case "ADVANCED":
+        return (
+          <Badge variant="purple" className="text-[10px] px-2 py-0.5 font-medium">
+            ADVANCED
+          </Badge>
+        );
+      default:
+        return (
+          <Badge variant="secondary" className="text-[10px] px-2 py-0.5 font-medium bg-canvas-soft border-hairline">
+            {level}
+          </Badge>
+        );
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "PUBLISHED":
@@ -73,32 +107,46 @@ export function CourseOversightTable({
     <div className="space-y-4">
       {/* Search & Filter Bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-muted" />
-          <Input
+        <div className="flex-1 max-w-sm">
+          <SearchInput
             value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onSearch={onSearchChange}
             placeholder="Search courses by title..."
-            className="pl-9 bg-surface rounded-md border-hairline text-xs text-ink placeholder:text-ink-muted focus-visible:ring-notion-blue"
+            size="sm"
           />
         </div>
 
-        {/* Category filter */}
-        {categories.length > 0 && (
+        <div className="flex items-center gap-2">
+          {/* Status filter */}
           <select
-            value={selectedCategory}
-            onChange={(e) => onCategoryChange(e.target.value)}
+            value={selectedStatus}
+            onChange={(e) => onStatusChange?.(e.target.value)}
             className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
-            aria-label="Filter by category"
+            aria-label="Filter by course status"
           >
-            <option value="ALL">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
+            <option value="ALL">All Statuses</option>
+            <option value="PUBLISHED">Published</option>
+            <option value="DRAFT">Draft</option>
+            <option value="ARCHIVED">Archived</option>
           </select>
-        )}
+
+          {/* Category filter */}
+          {categories.length > 0 && (
+            <select
+              value={selectedCategory}
+              onChange={(e) => onCategoryChange(e.target.value)}
+              className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
+              aria-label="Filter by category"
+            >
+              <option value="ALL">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
 
       {/* Courses Oversight Table */}
@@ -174,12 +222,7 @@ export function CourseOversightTable({
 
                     {/* Level */}
                     <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="rounded-full border-hairline bg-canvas-soft text-[10px] font-medium text-ink-muted"
-                      >
-                        {course.level}
-                      </Badge>
+                      {getLevelBadge(course.level)}
                     </TableCell>
 
                     {/* Status */}

@@ -144,6 +144,7 @@ export interface QueryCoursesParams {
   categoryId?: string;
   level?: CourseLevel | string;
   search?: string;
+  status?: CourseStatus | "ALL" | string;
 }
 
 export interface CoursesListResponse {
@@ -454,4 +455,49 @@ export interface SystemNotificationResponse {
   success: boolean;
   message: string;
   recipientCount?: number;
+}
+
+export interface UserStats {
+  total: number;
+  teachers: number;
+  students: number;
+  admins: number;
+  active: number;
+  inactive: number;
+}
+
+export interface CourseStats {
+  total: number;
+  published: number;
+  draft: number;
+  archived: number;
+}
+
+export type NotificationType =
+  | "COURSE_ENROLLED"
+  | "QUIZ_SUBMITTED"
+  | "COURSE_COMPLETED"
+  | "SYSTEM_BROADCAST";
+
+export interface NotificationItem {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  isRead: boolean;
+  readAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationsResponse {
+  data: NotificationItem[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    unreadCount: number;
+  };
 }

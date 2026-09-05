@@ -9,6 +9,7 @@ import { useCourseProgressQuery } from "@/hooks/use-student-learning";
 import { EnrolledCourseCard } from "@/components/enrollments/enrolled-course-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -99,14 +100,12 @@ export default function MyEnrollmentsPage() {
 
           {/* Quick Filter Search */}
           {isStudent && enrollments.length > 0 && (
-            <div className="relative max-w-md w-full mt-2">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint pointer-events-none" />
-              <Input
-                type="text"
+            <div className="max-w-md w-full mt-2">
+              <SearchInput
                 placeholder="Filter my enrolled courses..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-10 bg-surface border-hairline rounded-md text-xs sm:text-sm"
+                onSearch={setSearch}
+                className="h-10 text-xs sm:text-sm"
               />
             </div>
           )}

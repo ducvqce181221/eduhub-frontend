@@ -14,13 +14,14 @@ import {
 import type {
   QuizDetail,
   QuizAttemptResult,
+  QuizAttemptSummary,
   SubmitQuizAnswerPayload,
 } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 interface QuizViewProps {
   quiz: QuizDetail;
-  latestAttempt?: QuizAttemptResult | null;
+  latestAttempt?: QuizAttemptResult | QuizAttemptSummary | null;
   isLessonCompleted?: boolean;
   isSubmitting?: boolean;
   onSubmitAttempt: (answers: SubmitQuizAnswerPayload[]) => void;
@@ -39,7 +40,13 @@ export function QuizView({
 }: QuizViewProps) {
   // Store selected answer per question: { [questionId]: selectedAnswerId }
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [showActiveAttempt, setShowActiveAttempt] = useState(() => !latestAttempt);
+  const [isRetrying, setIsRetrying] = useState(false);
+
+  // Reset retry state when quiz changes
+  React.useEffect(() => {
+    setIsRetrying(false);
+    setSelectedAnswers({});
+  }, [quiz.id]);
 
   const questions = quiz.questions || [];
   const totalQuestions = questions.length;
@@ -65,17 +72,17 @@ export function QuizView({
     );
 
     onSubmitAttempt(payload);
-    setShowActiveAttempt(false);
+    setIsRetrying(false);
   };
 
   const handleRetryQuiz = () => {
     setSelectedAnswers({});
-    setShowActiveAttempt(true);
+    setIsRetrying(true);
     onRetry?.();
   };
 
   // Render Result Screen if latestAttempt exists and we are not in retry mode
-  if (latestAttempt && !showActiveAttempt) {
+  if (latestAttempt && !isRetrying) {
     const isPassed = latestAttempt.isPassed;
 
     return (
@@ -142,7 +149,7 @@ export function QuizView({
           </div>
 
           <div className="flex flex-col gap-1 justify-center">
-            {latestAttempt.isLessonCompleted ? (
+            {isLessonCompleted || ("isLessonCompleted" in latestAttempt && latestAttempt.isLessonCompleted) ? (
               <span className="text-xs text-sticker-teal font-medium flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 Lesson completion marked!

@@ -123,6 +123,7 @@ describe("User Management Components (Admin)", () => {
 
       const searchInput = screen.getByPlaceholderText(/search by name or email/i);
       fireEvent.change(searchInput, { target: { value: "john" } });
+      fireEvent.keyDown(searchInput, { key: "Enter", code: "Enter" });
       expect(onSearchChange).toHaveBeenCalledWith("john");
     });
   });

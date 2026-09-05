@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { CourseOversightTable } from "@/components/admin/courses/course-oversight-table";
 import { ArchiveCourseDialog } from "@/components/admin/courses/archive-course-dialog";
-import { getAllCourses, archiveCourse, getCategories } from "@/lib/api/admin";
+import { getAllCourses, getCourseStats, archiveCourse, getCategories } from "@/lib/api/admin";
 import type { Course } from "@/types/api";
 
 export default function AdminCoursesPage() {
@@ -18,19 +18,27 @@ export default function AdminCoursesPage() {
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   // Dialog state
   const [archivingCourse, setArchivingCourse] = useState<Course | null>(null);
 
+  // Platform Overall Stats Query
+  const { data: stats } = useQuery({
+    queryKey: ["admin-courses-stats"],
+    queryFn: () => getCourseStats(),
+  });
+
   // Fetch courses
   const { data: coursesData, isLoading: isLoadingCourses } = useQuery({
-    queryKey: ["admin-courses", page, limit, search, categoryFilter],
+    queryKey: ["admin-courses", page, limit, search, categoryFilter, statusFilter],
     queryFn: () =>
       getAllCourses({
         page,
         limit,
         search: search.trim() || undefined,
         categoryId: categoryFilter === "ALL" ? undefined : categoryFilter,
+        status: statusFilter,
       }),
   });
 
@@ -49,6 +57,7 @@ export default function AdminCoursesPage() {
     onSuccess: () => {
       toast.success("Course has been archived successfully");
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-courses-stats"] });
       setArchivingCourse(null);
     },
     onError: (err: any) => {
@@ -56,11 +65,11 @@ export default function AdminCoursesPage() {
     },
   });
 
-  // Metrics
-  const totalCourses = meta?.total || courses.length;
-  const publishedCount = courses.filter((c) => c.status === "PUBLISHED").length;
-  const draftCount = courses.filter((c) => c.status === "DRAFT").length;
-  const archivedCount = courses.filter((c) => c.status === "ARCHIVED").length;
+  // Metrics from platform overall stats
+  const totalCourses = stats?.total ?? meta?.total ?? courses.length;
+  const publishedCount = stats?.published ?? courses.filter((c) => c.status === "PUBLISHED").length;
+  const draftCount = stats?.draft ?? courses.filter((c) => c.status === "DRAFT").length;
+  const archivedCount = stats?.archived ?? courses.filter((c) => c.status === "ARCHIVED").length;
 
   return (
     <div className="flex flex-col min-h-full">
@@ -154,12 +163,17 @@ export default function AdminCoursesPage() {
           categories={categories}
           searchQuery={search}
           selectedCategory={categoryFilter}
+          selectedStatus={statusFilter}
           onSearchChange={(q) => {
             setSearch(q);
             setPage(1);
           }}
           onCategoryChange={(c) => {
             setCategoryFilter(c);
+            setPage(1);
+          }}
+          onStatusChange={(s) => {
+            setStatusFilter(s);
             setPage(1);
           }}
           onPageChange={setPage}

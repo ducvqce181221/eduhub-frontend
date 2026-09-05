@@ -19,6 +19,7 @@ const badgeVariants = cva(
         purple: "border-sticker-purple/40 bg-sticker-purple/20 text-sticker-purple-deep",
         pink: "border-sticker-pink/30 bg-sticker-pink/15 text-sticker-pink",
         orange: "border-sticker-orange/30 bg-sticker-orange/15 text-sticker-orange-deep",
+        amber: "border-sticker-amber/30 bg-sticker-amber/15 text-sticker-amber-deep font-semibold",
         teal: "border-sticker-teal/30 bg-sticker-teal/15 text-sticker-teal",
         green: "border-sticker-green/30 bg-sticker-green/15 text-sticker-green",
         destructive: "border-sticker-orange/30 bg-sticker-orange/10 text-sticker-orange-deep",

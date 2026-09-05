@@ -22,49 +22,27 @@ export function HeaderSearch({ className }: { className?: string }) {
     setTerm(currentSearchParam);
   }, [currentSearchParam]);
 
-  // Debounce handler when on home page
-  useEffect(() => {
-    if (!isHomePage) return;
-
-    // Don't update URL if term is identical to current param
-    if (term === currentSearchParam) return;
-
-    const timer = setTimeout(() => {
-      startTransition(() => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (term.trim()) {
-          params.set("search", term.trim());
-        } else {
-          params.delete("search");
-        }
-        params.set("page", "1"); // Reset pagination
-
-        router.replace(`/?${params.toString()}#catalog`, { scroll: false });
-      });
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [term, isHomePage, currentSearchParam, searchParams, router]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const query = term.trim();
 
     if (isHomePage) {
-      const params = new URLSearchParams(searchParams.toString());
-      if (query) {
-        params.set("search", query);
-      } else {
-        params.delete("search");
-      }
-      params.set("page", "1");
-      router.replace(`/?${params.toString()}#catalog`, { scroll: false });
+      startTransition(() => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (query) {
+          params.set("search", query);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "1");
+        router.replace(`/?${params.toString()}#catalog`, { scroll: false });
 
-      // Scroll to catalog grid
-      const catalogEl = document.getElementById("catalog");
-      if (catalogEl) {
-        catalogEl.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+        // Scroll to catalog grid
+        const catalogEl = document.getElementById("catalog");
+        if (catalogEl) {
+          catalogEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
     } else {
       // Navigate to home with search param
       const target = query
@@ -77,10 +55,12 @@ export function HeaderSearch({ className }: { className?: string }) {
   const handleClear = () => {
     setTerm("");
     if (isHomePage) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("search");
-      params.set("page", "1");
-      router.replace(`/?${params.toString()}#catalog`, { scroll: false });
+      startTransition(() => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("search");
+        params.set("page", "1");
+        router.replace(`/?${params.toString()}#catalog`, { scroll: false });
+      });
     }
   };
 
@@ -108,14 +88,14 @@ export function HeaderSearch({ className }: { className?: string }) {
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           placeholder="Search courses, topics, instructors..."
-          className="w-full h-9 pl-9 pr-8 bg-canvas-soft hover:bg-canvas-soft/80 focus:bg-surface border-hairline rounded-md text-xs sm:text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-notion-blue focus:ring-1 focus:ring-notion-blue"
+          className="w-full h-9 pl-9 pr-8 bg-canvas-soft hover:bg-canvas-soft/80 focus:bg-surface border-hairline rounded-md text-xs sm:text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-notion-blue focus:ring-1 focus:ring-notion-blue [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
         />
 
         {term && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-2.5 p-1 text-ink-muted hover:text-ink rounded-full transition-colors"
+            className="absolute right-2.5 p-1 text-ink-muted hover:text-ink rounded-full transition-colors cursor-pointer"
             aria-label="Clear search input"
           >
             <X className="w-3.5 h-3.5" />

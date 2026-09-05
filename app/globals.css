@@ -26,14 +26,19 @@
 
   /* Notion Decorative Sticker Palette */
   --color-sticker-sky: #62aef0;
+  --color-sticker-sky-deep: #0c5696;
   --color-sticker-purple: #d6b6f6;
   --color-sticker-purple-deep: #391c57;
   --color-sticker-pink: #ff64c8;
   --color-sticker-orange: #dd5b00;
   --color-sticker-orange-deep: #793400;
+  --color-sticker-amber: #f59e0b;
+  --color-sticker-amber-deep: #b45309;
   --color-sticker-teal: #2a9d99;
   --color-sticker-green: #1aae39;
   --color-sticker-brown: #523410;
+  --color-sticker-red: #e03e3e;
+  --color-sticker-red-deep: #961212;
 
   /* Shadcn UI Variable Bindings */
   --color-background: var(--background);

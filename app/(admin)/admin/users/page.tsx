@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth/auth-context";
 import {
   getUsers,
+  getUserStats,
   createUser,
   updateUserRole,
   updateUserStatus,
@@ -39,6 +40,12 @@ export default function AdminUsersPage() {
   );
   const [selectedUserForStatus, setSelectedUserForStatus] =
     useState<User | null>(null);
+
+  // Platform Overall Stats Query
+  const { data: stats } = useQuery({
+    queryKey: ["admin-users-stats"],
+    queryFn: () => getUserStats(),
+  });
 
   // Data Query
   const { data, isLoading } = useQuery({
@@ -67,6 +74,7 @@ export default function AdminUsersPage() {
     onSuccess: () => {
       toast.success("User account created successfully");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-stats"] });
       setIsCreateOpen(false);
     },
     onError: (err: any) => {
@@ -80,6 +88,7 @@ export default function AdminUsersPage() {
     onSuccess: () => {
       toast.success("User role updated successfully");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-stats"] });
       setSelectedUserForRole(null);
     },
     onError: (err: any) => {
@@ -97,6 +106,7 @@ export default function AdminUsersPage() {
           : "Account deactivated successfully",
       );
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-stats"] });
       setSelectedUserForStatus(null);
     },
     onError: (err: any) => {
@@ -104,11 +114,11 @@ export default function AdminUsersPage() {
     },
   });
 
-  // Calculate Metrics from current data
-  const totalCount = meta?.total || users.length;
-  const teacherCount = users.filter((u) => u.role === "TEACHER").length;
-  const studentCount = users.filter((u) => u.role === "STUDENT").length;
-  const inactiveCount = users.filter((u) => !u.isActive).length;
+  // Calculate Metrics from platform-wide stats (fallback to current data if loading)
+  const totalCount = stats?.total ?? meta?.total ?? users.length;
+  const teacherCount = stats?.teachers ?? users.filter((u) => u.role === "TEACHER").length;
+  const studentCount = stats?.students ?? users.filter((u) => u.role === "STUDENT").length;
+  const inactiveCount = stats?.inactive ?? users.filter((u) => !u.isActive).length;
 
   return (
     <div className="flex flex-col min-h-full">

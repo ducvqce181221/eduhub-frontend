@@ -50,20 +50,23 @@ export function TeacherCourseCard({
     switch (status) {
       case "PUBLISHED":
         return (
-          <span className="inline-flex items-center rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-xs font-semibold text-sticker-teal border border-transparent">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-xs font-semibold text-sticker-teal border border-sticker-teal/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal" />
             PUBLISHED
           </span>
         );
       case "ARCHIVED":
         return (
-          <span className="inline-flex items-center rounded-full bg-canvas-soft px-2.5 py-0.5 text-xs font-semibold text-ink-muted border border-hairline">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-0.5 text-xs font-semibold text-ink-muted border border-hairline">
+            <Archive className="h-3 w-3 text-ink-muted" />
             ARCHIVED
           </span>
         );
       case "DRAFT":
       default:
         return (
-          <span className="inline-flex items-center rounded-full bg-sticker-orange/15 px-2.5 py-0.5 text-xs font-semibold text-sticker-orange-deep border border-transparent">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-amber/15 px-2.5 py-0.5 text-xs font-semibold text-sticker-amber-deep border border-sticker-amber/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-sticker-amber-deep" />
             DRAFT
           </span>
         );
@@ -73,11 +76,11 @@ export function TeacherCourseCard({
   const getLevelBadge = (level: Course["level"]) => {
     switch (level) {
       case "BEGINNER":
-        return <Badge variant="secondary" className="bg-sticker-sky/15 text-sticker-sky-deep border-transparent">BEGINNER</Badge>;
+        return <Badge variant="teal" className="text-[11px] px-2 py-0.5 font-medium">BEGINNER</Badge>;
       case "INTERMEDIATE":
-        return <Badge variant="secondary" className="bg-sticker-purple/15 text-sticker-purple border-transparent">INTERMEDIATE</Badge>;
+        return <Badge variant="sky" className="text-[11px] px-2 py-0.5 font-medium">INTERMEDIATE</Badge>;
       case "ADVANCED":
-        return <Badge variant="secondary" className="bg-sticker-orange/15 text-sticker-orange-deep border-transparent">ADVANCED</Badge>;
+        return <Badge variant="purple" className="text-[11px] px-2 py-0.5 font-medium">ADVANCED</Badge>;
     }
   };
 

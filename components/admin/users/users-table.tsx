@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   Table,
   TableHeader,
@@ -61,19 +62,19 @@ export function UsersTable({
     switch (role) {
       case "ADMIN":
         return (
-          <Badge className="border border-sticker-purple/20 bg-sticker-purple/15 text-sticker-purple font-semibold text-[11px] rounded-full px-2.5 py-0.5">
+          <Badge variant="admin" className="text-[11px] font-semibold px-2.5 py-0.5">
             ADMIN
           </Badge>
         );
       case "TEACHER":
         return (
-          <Badge className="border border-sticker-sky/20 bg-sticker-sky/15 text-sticker-sky-deep font-semibold text-[11px] rounded-full px-2.5 py-0.5">
+          <Badge variant="teacher" className="text-[11px] font-semibold px-2.5 py-0.5">
             TEACHER
           </Badge>
         );
       default:
         return (
-          <Badge className="border border-hairline bg-canvas-soft text-ink-secondary font-medium text-[11px] rounded-full px-2.5 py-0.5">
+          <Badge variant="student" className="text-[11px] font-medium px-2.5 py-0.5">
             STUDENT
           </Badge>
         );
@@ -84,13 +85,12 @@ export function UsersTable({
     <div className="space-y-4">
       {/* Search & Filter Toolbar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-muted" />
-          <Input
+        <div className="flex-1 max-w-sm">
+          <SearchInput
             value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onSearch={onSearchChange}
             placeholder="Search by name or email..."
-            className="pl-9 bg-surface rounded-md border-hairline text-xs text-ink placeholder:text-ink-muted focus-visible:ring-notion-blue"
+            size="sm"
           />
         </div>
 
@@ -203,8 +203,8 @@ export function UsersTable({
                           Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-0.5 text-[11px] font-medium text-ink-muted border border-hairline">
-                          <span className="h-1.5 w-1.5 rounded-full bg-ink-muted/50" />
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-amber/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-amber-deep border border-sticker-amber/20">
+                          <span className="h-1.5 w-1.5 rounded-full bg-sticker-amber-deep" />
                           Inactive
                         </span>
                       )}

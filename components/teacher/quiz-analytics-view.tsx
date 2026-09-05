@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -284,13 +285,12 @@ export function QuizAnalyticsView({
               </p>
             </div>
 
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-ink-muted" />
-              <Input
+            <div className="w-full sm:w-64">
+              <SearchInput
                 placeholder="Search student or quiz..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-8 pl-8 text-xs bg-surface border-hairline text-ink placeholder:text-ink-muted focus-visible:ring-notion-blue"
+                onSearch={setSearchTerm}
+                size="sm"
               />
             </div>
           </div>

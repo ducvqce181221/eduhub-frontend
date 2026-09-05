@@ -8,6 +8,7 @@ import {
   useLessonDetailsQuery,
   useLessonProgressQuery,
   useCourseProgressQuery,
+  useQuizAttemptsQuery,
   useUpdateProgressMutation,
   useSubmitQuizMutation,
 } from "@/hooks/use-student-learning";
@@ -44,6 +45,12 @@ export default function LessonLearnPage() {
   const { data: lesson, isLoading: isLoadingLesson } = useLessonDetailsQuery(lessonId);
   const { data: lessonProgress } = useLessonProgressQuery(lessonId);
   const { data: courseProgress } = useCourseProgressQuery(courseId);
+
+  const quizId = lesson?.quiz?.id || "";
+  const { data: previousAttempts = [] } = useQuizAttemptsQuery(quizId, Boolean(quizId));
+
+  // Determine active attempt: fresh mutation result or most recent historical attempt
+  const activeAttempt = latestAttempt || (previousAttempts.length > 0 ? previousAttempts[0] : null);
 
   // Mutations
   const updateProgressMutation = useUpdateProgressMutation(courseId);
@@ -218,7 +225,7 @@ export default function LessonLearnPage() {
           {lesson.quiz && (
             <QuizView
               quiz={lesson.quiz as any}
-              latestAttempt={latestAttempt}
+              latestAttempt={activeAttempt}
               isLessonCompleted={isLessonCompleted}
               isSubmitting={submitQuizMutation.isPending}
               onSubmitAttempt={handleSubmitQuiz}

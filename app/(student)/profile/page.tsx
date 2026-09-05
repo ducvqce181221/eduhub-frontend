@@ -99,11 +99,11 @@ export default function ProfilePage() {
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case "ADMIN":
-        return "orange";
+        return "admin" as const;
       case "TEACHER":
-        return "purple";
+        return "teacher" as const;
       default:
-        return "secondary";
+        return "student" as const;
     }
   };
 

@@ -73,9 +73,9 @@ describe("CourseFilters Component", () => {
     );
 
     const input = screen.getByPlaceholderText(/search courses/i);
-    await user.type(input, "NestJS");
+    await user.type(input, "NestJS{Enter}");
 
-    expect(handleSearchChange).toHaveBeenCalled();
+    expect(handleSearchChange).toHaveBeenCalledWith("NestJS");
   });
 
   it("calls onCategoryChange when user selects a category", async () => {
