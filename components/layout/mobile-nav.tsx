@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { useCategoriesQuery } from "@/hooks/use-course-catalog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Badge } from "@/components/ui/badge";
 import {
   Menu,
@@ -65,18 +65,22 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
         </SheetHeader>
 
         {/* Mobile Search Input */}
-        <form onSubmit={handleMobileSearch} className="mt-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
-            <Input
-              type="search"
-              placeholder="Search courses..."
-              value={mobileSearch}
-              onChange={(e) => setMobileSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-3 text-xs bg-canvas-soft border-hairline rounded-md"
-            />
-          </div>
-        </form>
+        <div className="mt-4">
+          <SearchInput
+            placeholder="Search courses..."
+            value={mobileSearch}
+            onSearch={(term) => {
+              setMobileSearch(term);
+              if (term.trim()) {
+                router.push(`/?search=${encodeURIComponent(term.trim())}#catalog`);
+              } else {
+                router.push("/#catalog");
+              }
+              close();
+            }}
+            className="bg-canvas-soft"
+          />
+        </div>
 
         <div className="flex flex-col gap-1 py-4">
           <Link

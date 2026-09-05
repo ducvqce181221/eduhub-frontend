@@ -8,6 +8,7 @@ import { UserMenu } from "@/components/layout/user-menu";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ExploreMenu } from "@/components/layout/explore-menu";
 import { HeaderSearch } from "@/components/layout/header-search";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { Button } from "@/components/ui/button";
 
 import type { User } from "@/types/api";
@@ -85,9 +86,12 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
         </div>
 
         {/* Right: Auth State / Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {isAuthed && currentUser ? (
-            <UserMenu initialUser={currentUser} />
+            <div className="flex items-center gap-2">
+              <NotificationBell />
+              <UserMenu initialUser={currentUser} />
+            </div>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
               <Button variant="ghost" size="sm" asChild>
