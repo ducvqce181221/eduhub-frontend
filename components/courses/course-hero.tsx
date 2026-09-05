@@ -14,7 +14,6 @@ import {
   Clock,
   Layers,
   Shield,
-  Sparkles,
   Users,
 } from "lucide-react";
 import { getLevelBadgeVariant } from "./course-card";
@@ -94,14 +93,14 @@ export function CourseHero({ course }: CourseHeroProps) {
               <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />
               <Link
                 href={`/courses?categoryId=${course.category.id}`}
-                className="hover:text-ink transition-colors truncate max-w-[150px]"
+                className="hover:text-ink transition-colors truncate max-w-37.5"
               >
                 {course.category.name}
               </Link>
             </>
           )}
           <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />
-          <span className="text-ink font-medium truncate max-w-[200px] sm:max-w-[300px]">
+          <span className="text-ink font-medium truncate max-w-50 sm:max-w-75">
             {course.title}
           </span>
         </nav>

@@ -104,20 +104,20 @@ export function VideoUploader({ currentVideo, onSaveVideo }: VideoUploaderProps)
   };
 
   return (
-    <div className="space-y-4 rounded-xl border border-neutral-200 bg-white p-5">
+    <div className="space-y-4 rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-neutral-900">
+          <h3 className="text-sm font-bold text-ink">
             Lesson Video (Cloudflare R2 Direct Upload)
           </h3>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-ink-muted">
             Streams via Cloudflare R2 CDN with dynamic watch heartbeat tracking.
           </p>
         </div>
       </div>
 
       {errorMessage && (
-        <div className="flex items-center gap-2 rounded-lg bg-rose-50 p-3 text-xs text-rose-700">
+        <div className="flex items-center gap-2 rounded-md bg-sticker-red/15 p-3 text-xs text-sticker-red border border-transparent">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>
@@ -127,15 +127,15 @@ export function VideoUploader({ currentVideo, onSaveVideo }: VideoUploaderProps)
       {!uploadedUrl && !isUploading && (
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-200 bg-neutral-50/50 p-8 text-center transition-colors hover:border-[#0075de]/50 hover:bg-sky-50/30"
+          className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-hairline bg-canvas-soft/40 p-8 text-center transition-colors hover:border-notion-blue hover:bg-notion-blue/5"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-xs">
-            <Upload className="h-6 w-6 text-[#0075de]" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface border border-hairline shadow-2xs text-notion-blue">
+            <Upload className="h-6 w-6" />
           </div>
-          <h4 className="mt-3 text-sm font-semibold text-neutral-900">
+          <h4 className="mt-3 text-sm font-semibold text-ink">
             Upload Lesson Video
           </h4>
-          <p className="mt-1 text-xs text-neutral-500">
+          <p className="mt-1 text-xs text-ink-muted">
             Drag and drop MP4 or WebM video file, or click to browse
           </p>
           <input
@@ -151,38 +151,38 @@ export function VideoUploader({ currentVideo, onSaveVideo }: VideoUploaderProps)
 
       {/* Live Upload Progress */}
       {isUploading && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-6">
-          <div className="flex items-center justify-between text-xs font-semibold text-neutral-700">
+        <div className="rounded-lg border border-hairline bg-canvas-soft/60 p-6">
+          <div className="flex items-center justify-between text-xs font-semibold text-ink">
             <span className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-[#0075de]" />
+              <Loader2 className="h-4 w-4 animate-spin text-notion-blue" />
               Uploading directly to Cloudflare R2...
             </span>
-            <span>{uploadProgress}%</span>
+            <span className="tabular-nums font-mono">{uploadProgress}%</span>
           </div>
-          <Progress value={uploadProgress} className="mt-3 h-2" />
+          <Progress value={uploadProgress} className="mt-3 h-1.5" />
         </div>
       )}
 
       {/* Video Uploaded Info & Controls */}
       {uploadedUrl && !isUploading && (
         <div className="space-y-4">
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50/30 p-4">
+          <div className="rounded-lg border border-sticker-teal/25 bg-sticker-teal/5 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sticker-teal/15 text-sticker-teal shrink-0">
                   <CheckCircle2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-neutral-900">
+                  <h4 className="text-sm font-semibold text-ink">
                     {uploadedUrl.split("/").pop()}
                   </h4>
-                  <div className="flex items-center gap-2 text-xs text-neutral-500">
-                    <span className="flex items-center gap-1">
+                  <div className="flex items-center gap-2 text-xs text-ink-muted">
+                    <span className="flex items-center gap-1 font-mono tabular-nums">
                       <Clock className="h-3 w-3" />
                       {durationSeconds > 0 ? formatSeconds(durationSeconds) : "Duration required"}
                     </span>
                     <span>•</span>
-                    <span className="text-emerald-700 font-medium">Ready on R2</span>
+                    <span className="text-sticker-teal font-medium">Ready on R2</span>
                   </div>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export function VideoUploader({ currentVideo, onSaveVideo }: VideoUploaderProps)
                 variant="outline"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                className="rounded-md border-neutral-200 text-xs text-neutral-700 hover:bg-neutral-50"
+                className="rounded-md border-hairline text-xs text-ink hover:bg-canvas-soft"
               >
                 <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
                 Replace Video
@@ -212,7 +212,7 @@ export function VideoUploader({ currentVideo, onSaveVideo }: VideoUploaderProps)
           {/* Duration Config and Save */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <label htmlFor="duration-input" className="text-xs font-semibold text-neutral-700">
+              <label htmlFor="duration-input" className="text-xs font-semibold text-ink">
                 Duration (seconds):
               </label>
               <Input
@@ -221,10 +221,10 @@ export function VideoUploader({ currentVideo, onSaveVideo }: VideoUploaderProps)
                 min="1"
                 value={durationSeconds || ""}
                 onChange={(e) => setDurationSeconds(parseInt(e.target.value, 10) || 0)}
-                className="h-8 w-28 text-xs"
+                className="h-8 w-28 text-xs bg-surface border-hairline font-mono tabular-nums"
                 placeholder="e.g. 360"
               />
-              <span className="text-xs text-neutral-400">
+              <span className="text-xs text-ink-muted font-mono tabular-nums">
                 ({formatSeconds(durationSeconds || 0)})
               </span>
             </div>
@@ -233,7 +233,7 @@ export function VideoUploader({ currentVideo, onSaveVideo }: VideoUploaderProps)
               type="button"
               onClick={handleSave}
               disabled={isSaving || durationSeconds <= 0}
-              className="rounded-md bg-[#0075de] text-xs font-medium text-white hover:bg-[#005bab]"
+              className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
             >
               {isSaving ? "Saving..." : "Save Video"}
             </Button>

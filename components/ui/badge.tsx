@@ -5,20 +5,23 @@ import { Slot } from "radix-ui"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-5.5 w-fit shrink-0 items-center justify-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap transition-all select-none [&>svg]:size-3!",
+  "group/badge inline-flex w-fit shrink-0 items-center justify-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-colors select-none [&>svg]:size-3",
   {
     variants: {
       variant: {
-        default: "border-notion-blue/20 bg-notion-blue/10 text-notion-blue",
-        secondary: "border-hairline bg-surface text-ink-secondary shadow-2xs",
+        default: "border-notion-blue/25 bg-notion-blue/10 text-notion-blue",
+        secondary: "border-hairline bg-surface text-ink-secondary",
         outline: "border-hairline text-ink-muted bg-transparent",
+        student: "border-hairline bg-canvas-soft text-ink-secondary",
+        teacher: "border-sticker-purple/40 bg-sticker-purple/20 text-sticker-purple-deep font-semibold",
+        admin: "border-sticker-orange/30 bg-sticker-orange/15 text-sticker-orange-deep font-semibold",
         sky: "border-sticker-sky/30 bg-sticker-sky/15 text-notion-blue-active",
-        purple: "border-sticker-purple/50 bg-sticker-purple/25 text-sticker-purple-deep",
+        purple: "border-sticker-purple/40 bg-sticker-purple/20 text-sticker-purple-deep",
         pink: "border-sticker-pink/30 bg-sticker-pink/15 text-sticker-pink",
         orange: "border-sticker-orange/30 bg-sticker-orange/15 text-sticker-orange-deep",
         teal: "border-sticker-teal/30 bg-sticker-teal/15 text-sticker-teal",
         green: "border-sticker-green/30 bg-sticker-green/15 text-sticker-green",
-        destructive: "border-sticker-orange/20 bg-sticker-orange/10 text-sticker-orange",
+        destructive: "border-sticker-orange/30 bg-sticker-orange/10 text-sticker-orange-deep",
       },
     },
     defaultVariants: {

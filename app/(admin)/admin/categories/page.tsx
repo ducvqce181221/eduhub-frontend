@@ -82,67 +82,67 @@ export default function AdminCategoriesPage() {
         {/* Header Actions */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-neutral-900">
+            <h2 className="text-lg font-semibold tracking-tight text-ink">
               Course Categories
             </h2>
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-ink-muted">
               Organize educational domains, topics, and catalog tags across the platform.
             </p>
           </div>
 
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#0075de] hover:bg-[#005bab] text-white px-4 py-2 text-xs font-semibold shadow-2xs transition-all active:scale-98"
+            className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium gap-1.5 shadow-notion-soft transition-colors"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             Add Category
           </Button>
         </div>
 
         {/* Metric Summary Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-50 text-[#0075de]">
-                <FolderTree className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-canvas-soft border border-hairline text-ink-muted">
+                <FolderTree className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
                   Total Categories
                 </p>
-                <h3 className="text-xl font-bold text-neutral-900">
+                <h3 className="text-xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                   {totalCategories}
                 </h3>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                <CheckCircle2 className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sticker-teal/15 border border-sticker-teal/20 text-sticker-teal">
+                <CheckCircle2 className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
                   Active
                 </p>
-                <h3 className="text-xl font-bold text-neutral-900">
+                <h3 className="text-xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                   {activeCategories}
                 </h3>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600">
-                <EyeOff className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-canvas-soft border border-hairline text-ink-muted">
+                <EyeOff className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
                   Hidden
                 </p>
-                <h3 className="text-xl font-bold text-neutral-900">
+                <h3 className="text-xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                   {hiddenCategories}
                 </h3>
               </div>

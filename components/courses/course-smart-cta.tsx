@@ -14,7 +14,6 @@ import {
   Lock,
   Loader2,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import type { User } from "@/types/api";
 import { cn } from "@/lib/utils";
@@ -43,16 +42,16 @@ export function CourseSmartCTA({
   // 1. Guest Visitor (Unauthenticated)
   if (!user) {
     return (
-      <div className={cn("flex flex-col gap-3.5", className)}>
+      <div className={cn("flex flex-col gap-3", className)}>
         <Button
           size="lg"
           variant="pill"
-          className="w-full text-base font-semibold shadow-md h-12"
+          className="w-full text-sm font-semibold h-11 cursor-pointer"
           asChild
         >
           <Link href={`/login?redirect=/courses/${courseId}`}>
             <span>Log in to Enroll</span>
-            <ArrowRight className="w-4 h-4 ml-2" />
+            <ArrowRight className="w-4 h-4 ml-1.5" />
           </Link>
         </Button>
         <p className="text-xs text-ink-muted text-center leading-relaxed">
@@ -73,25 +72,25 @@ export function CourseSmartCTA({
 
   if (isOwner || isAdmin) {
     return (
-      <div className={cn("flex flex-col gap-3.5", className)}>
+      <div className={cn("flex flex-col gap-3", className)}>
         <div className="flex items-center gap-2">
           {isAdmin ? (
-            <Badge variant="secondary" className="px-2.5 py-0.5 text-xs bg-sticker-purple/20 text-sticker-purple-deep border-transparent font-medium flex items-center gap-1">
+            <Badge variant="admin" className="px-2.5 py-0.5 text-xs font-medium flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
-              Admin Authority
+              <span>Admin Authority</span>
             </Badge>
           ) : (
-            <Badge variant="secondary" className="px-2.5 py-0.5 text-xs bg-sticker-sky/20 text-notion-blue-active border-transparent font-medium flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" />
-              Course Owner
+            <Badge variant="teacher" className="px-2.5 py-0.5 text-xs font-medium flex items-center gap-1">
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Course Owner</span>
             </Badge>
           )}
         </div>
 
         <Button
-          size="lg"
+          size="default"
           variant="default"
-          className="w-full text-sm font-semibold h-12 rounded-xl bg-ink text-white hover:bg-ink/90 shadow-md"
+          className="w-full text-xs font-semibold h-10 rounded-md bg-ink text-white hover:bg-ink/90 cursor-pointer"
           asChild
         >
           <Link
@@ -110,7 +109,7 @@ export function CourseSmartCTA({
           <Button
             size="default"
             variant="outline"
-            className="w-full text-xs font-semibold h-10 rounded-xl border-neutral-200 text-neutral-700 hover:bg-neutral-100/70"
+            className="w-full text-xs font-medium h-9 rounded-md border-hairline bg-surface text-ink hover:bg-canvas-soft cursor-pointer"
             asChild
           >
             <Link href="/admin/courses">
@@ -130,9 +129,9 @@ export function CourseSmartCTA({
   // 3. Non-owner Teacher
   if (user.role === "TEACHER" && !isOwner) {
     return (
-      <div className={cn("flex flex-col gap-3.5 p-4 rounded-xl bg-canvas-soft border border-hairline", className)}>
+      <div className={cn("flex flex-col gap-2.5 p-3.5 rounded-lg bg-canvas-soft border border-hairline", className)}>
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="px-2.5 py-0.5 text-xs bg-canvas text-ink-secondary border-hairline font-medium">
+          <Badge variant="secondary" className="px-2 py-0.5 text-xs bg-surface text-ink-secondary border-hairline font-medium">
             Teacher Preview Mode
           </Badge>
         </div>
@@ -146,23 +145,23 @@ export function CourseSmartCTA({
   // 4. Student (Already Enrolled)
   if (isEnrolled) {
     return (
-      <div className={cn("flex flex-col gap-3.5", className)}>
+      <div className={cn("flex flex-col gap-3", className)}>
         <div className="flex items-center gap-2">
           <Badge variant="teal" className="px-2.5 py-0.5 text-xs font-semibold flex items-center gap-1">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            Enrolled Student
+            <span>Enrolled Student</span>
           </Badge>
         </div>
 
         <Button
           size="lg"
           variant="pill"
-          className="w-full text-base font-semibold shadow-md h-12 bg-notion-blue hover:bg-notion-blue-active text-white"
+          className="w-full text-sm font-semibold h-11 cursor-pointer"
           asChild
         >
           <Link href={`/learn/${courseId}`}>
             <span>Continue Learning</span>
-            <ArrowRight className="w-4 h-4 ml-2" />
+            <ArrowRight className="w-4 h-4 ml-1.5" />
           </Link>
         </Button>
 
@@ -175,13 +174,13 @@ export function CourseSmartCTA({
 
   // 5. Student (Not Enrolled Yet)
   return (
-    <div className={cn("flex flex-col gap-3.5", className)}>
+    <div className={cn("flex flex-col gap-3", className)}>
       <Button
         size="lg"
         variant="pill"
         onClick={onEnroll}
         disabled={isLoadingEnrollment}
-        className="w-full text-base font-semibold shadow-md h-12"
+        className="w-full text-sm font-semibold h-11 cursor-pointer"
       >
         {isLoadingEnrollment ? (
           <>

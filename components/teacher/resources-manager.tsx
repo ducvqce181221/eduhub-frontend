@@ -71,13 +71,13 @@ export function ResourcesManager({
 
   return (
     <>
-      <div className="space-y-4 rounded-xl border border-neutral-200 bg-white p-5">
+      <div className="space-y-4 rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-neutral-900">
+            <h3 className="text-sm font-bold text-ink">
               Downloadable Resources ({resources.length})
             </h3>
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-ink-muted">
               Attach source code, cheat sheets, PDF guides, or slides.
             </p>
           </div>
@@ -87,7 +87,7 @@ export function ResourcesManager({
             size="sm"
             disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
-            className="rounded-md bg-[#0075de] text-xs text-white hover:bg-[#005bab]"
+            className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
           >
             {isUploading ? (
               <>
@@ -110,7 +110,7 @@ export function ResourcesManager({
         </div>
 
         {errorMessage && (
-          <div className="flex items-center gap-2 rounded-lg bg-rose-50 p-3 text-xs text-rose-700">
+          <div className="flex items-center gap-2 rounded-md bg-sticker-red/15 p-3 text-xs text-sticker-red border border-transparent">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -118,23 +118,23 @@ export function ResourcesManager({
 
         {/* Resources list */}
         {resources.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-neutral-200 py-6 text-center text-xs text-neutral-400">
+          <div className="rounded-md border border-dashed border-hairline py-6 text-center text-xs text-ink-muted">
             No resources attached to this lesson yet.
           </div>
         ) : (
-          <div className="divide-y divide-neutral-100 rounded-lg border border-neutral-200 bg-neutral-50/40">
+          <div className="divide-y divide-hairline rounded-md border border-hairline bg-surface">
             {resources.map((res) => (
               <div
                 key={res.id}
-                className="flex items-center justify-between p-3 transition hover:bg-white"
+                className="flex items-center justify-between p-3 transition hover:bg-canvas-soft/60"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <FileText className="h-4 w-4 shrink-0 text-[#0075de]" />
+                  <FileText className="h-4 w-4 shrink-0 text-notion-blue" />
                   <div className="truncate">
-                    <p className="truncate text-xs font-semibold text-neutral-900">
+                    <p className="truncate text-xs font-semibold text-ink">
                       {res.name}
                     </p>
-                    <p className="text-[11px] text-neutral-400">
+                    <p className="text-[11px] font-mono tabular-nums text-ink-muted">
                       {formatFileSize(res.fileSize)}
                     </p>
                   </div>
@@ -145,7 +145,7 @@ export function ResourcesManager({
                     asChild
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 text-neutral-500 hover:text-neutral-900"
+                    className="h-7 w-7 text-ink-muted hover:text-ink hover:bg-canvas-soft"
                   >
                     <a href={res.fileUrl} target="_blank" rel="noopener noreferrer" download>
                       <Download className="h-3.5 w-3.5" />
@@ -155,7 +155,7 @@ export function ResourcesManager({
                     variant="ghost"
                     size="icon"
                     onClick={() => setDeletingResource(res)}
-                    className="h-7 w-7 text-neutral-400 hover:text-rose-600"
+                    className="h-7 w-7 text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>

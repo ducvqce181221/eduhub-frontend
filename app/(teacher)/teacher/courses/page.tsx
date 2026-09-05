@@ -77,7 +77,7 @@ export default function TeacherCoursesPage() {
       await loadData();
     } catch (err: any) {
       const errorMsg = Array.isArray(err?.message) ? err.message : [err?.message || "Course is not ready for publishing"];
-      
+
       const hasMetadata = Boolean(target.title && target.description && target.thumbnailUrl && target.categoryId && target.level);
       const hasChapters = Boolean(target.chapters && target.chapters.length > 0);
       const hasLessons = Boolean(
@@ -120,7 +120,7 @@ export default function TeacherCoursesPage() {
   }, [courses, searchQuery, statusFilter]);
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] pb-16 pt-8">
+    <div className="min-h-dvh bg-canvas pb-16 pt-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header with New Course Trigger */}
         <TeacherCoursesHeader
@@ -129,7 +129,7 @@ export default function TeacherCoursesPage() {
         />
 
         {/* Filter and Search Bar */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-200/80 pb-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-hairline pb-4">
           {/* Status Tabs */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0">
             {(["ALL", "DRAFT", "PUBLISHED", "ARCHIVED"] as const).map((status) => (
@@ -137,11 +137,10 @@ export default function TeacherCoursesPage() {
                 key={status}
                 type="button"
                 onClick={() => setStatusFilter(status)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
-                  statusFilter === status
-                    ? "bg-[#0075de] text-white shadow-2xs"
-                    : "bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200"
-                }`}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${statusFilter === status
+                    ? "bg-notion-blue text-white shadow-2xs"
+                    : "bg-surface text-ink-secondary hover:bg-canvas-soft border border-hairline"
+                  }`}
               >
                 {status}
               </button>
@@ -150,12 +149,12 @@ export default function TeacherCoursesPage() {
 
           {/* Search Input */}
           <div className="relative w-full max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-muted" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search your courses..."
-              className="h-9 rounded-md bg-white pl-9 text-xs shadow-2xs"
+              className="h-9 rounded-md bg-surface pl-9 text-xs border-hairline shadow-2xs"
             />
           </div>
         </div>
@@ -164,30 +163,32 @@ export default function TeacherCoursesPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-72 rounded-xl border border-neutral-200 bg-white p-4">
-                <Skeleton className="h-36 w-full rounded-lg" />
+              <div key={i} className="h-72 rounded-lg border border-hairline bg-surface p-4">
+                <Skeleton className="h-36 w-full rounded-md" />
                 <Skeleton className="mt-4 h-4 w-3/4" />
                 <Skeleton className="mt-2 h-3 w-1/2" />
               </div>
             ))}
           </div>
         ) : filteredCourses.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-neutral-200 bg-white p-12 text-center shadow-2xs">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
+          <div className="rounded-lg border border-hairline bg-surface p-12 text-center shadow-notion-soft">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft text-ink-muted border border-hairline">
               <BookOpen className="h-6 w-6 stroke-1" />
             </div>
-            <h3 className="mt-3 text-base font-semibold text-neutral-900">
+            <h3 className="mt-3 text-base font-semibold text-ink">
               No courses found
             </h3>
-            <p className="mt-1 text-xs text-neutral-500">
+            <p className="mt-1 text-xs text-ink-muted">
               {searchQuery || statusFilter !== "ALL"
                 ? "Try adjusting your search query or status filter."
                 : "You have not created any courses yet. Get started by clicking 'New Course'."}
             </p>
             {!searchQuery && statusFilter === "ALL" && (
               <Button
+                variant="pill"
+                size="default"
                 onClick={() => setIsCreateOpen(true)}
-                className="mt-5 rounded-full bg-[#0075de] px-5 text-xs font-medium text-white hover:bg-[#005bab]"
+                className="mt-5 px-5 shadow-xs"
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
                 Create First Course

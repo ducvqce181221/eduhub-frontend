@@ -42,7 +42,12 @@ export function CourseFilters({
   const hasActiveFilters = Boolean(searchValue || selectedCategory || selectedLevel);
 
   return (
-    <div className={cn("flex flex-col gap-4 bg-surface p-4 sm:p-5 rounded-xl border border-hairline shadow-2xs", className)}>
+    <div
+      className={cn(
+        "flex flex-col gap-4 bg-surface p-4 sm:p-5 rounded-lg border border-hairline shadow-notion-soft",
+        className,
+      )}
+    >
       {/* Optional Search Bar if showSearch is true */}
       {showSearch && (
         <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -53,7 +58,7 @@ export function CourseFilters({
               placeholder="Search courses by title or keyword..."
               value={searchValue}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10 pr-9 h-11 bg-canvas-soft border-hairline rounded-lg text-sm focus:border-notion-blue focus:ring-1 focus:ring-notion-blue shadow-2xs"
+              className="pl-10 pr-9 h-10 bg-canvas-soft border-hairline rounded-md text-sm focus:border-notion-blue focus:ring-1 focus:ring-notion-blue"
             />
             {searchValue && (
               <button
@@ -89,7 +94,7 @@ export function CourseFilters({
             size="sm"
             onClick={() => onCategoryChange("")}
             className={cn(
-              "h-8 rounded-full text-xs font-medium px-3.5 shrink-0 transition-colors cursor-pointer",
+              "h-7 rounded-full text-xs font-medium px-3 shrink-0 transition-colors cursor-pointer",
               selectedCategory === ""
                 ? "bg-notion-blue text-white border-notion-blue"
                 : "border-hairline text-ink-secondary bg-surface hover:bg-canvas-soft",
@@ -106,7 +111,7 @@ export function CourseFilters({
                 size="sm"
                 onClick={() => onCategoryChange(cat.id)}
                 className={cn(
-                  "h-8 rounded-full text-xs font-medium px-3.5 shrink-0 transition-colors cursor-pointer",
+                  "h-7 rounded-full text-xs font-medium px-3 shrink-0 transition-colors cursor-pointer",
                   isSelected
                     ? "bg-notion-blue text-white border-notion-blue"
                     : "border-hairline text-ink-secondary bg-surface hover:bg-canvas-soft",
@@ -125,7 +130,7 @@ export function CourseFilters({
           <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider shrink-0">
             Level:
           </span>
-          <div className="inline-flex bg-canvas-soft p-1 rounded-lg border border-hairline flex-wrap gap-1">
+          <div className="inline-flex bg-canvas-soft p-0.5 rounded-md border border-hairline flex-wrap gap-0.5">
             {LEVELS.map((lvl) => {
               const isSelected = selectedLevel === lvl.value;
               return (
@@ -134,9 +139,9 @@ export function CourseFilters({
                   type="button"
                   onClick={() => onLevelChange(lvl.value)}
                   className={cn(
-                    "px-3 py-1 text-xs font-medium rounded-md transition-all cursor-pointer",
+                    "px-2.5 py-1 text-xs font-medium rounded-sm transition-all cursor-pointer",
                     isSelected
-                      ? "bg-surface text-ink font-semibold shadow-2xs"
+                      ? "bg-surface text-ink font-semibold shadow-notion-soft"
                       : "text-ink-muted hover:text-ink",
                   )}
                 >
@@ -152,7 +157,7 @@ export function CourseFilters({
             variant="outline"
             size="sm"
             onClick={onReset}
-            className="h-8 text-xs px-3 rounded-lg border-hairline text-ink-muted hover:text-ink hover:bg-canvas-soft gap-1.5 self-start sm:self-auto cursor-pointer"
+            className="h-7 text-xs px-2.5 rounded-md border-hairline text-ink-muted hover:text-ink hover:bg-canvas-soft gap-1.5 self-start sm:self-auto cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
             <span>Reset filters</span>
@@ -162,11 +167,11 @@ export function CourseFilters({
 
       {/* 3. Active Filter Chips Row */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-hairline/60 text-xs">
+        <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-hairline text-xs">
           <span className="text-ink-muted font-medium">Active filters:</span>
 
           {searchValue && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-notion-blue/10 text-notion-blue border border-notion-blue/20">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-notion-blue/10 text-notion-blue border border-notion-blue/20">
               <span>Keyword: &ldquo;{searchValue}&rdquo;</span>
               <button
                 type="button"
@@ -180,7 +185,7 @@ export function CourseFilters({
           )}
 
           {selectedCategory && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/5 text-ink border border-hairline">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-canvas-soft text-ink border border-hairline">
               <span>
                 Category:{" "}
                 {categories.find((c) => c.id === selectedCategory)?.name ||
@@ -189,7 +194,7 @@ export function CourseFilters({
               <button
                 type="button"
                 onClick={() => onCategoryChange("")}
-                className="p-0.5 hover:bg-black/10 rounded-full cursor-pointer"
+                className="p-0.5 hover:bg-neutral-200 rounded-full cursor-pointer"
                 aria-label="Clear category filter"
               >
                 <X className="w-3 h-3" />
@@ -198,12 +203,12 @@ export function CourseFilters({
           )}
 
           {selectedLevel && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/5 text-ink border border-hairline">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-canvas-soft text-ink border border-hairline">
               <span>Level: {selectedLevel}</span>
               <button
                 type="button"
                 onClick={() => onLevelChange("")}
-                className="p-0.5 hover:bg-black/10 rounded-full cursor-pointer"
+                className="p-0.5 hover:bg-neutral-200 rounded-full cursor-pointer"
                 aria-label="Clear level filter"
               >
                 <X className="w-3 h-3" />
@@ -215,7 +220,7 @@ export function CourseFilters({
             variant="ghost"
             size="sm"
             onClick={onReset}
-            className="h-6 text-xs px-2 text-ink-muted hover:text-ink hover:bg-black/5 rounded-full ml-auto gap-1 cursor-pointer"
+            className="h-6 text-xs px-2 text-ink-muted hover:text-ink hover:bg-canvas-soft rounded-md ml-auto gap-1 cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
             <span>Reset All</span>

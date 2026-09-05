@@ -83,36 +83,36 @@ export function LearningSidebar({
   return (
     <div
       className={cn(
-        "flex flex-col h-full bg-surface border border-hairline rounded-2xl overflow-hidden shadow-notion-soft",
+        "flex flex-col h-full bg-surface border border-hairline rounded-lg overflow-hidden shadow-notion-soft",
         className,
       )}
     >
       {/* Sidebar Header: Course Title & Progress Bar */}
-      <div className="p-5 border-b border-hairline bg-canvas-soft/60 flex flex-col gap-3">
+      <div className="p-4 sm:p-5 border-b border-hairline bg-canvas-soft/60 flex flex-col gap-2.5">
         <Link
           href={`/courses/${courseId}`}
-          className="text-xs font-semibold text-ink-muted hover:text-notion-blue transition-colors flex items-center gap-1.5"
+          className="text-xs font-medium text-ink-muted hover:text-notion-blue transition-colors flex items-center gap-1.5 w-fit"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           <span>Back to Course Overview</span>
         </Link>
 
-        <h2 className="text-base font-bold text-ink leading-snug line-clamp-2">
+        <h2 className="text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2">
           {courseTitle}
         </h2>
 
         {/* Progress bar */}
         <div className="flex flex-col gap-1.5 pt-1">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-ink">
+            <span className="font-semibold text-ink tabular-nums">
               {roundedProgress}% Complete
             </span>
-            <span className="text-ink-muted">
+            <span className="text-ink-muted tabular-nums">
               {completedCount} of {totalLessons} lessons
             </span>
           </div>
 
-          <div className="w-full h-2 rounded-full bg-canvas border border-hairline overflow-hidden">
+          <div className="w-full h-1.5 rounded-full bg-canvas border border-hairline overflow-hidden">
             <div
               className="h-full bg-notion-blue rounded-full transition-all duration-500 ease-out"
               style={{ width: `${Math.min(100, Math.max(0, roundedProgress))}%` }}
@@ -135,7 +135,7 @@ export function LearningSidebar({
               <button
                 type="button"
                 onClick={() => toggleChapter(chapter.id)}
-                className="w-full flex items-center justify-between p-3.5 text-left bg-canvas-soft/40 hover:bg-canvas-soft transition-colors cursor-pointer"
+                className="w-full flex items-center justify-between px-4 py-3 text-left bg-canvas-soft/40 hover:bg-canvas-soft transition-colors cursor-pointer"
                 aria-expanded={isExpanded}
               >
                 <div className="flex items-center gap-2 min-w-0 pr-2">
@@ -149,7 +149,7 @@ export function LearningSidebar({
                   </span>
                 </div>
 
-                <span className="text-[11px] text-ink-muted shrink-0">
+                <span className="text-[11px] text-ink-muted shrink-0 tabular-nums font-mono">
                   {sortedLessons.length} {sortedLessons.length === 1 ? "lesson" : "lessons"}
                 </span>
               </button>
@@ -169,9 +169,9 @@ export function LearningSidebar({
                         type="button"
                         onClick={() => onSelectLesson?.(lesson.id)}
                         className={cn(
-                          "w-full flex items-center justify-between p-3 text-left transition-colors cursor-pointer group",
+                          "w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors cursor-pointer group",
                           isActive
-                            ? "bg-notion-blue/10 border-l-3 border-notion-blue text-ink"
+                            ? "bg-notion-blue/5 border-l-2 border-notion-blue text-ink"
                             : "hover:bg-canvas-soft/60 text-ink-secondary",
                         )}
                       >
@@ -187,16 +187,16 @@ export function LearningSidebar({
                           <div className="min-w-0">
                             <span
                               className={cn(
-                                "text-xs font-medium leading-snug block truncate",
-                                isActive ? "text-notion-blue-active font-semibold" : "text-ink",
+                                "text-xs leading-snug block truncate",
+                                isActive ? "text-notion-blue-active font-semibold" : "text-ink font-medium",
                               )}
                             >
                               {lesson.title}
                             </span>
 
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center gap-2 mt-0.5">
                               {duration !== undefined && duration > 0 && (
-                                <span className="text-[11px] text-ink-muted font-mono flex items-center gap-1">
+                                <span className="text-[11px] text-ink-muted font-mono tabular-nums flex items-center gap-1">
                                   <Clock className="w-2.5 h-2.5" />
                                   {formatDuration(duration)}
                                 </span>
@@ -226,7 +226,7 @@ export function LearningSidebar({
           disabled={!prevLesson}
           onClick={() => prevLesson && onSelectLesson?.(prevLesson.id)}
           className={cn(
-            "flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-hairline transition-colors",
+            "flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md border border-hairline transition-colors",
             prevLesson
               ? "bg-surface text-ink hover:bg-canvas-soft cursor-pointer"
               : "opacity-40 text-ink-muted cursor-not-allowed bg-transparent",
@@ -241,7 +241,7 @@ export function LearningSidebar({
           disabled={!nextLesson}
           onClick={() => nextLesson && onSelectLesson?.(nextLesson.id)}
           className={cn(
-            "flex items-center gap-1 text-xs font-semibold px-3.5 py-1.5 rounded-lg transition-colors",
+            "flex items-center gap-1 text-xs font-medium px-3.5 py-1.5 rounded-md transition-colors",
             nextLesson
               ? "bg-notion-blue text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
               : "opacity-40 text-ink-muted cursor-not-allowed bg-transparent border border-hairline",

@@ -9,11 +9,18 @@ import {
   Users,
   Award,
   TrendingUp,
-  BookOpen,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableHeader,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import type { Course, CourseQuizStudentResult, CourseQuizResultItem } from "@/types/api";
 
 interface QuizAnalyticsViewProps {
@@ -139,14 +146,14 @@ export function QuizAnalyticsView({
 
   if (quizResults.length === 0) {
     return (
-      <div className="rounded-xl border border-neutral-200 bg-white p-12 text-center shadow-2xs">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
-          <HelpCircle className="h-6 w-6 stroke-1" />
+      <div className="rounded-lg border border-hairline bg-surface p-12 text-center shadow-notion-soft">
+        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-md bg-canvas-soft border border-hairline text-ink-muted">
+          <HelpCircle className="h-5 w-5 stroke-1" />
         </div>
-        <h3 className="mt-3 text-sm font-bold text-neutral-900">
+        <h3 className="mt-3 text-sm font-semibold text-ink">
           No quiz results available
         </h3>
-        <p className="mt-1 text-xs text-neutral-500 max-w-md mx-auto">
+        <p className="mt-1 text-xs text-ink-muted max-w-md mx-auto">
           When enrolled students attempt the assessment quizzes attached to your lessons, their submissions, highest scores, and pass rates will appear here.
         </p>
       </div>
@@ -157,197 +164,199 @@ export function QuizAnalyticsView({
     <div className="space-y-6">
       {/* Top Metric Summary Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+        <div className="rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-50 text-[#0075de]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-notion-blue/10 text-notion-blue border border-notion-blue/20">
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-medium text-neutral-500">Total Quiz Attempts</p>
-              <h4 className="text-xl font-bold text-neutral-900">{overallStats.totalAttempts}</h4>
+              <p className="text-xs font-medium text-ink-muted">Total Quiz Attempts</p>
+              <h4 className="text-2xl font-semibold tracking-tight text-ink font-mono tabular-nums">
+                {overallStats.totalAttempts}
+              </h4>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+        <div className="rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sticker-teal/15 text-sticker-teal border border-sticker-teal/20">
               <TrendingUp className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-medium text-neutral-500">Average Pass Rate</p>
-              <h4 className="text-xl font-bold text-neutral-900">{overallStats.avgPassRate}%</h4>
+              <p className="text-xs font-medium text-ink-muted">Average Pass Rate</p>
+              <h4 className="text-2xl font-semibold tracking-tight text-ink font-mono tabular-nums">
+                {overallStats.avgPassRate}%
+              </h4>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+        <div className="rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sticker-purple/15 text-sticker-purple border border-sticker-purple/20">
               <Award className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-medium text-neutral-500">Average Score</p>
-              <h4 className="text-xl font-bold text-neutral-900">{overallStats.avgScore}%</h4>
+              <p className="text-xs font-medium text-ink-muted">Average Score</p>
+              <h4 className="text-2xl font-semibold tracking-tight text-ink font-mono tabular-nums">
+                {overallStats.avgScore}%
+              </h4>
             </div>
           </div>
         </div>
       </div>
 
       {/* Quiz Performance Summary Table */}
-      <div className="rounded-xl border border-neutral-200 bg-white shadow-2xs overflow-hidden">
-        <div className="border-b border-neutral-200 bg-neutral-50/60 p-4">
-          <h3 className="text-sm font-bold text-neutral-900">
+      <div className="rounded-lg border border-hairline bg-surface shadow-notion-soft overflow-hidden">
+        <div className="border-b border-hairline bg-canvas-soft/60 p-4">
+          <h3 className="text-sm font-semibold text-ink">
             Quiz Performance Breakdown ({aggregatedQuizzes.length})
           </h3>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-ink-muted">
             Aggregated pass rates, attempts, and average scores per lesson assessment.
           </p>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-neutral-200 bg-neutral-50/40 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-                <th className="py-3 px-4">Quiz / Lesson</th>
-                <th className="py-3 px-4">Pass Threshold</th>
-                <th className="py-3 px-4">Total Attempts</th>
-                <th className="py-3 px-4 w-44">Pass Rate</th>
-                <th className="py-3 px-4 text-right">Average Score</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-100 text-xs">
-              {aggregatedQuizzes.map((item) => (
-                <tr
-                  key={item.quizId}
-                  className="transition hover:bg-neutral-50/60"
-                >
-                  <td className="py-3.5 px-4">
-                    <div>
-                      <p className="font-semibold text-neutral-900">
-                        {item.quizTitle}
-                      </p>
-                      <p className="text-[11px] text-neutral-400">
-                        Lesson: {item.lessonTitle}
-                      </p>
-                    </div>
-                  </td>
+        <Table className="border-0 rounded-none">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Quiz / Lesson</TableHead>
+              <TableHead>Pass Threshold</TableHead>
+              <TableHead>Total Attempts</TableHead>
+              <TableHead className="w-44">Pass Rate</TableHead>
+              <TableHead className="text-right">Average Score</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {aggregatedQuizzes.map((item) => (
+              <TableRow key={item.quizId}>
+                <TableCell>
+                  <div>
+                    <p className="font-medium text-ink">
+                      {item.quizTitle}
+                    </p>
+                    <p className="text-[11px] text-ink-muted">
+                      Lesson: {item.lessonTitle}
+                    </p>
+                  </div>
+                </TableCell>
 
-                  <td className="py-3.5 px-4 text-neutral-700 font-medium">
-                    {item.passScore}%
-                  </td>
+                <TableCell className="text-ink font-mono tabular-nums">
+                  {item.passScore}%
+                </TableCell>
 
-                  <td className="py-3.5 px-4 text-neutral-700 font-medium">
-                    {item.totalAttempts} {item.totalAttempts === 1 ? "attempt" : "attempts"}
-                  </td>
+                <TableCell className="text-ink font-mono tabular-nums">
+                  {item.totalAttempts} {item.totalAttempts === 1 ? "attempt" : "attempts"}
+                </TableCell>
 
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center gap-2">
-                      <Progress
-                        value={item.passRate}
-                        className="h-1.5 flex-1"
-                      />
-                      <span className="text-[11px] font-semibold text-neutral-700 w-10 text-right">
-                        {Math.round(item.passRate)}%
-                      </span>
-                    </div>
-                  </td>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Progress
+                      value={item.passRate}
+                      className="h-1.5 flex-1"
+                    />
+                    <span className="text-[11px] font-semibold text-ink w-10 text-right font-mono tabular-nums">
+                      {Math.round(item.passRate)}%
+                    </span>
+                  </div>
+                </TableCell>
 
-                  <td className="py-3.5 px-4 text-right font-bold text-neutral-900">
-                    {Math.round(item.averageScore * 10) / 10}%
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                <TableCell className="text-right font-semibold text-ink font-mono tabular-nums">
+                  {Math.round(item.averageScore * 10) / 10}%
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
       {/* Individual Student Submissions Breakdown (if student details are present) */}
       {filteredStudentAttempts.length > 0 && (
-        <div className="rounded-xl border border-neutral-200 bg-white shadow-2xs overflow-hidden">
-          <div className="flex flex-col gap-3 border-b border-neutral-200 bg-neutral-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="rounded-lg border border-hairline bg-surface shadow-notion-soft overflow-hidden">
+          <div className="flex flex-col gap-3 border-b border-hairline bg-canvas-soft/60 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-sm font-bold text-neutral-900">
+              <h3 className="text-sm font-semibold text-ink">
                 Student Assessment Attempts ({filteredStudentAttempts.length})
               </h3>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-ink-muted">
                 Individual student test scores, attempt count, and pass status.
               </p>
             </div>
 
             <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-neutral-400" />
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-ink-muted" />
               <Input
                 placeholder="Search student or quiz..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-8 pl-8 text-xs bg-white"
+                className="h-8 pl-8 text-xs bg-surface border-hairline text-ink placeholder:text-ink-muted focus-visible:ring-notion-blue"
               />
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-neutral-200 bg-neutral-50/40 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-                  <th className="py-3 px-4">Student</th>
-                  <th className="py-3 px-4">Quiz</th>
-                  <th className="py-3 px-4 text-center">Attempts</th>
-                  <th className="py-3 px-4 text-center">Highest Score</th>
-                  <th className="py-3 px-4 text-right">Result</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 text-xs">
-                {filteredStudentAttempts.map((attempt, index) => {
-                  const isPassed = attempt.isPassed;
-                  return (
-                    <tr
-                      key={`${attempt.studentId || index}_${attempt.quizId}`}
-                      className="transition hover:bg-neutral-50/60"
-                    >
-                      <td className="py-3 px-4">
-                        <div>
-                          <p className="font-semibold text-neutral-900">
-                            {attempt.fullName || "Student"}
-                          </p>
-                          <p className="text-[11px] text-neutral-400">
-                            {attempt.email || ""}
-                          </p>
-                        </div>
-                      </td>
+          <Table className="border-0 rounded-none">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Student</TableHead>
+                <TableHead>Quiz</TableHead>
+                <TableHead className="text-center">Attempts</TableHead>
+                <TableHead className="text-center">Highest Score</TableHead>
+                <TableHead className="text-right">Result</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredStudentAttempts.map((attempt, index) => {
+                const isPassed = attempt.isPassed;
+                return (
+                  <TableRow key={`${attempt.studentId || index}_${attempt.quizId}`}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium text-ink">
+                          {attempt.fullName || "Student"}
+                        </p>
+                        <p className="text-[11px] text-ink-muted">
+                          {attempt.email || ""}
+                        </p>
+                      </div>
+                    </TableCell>
 
-                      <td className="py-3 px-4 font-medium text-neutral-800">
-                        {attempt.quizTitle}
-                      </td>
+                    <TableCell className="text-ink font-medium">
+                      {attempt.quizTitle}
+                    </TableCell>
 
-                      <td className="py-3 px-4 text-center text-neutral-600 font-medium">
-                        {attempt.attemptsCount || 1}
-                      </td>
+                    <TableCell className="text-center text-ink-muted font-mono tabular-nums">
+                      {attempt.attemptsCount || 1}
+                    </TableCell>
 
-                      <td className="py-3 px-4 text-center font-bold text-neutral-900">
-                        {attempt.highestScore ?? 0}%
-                      </td>
+                    <TableCell className="text-center font-semibold text-ink font-mono tabular-nums">
+                      {attempt.highestScore ?? 0}%
+                    </TableCell>
 
-                      <td className="py-3 px-4 text-right">
-                        {isPassed ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                            <CheckCircle2 className="h-3 w-3" />
-                            Passed
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-semibold text-rose-700 ring-1 ring-inset ring-rose-600/20">
-                            <XCircle className="h-3 w-3" />
-                            Failed
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    <TableCell className="text-right">
+                      {isPassed ? (
+                        <Badge
+                          variant="secondary"
+                          className="bg-sticker-teal/15 text-sticker-teal border-transparent font-medium gap-1 text-[11px]"
+                        >
+                          <CheckCircle2 className="h-3 w-3" />
+                          Passed
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="destructive"
+                          className="bg-rose-500/10 text-rose-600 dark:text-rose-400 border-transparent font-medium gap-1 text-[11px]"
+                        >
+                          <XCircle className="h-3 w-3" />
+                          Failed
+                        </Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>

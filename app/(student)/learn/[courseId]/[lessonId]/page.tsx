@@ -26,7 +26,6 @@ import {
   HelpCircle,
   Layers,
   Menu,
-  Sparkles,
   X,
 } from "lucide-react";
 import type { QuizAttemptResult, SubmitQuizAnswerPayload } from "@/types/api";
@@ -83,12 +82,12 @@ export default function LessonLearnPage() {
       <div className="flex flex-col flex-1 bg-canvas-soft min-h-[85vh] p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <Skeleton className="aspect-video w-full rounded-2xl" />
-            <Skeleton className="h-8 w-3/4 rounded-lg" />
-            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="aspect-video w-full rounded-lg" />
+            <Skeleton className="h-8 w-3/4 rounded-md" />
+            <Skeleton className="h-20 w-full rounded-lg" />
           </div>
           <div className="lg:col-span-1">
-            <Skeleton className="h-[600px] w-full rounded-2xl" />
+            <Skeleton className="h-150 w-full rounded-lg" />
           </div>
         </div>
       </div>
@@ -105,7 +104,7 @@ export default function LessonLearnPage() {
         <Button variant="pill" size="default" asChild>
           <Link href="/courses">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Courses
+            <span>Back to Courses</span>
           </Link>
         </Button>
       </div>
@@ -123,14 +122,14 @@ export default function LessonLearnPage() {
           className="text-xs font-semibold text-ink-muted flex items-center gap-1"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span className="truncate max-w-[180px]">{course.title}</span>
+          <span className="truncate max-w-45">{course.title}</span>
         </Link>
 
         <Button
           variant="outline"
           size="sm"
           onClick={() => setIsMobileSidebarOpen(true)}
-          className="h-8 text-xs gap-1.5 border-hairline"
+          className="h-8 text-xs gap-1.5 border-hairline rounded-md"
         >
           <Menu className="w-3.5 h-3.5" />
           <span>Curriculum ({courseProgress?.completedLessons || 0}/{courseProgress?.totalLessons || 0})</span>
@@ -140,7 +139,7 @@ export default function LessonLearnPage() {
       {/* Main Learning Workspace Container */}
       <div className="max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Column: Video Player, Details, Resources & Quiz */}
-        <div className="lg:col-span-2 flex flex-col gap-8 min-w-0">
+        <div className="lg:col-span-2 flex flex-col gap-6 min-w-0">
           {/* Video Player */}
           <VideoPlayer
             video={lesson.video}
@@ -151,12 +150,12 @@ export default function LessonLearnPage() {
           />
 
           {/* Lesson Metadata Header */}
-          <div className="flex flex-col gap-3 p-6 sm:p-7 rounded-2xl bg-surface border border-hairline shadow-notion-soft">
+          <div className="flex flex-col gap-3 p-5 sm:p-6 rounded-lg bg-surface border border-hairline shadow-notion-soft">
             <div className="flex flex-wrap items-center gap-2">
               {isLessonCompleted && (
                 <Badge variant="teal" className="text-xs px-2.5 py-0.5 font-semibold flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  Lesson Completed
+                  <span>Lesson Completed</span>
                 </Badge>
               )}
               {lesson.video?.durationSeconds && (
@@ -166,12 +165,12 @@ export default function LessonLearnPage() {
               )}
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-bold text-ink tracking-tight">
+            <h1 className="text-lg sm:text-xl font-bold text-ink tracking-tight">
               {lesson.title}
             </h1>
 
             {lesson.description && (
-              <p className="text-sm text-ink-secondary leading-relaxed pt-1 border-t border-hairline mt-1">
+              <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed pt-2 border-t border-hairline mt-0.5">
                 {lesson.description}
               </p>
             )}
@@ -179,17 +178,17 @@ export default function LessonLearnPage() {
 
           {/* Downloadable Resources Section */}
           {lesson.resources && lesson.resources.length > 0 && (
-            <div className="p-6 sm:p-7 rounded-2xl bg-surface border border-hairline shadow-notion-soft flex flex-col gap-4">
-              <h3 className="text-base font-bold text-ink flex items-center gap-2">
+            <div className="p-5 sm:p-6 rounded-lg bg-surface border border-hairline shadow-notion-soft flex flex-col gap-3.5">
+              <h3 className="text-sm sm:text-base font-bold text-ink flex items-center gap-2">
                 <FileText className="w-4 h-4 text-sticker-teal" />
-                Downloadable Lesson Resources
+                <span>Downloadable Lesson Resources</span>
               </h3>
 
-              <div className="divide-y divide-hairline border border-hairline rounded-xl overflow-hidden bg-canvas-soft/30">
+              <div className="divide-y divide-hairline border border-hairline rounded-md overflow-hidden bg-canvas-soft/30">
                 {lesson.resources.map((res) => (
                   <div
                     key={res.id}
-                    className="p-3.5 flex items-center justify-between gap-3 hover:bg-canvas-soft/70 transition-colors"
+                    className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-canvas-soft/70 transition-colors"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <FileText className="w-4 h-4 text-ink-muted shrink-0" />
@@ -201,7 +200,7 @@ export default function LessonLearnPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-8 text-xs border-hairline hover:bg-white shrink-0 gap-1.5"
+                      className="h-7 text-xs border-hairline rounded-md hover:bg-surface shrink-0 gap-1.5 cursor-pointer"
                       asChild
                     >
                       <a href={res.fileUrl} target="_blank" rel="noopener noreferrer" download>
@@ -246,7 +245,7 @@ export default function LessonLearnPage() {
 
       {/* Mobile Sidebar Drawer Overlay */}
       {isMobileSidebarOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex justify-end">
+        <div className="lg:hidden fixed inset-0 z-50 bg-black/40 flex justify-end">
           <div className="w-full max-w-sm h-full bg-surface shadow-2xl flex flex-col">
             <div className="p-3.5 border-b border-hairline flex items-center justify-between">
               <span className="text-sm font-bold text-ink">Curriculum Navigation</span>

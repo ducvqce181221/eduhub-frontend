@@ -169,26 +169,26 @@ export function LessonDrawer({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl overflow-y-auto p-0 border-l border-neutral-200 shadow-2xl">
-        <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white p-6 pb-4">
+      <SheetContent className="w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl overflow-y-auto p-0 border-l border-hairline bg-surface shadow-notion-elevated">
+        <div className="sticky top-0 z-10 border-b border-hairline bg-surface p-6 pb-4">
           <SheetHeader>
-            <SheetTitle className="text-xl font-bold text-neutral-900">
+            <SheetTitle className="text-xl font-bold text-ink tracking-tight">
               Edit Lesson
             </SheetTitle>
-            <SheetDescription className="text-xs text-neutral-500">
+            <SheetDescription className="text-xs text-ink-muted">
               Configure lesson content, Cloudflare R2 video, attachments, and quiz.
             </SheetDescription>
           </SheetHeader>
 
           {/* Navigation Tabs */}
-          <div className="mt-4 flex gap-2 border-b border-neutral-100 pb-2">
+          <div className="mt-4 flex gap-2 border-b border-hairline pb-2 overflow-x-auto">
             <button
               type="button"
               onClick={() => setActiveTab("general")}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-full px-3 py-1 text-xs font-medium transition cursor-pointer ${
                 activeTab === "general"
-                  ? "bg-[#0075de] text-white"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  ? "bg-notion-blue text-white shadow-2xs"
+                  : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
               General Info
@@ -196,10 +196,10 @@ export function LessonDrawer({
             <button
               type="button"
               onClick={() => setActiveTab("video")}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-full px-3 py-1 text-xs font-medium transition cursor-pointer ${
                 activeTab === "video"
-                  ? "bg-[#0075de] text-white"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  ? "bg-notion-blue text-white shadow-2xs"
+                  : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
               Video {lesson.video ? "✓" : ""}
@@ -207,10 +207,10 @@ export function LessonDrawer({
             <button
               type="button"
               onClick={() => setActiveTab("resources")}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-full px-3 py-1 text-xs font-medium transition cursor-pointer ${
                 activeTab === "resources"
-                  ? "bg-[#0075de] text-white"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  ? "bg-notion-blue text-white shadow-2xs"
+                  : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
               Resources ({lesson.resources?.length || 0})
@@ -218,10 +218,10 @@ export function LessonDrawer({
             <button
               type="button"
               onClick={() => setActiveTab("quiz")}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-full px-3 py-1 text-xs font-medium transition cursor-pointer ${
                 activeTab === "quiz"
-                  ? "bg-[#0075de] text-white"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  ? "bg-notion-blue text-white shadow-2xs"
+                  : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
               Quiz {lesson.quiz ? "✓" : ""}
@@ -232,21 +232,21 @@ export function LessonDrawer({
         {/* Tab Body */}
         <div className="p-6">
           {activeTab === "general" && (
-            <div className="space-y-4 rounded-xl border border-neutral-200 bg-white p-5">
+            <div className="space-y-4 rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
               <div>
-                <label className="block text-xs font-semibold text-neutral-700">
+                <label className="block text-xs font-semibold text-ink">
                   Lesson Title
                 </label>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. 1.1 Architecture Overview"
-                  className="mt-1 text-sm"
+                  className="mt-1 text-sm bg-surface border-hairline"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-700">
+                <label className="block text-xs font-semibold text-ink">
                   Lesson Description / Notes
                 </label>
                 <Textarea
@@ -254,7 +254,7 @@ export function LessonDrawer({
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Provide overview notes, timestamps, or instructions..."
                   rows={4}
-                  className="mt-1 text-xs resize-none"
+                  className="mt-1 text-xs resize-none bg-surface border-hairline"
                 />
               </div>
 
@@ -262,7 +262,7 @@ export function LessonDrawer({
                 <Button
                   onClick={handleSaveGeneral}
                   disabled={isSavingGeneral || !title.trim()}
-                  className="rounded-md bg-[#0075de] text-xs font-medium text-white hover:bg-[#005bab]"
+                  className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
                 >
                   {isSavingGeneral ? "Saving..." : "Save Details"}
                 </Button>

@@ -9,7 +9,6 @@ import {
   HelpCircle,
   Loader2,
   RefreshCw,
-  Sparkles,
   XCircle,
 } from "lucide-react";
 import type {
@@ -82,7 +81,7 @@ export function QuizView({
     return (
       <div
         className={cn(
-          "flex flex-col gap-6 p-6 sm:p-8 rounded-2xl bg-surface border border-hairline shadow-notion-soft",
+          "flex flex-col gap-6 p-6 sm:p-8 rounded-lg bg-surface border border-hairline shadow-notion-soft",
           className,
         )}
       >
@@ -108,7 +107,7 @@ export function QuizView({
                   </>
                 )}
               </Badge>
-              <span className="text-xs text-ink-muted">
+              <span className="text-xs text-ink-muted tabular-nums">
                 Required Pass Score: {latestAttempt.passScore}%
               </span>
             </div>
@@ -119,7 +118,7 @@ export function QuizView({
             variant="outline"
             size="sm"
             onClick={handleRetryQuiz}
-            className="rounded-full border-hairline text-ink hover:bg-accent shrink-0 gap-1.5"
+            className="rounded-md border-hairline text-ink hover:bg-accent shrink-0 gap-1.5"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Retry Quiz</span>
@@ -127,17 +126,17 @@ export function QuizView({
         </div>
 
         {/* Score Summary Box */}
-        <div className="grid sm:grid-cols-3 gap-4 p-5 rounded-xl bg-canvas-soft border border-hairline">
+        <div className="grid sm:grid-cols-3 gap-4 p-5 rounded-md bg-canvas-soft border border-hairline">
           <div className="flex flex-col gap-1">
             <span className="text-xs text-ink-muted">Your Score</span>
-            <span className={cn("text-3xl font-bold font-mono tracking-tight", isPassed ? "text-sticker-teal" : "text-sticker-orange-deep")}>
+            <span className={cn("text-3xl font-bold font-mono tabular-nums tracking-tight", isPassed ? "text-sticker-teal" : "text-sticker-orange-deep")}>
               {latestAttempt.score}%
             </span>
           </div>
 
           <div className="flex flex-col gap-1">
             <span className="text-xs text-ink-muted">Earned Points</span>
-            <span className="text-2xl font-semibold text-ink font-mono">
+            <span className="text-2xl font-semibold text-ink font-mono tabular-nums">
               {latestAttempt.earnedPoints} / {latestAttempt.totalPoints} points
             </span>
           </div>
@@ -179,7 +178,7 @@ export function QuizView({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 p-6 sm:p-8 rounded-2xl bg-surface border border-hairline shadow-notion-soft",
+        "flex flex-col gap-6 p-6 sm:p-8 rounded-lg bg-surface border border-hairline shadow-notion-soft",
         className,
       )}
     >
@@ -191,7 +190,7 @@ export function QuizView({
               <HelpCircle className="w-3.5 h-3.5" />
               Lesson Assessment
             </Badge>
-            <Badge variant="secondary" className="text-xs px-2.5 py-0.5 bg-canvas-soft border-hairline text-ink-secondary">
+            <Badge variant="secondary" className="text-xs px-2.5 py-0.5 bg-canvas-soft border-hairline text-ink-secondary tabular-nums">
               Pass threshold: {quiz.passScore}%
             </Badge>
           </div>
@@ -204,7 +203,7 @@ export function QuizView({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs font-medium text-ink-muted">
+          <span className="text-xs font-medium text-ink-muted tabular-nums">
             {answeredCount} of {totalQuestions} answered
           </span>
         </div>
@@ -218,14 +217,14 @@ export function QuizView({
           return (
             <div
               key={question.id}
-              className="flex flex-col gap-3.5 p-5 rounded-xl border border-hairline bg-canvas-soft/40 shadow-2xs"
+              className="flex flex-col gap-3.5 p-5 rounded-md border border-hairline bg-surface shadow-2xs"
             >
               <div className="flex items-start justify-between gap-4">
                 <h4 className="text-sm sm:text-base font-semibold text-ink leading-snug">
                   <span className="text-notion-blue mr-2 font-mono">Q{qIdx + 1}.</span>
                   {question.content}
                 </h4>
-                <Badge variant="secondary" className="text-[11px] px-2 py-0.5 bg-surface border-hairline text-ink-faint shrink-0">
+                <Badge variant="secondary" className="text-[11px] px-2 py-0.5 bg-canvas-soft border-hairline text-ink-faint shrink-0 tabular-nums">
                   {question.points} {question.points === 1 ? "point" : "points"}
                 </Badge>
               </div>
@@ -239,9 +238,9 @@ export function QuizView({
                     <label
                       key={answer.id}
                       className={cn(
-                        "flex items-center gap-3 p-3.5 rounded-lg border text-xs sm:text-sm font-medium transition-all cursor-pointer select-none",
+                        "flex items-center gap-3 p-3.5 rounded-md border text-xs sm:text-sm font-medium transition-all cursor-pointer select-none",
                         isSelected
-                          ? "border-notion-blue bg-white text-ink shadow-xs ring-1 ring-notion-blue/20"
+                          ? "border-notion-blue bg-notion-blue/5 text-ink shadow-2xs ring-1 ring-notion-blue/30"
                           : "border-hairline bg-surface text-ink-secondary hover:bg-canvas-soft hover:text-ink",
                       )}
                     >
@@ -282,7 +281,7 @@ export function QuizView({
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 mr-2" />
+                <CheckCircle2 className="w-4 h-4 mr-2" />
                 <span>Submit Quiz</span>
               </>
             )}

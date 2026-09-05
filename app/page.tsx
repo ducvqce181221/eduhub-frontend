@@ -9,15 +9,10 @@ import { CourseFilters } from "@/components/courses/course-filters";
 import { CourseGrid } from "@/components/courses/course-grid";
 import { Pagination } from "@/components/common/pagination";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  Sparkles,
   ArrowDown,
   Compass,
-  CheckCircle2,
   GraduationCap,
-  Video,
-  Award,
 } from "lucide-react";
 import type { CourseLevel } from "@/types/api";
 
@@ -96,14 +91,11 @@ function HomeContent() {
     <div className="flex flex-col flex-1 bg-canvas-soft">
       {/* 1. Hero Section */}
       <section className="w-full py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 mb-5">
-          <Badge
-            variant="secondary"
-            className="px-3 py-1 text-xs font-semibold text-notion-blue bg-surface border-hairline shadow-2xs"
-          >
-            <Sparkles className="w-3.5 h-3.5 mr-1 text-notion-blue" />
+        <div className="inline-flex items-center gap-2 mb-6">
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium text-notion-blue bg-surface border border-hairline shadow-notion-soft">
+            <span className="w-1.5 h-1.5 rounded-full bg-notion-blue" />
             <span>EduHub Learning Platform</span>
-          </Badge>
+          </span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-ink tracking-tight leading-tight mb-5">
@@ -112,7 +104,7 @@ function HomeContent() {
         </h1>
 
         <p className="text-base sm:text-lg text-ink-muted max-w-2xl mx-auto mb-8 leading-relaxed">
-          The connected learning management system where students master skills through high-definition video streaming, interactive assessments, and atomic progress tracking.
+          Structured courses designed for working engineers. High-definition video streaming, interactive assessments, and atomic progress tracking.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
@@ -120,7 +112,7 @@ function HomeContent() {
             size="lg"
             variant="pill"
             onClick={scrollToCatalog}
-            className="h-11 px-7 gap-2 shadow-sm cursor-pointer"
+            className="h-11 px-7 gap-2 cursor-pointer"
           >
             <span>Explore Courses</span>
             <ArrowDown className="w-4 h-4" />
@@ -165,35 +157,34 @@ function HomeContent() {
           )}
         </div>
 
-        {/* Value Proposition Highlights */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-hairline/70 max-w-3xl mx-auto text-left">
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-surface/60 border border-hairline/80">
-            <div className="w-8 h-8 rounded-md bg-notion-blue/10 flex items-center justify-center text-notion-blue shrink-0">
-              <Video className="w-4 h-4" />
+        {/* Value Proposition Highlights: Notion Editorial Proof-Points */}
+        <div className="border-t border-hairline pt-8 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 text-center sm:text-left divide-y sm:divide-y-0 sm:divide-x divide-hairline">
+            <div className="sm:px-4 first:sm:pl-0">
+              <div className="text-xs font-semibold text-ink uppercase tracking-wider mb-1">
+                Adaptive Streaming
+              </div>
+              <p className="text-xs text-ink-muted leading-normal">
+                Lossless Cloudflare R2 video delivery with persistent playback resumes.
+              </p>
             </div>
-            <div>
-              <h4 className="text-xs font-semibold text-ink">Cloudflare R2 Video</h4>
-              <p className="text-[11px] text-ink-muted">Adaptive HD streaming playback</p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-surface/60 border border-hairline/80">
-            <div className="w-8 h-8 rounded-md bg-sticker-teal/20 flex items-center justify-center text-sticker-teal shrink-0">
-              <CheckCircle2 className="w-4 h-4" />
+            <div className="pt-4 sm:pt-0 sm:px-4">
+              <div className="text-xs font-semibold text-ink uppercase tracking-wider mb-1">
+                Atomic Assessments
+              </div>
+              <p className="text-xs text-ink-muted leading-normal">
+                Single-choice quizzes graded instantly with precise formula verification.
+              </p>
             </div>
-            <div>
-              <h4 className="text-xs font-semibold text-ink">Instant Assessments</h4>
-              <p className="text-[11px] text-ink-muted">Atomic grading &amp; pass formula</p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-surface/60 border border-hairline/80">
-            <div className="w-8 h-8 rounded-md bg-sticker-purple/25 flex items-center justify-center text-sticker-purple-deep shrink-0">
-              <Award className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-semibold text-ink">90% Watch Mastery</h4>
-              <p className="text-[11px] text-ink-muted">Verified progress synchronization</p>
+            <div className="pt-4 sm:pt-0 sm:px-4 last:sm:pr-0">
+              <div className="text-xs font-semibold text-ink uppercase tracking-wider mb-1">
+                Mastery Sync
+              </div>
+              <p className="text-xs text-ink-muted leading-normal">
+                Strict 90% watch threshold and automated milestone progress completion.
+              </p>
             </div>
           </div>
         </div>
@@ -272,34 +263,36 @@ function HomeContent() {
       </section>
 
       {/* 3. Teacher & Platform Call to Action */}
-      <section className="w-full mt-10 py-16 px-4 sm:px-6 lg:px-8 bg-notion-indigo text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <Badge className="mb-4 bg-white/10 text-white border-white/20 px-3 py-1 text-xs">
-            <GraduationCap className="w-3.5 h-3.5 mr-1" />
-            Instructor Studio
-          </Badge>
+      <section className="w-full mt-8 py-16 px-4 sm:px-6 lg:px-8 bg-canvas-soft border-t border-hairline">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-lg bg-surface border border-hairline shadow-notion-soft p-8 sm:p-12 text-center">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-sticker-purple-deep bg-sticker-purple/20 border border-sticker-purple/30 mb-4">
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Instructor Studio</span>
+            </span>
 
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-4">
-            Share your expertise. Teach on EduHub.
-          </h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight mb-3">
+              Share your expertise. Teach on EduHub.
+            </h2>
 
-          <p className="text-white/80 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
-            Create structured chapters, upload high-definition video lessons with direct Cloudflare R2 storage, design interactive assessments, and track learner milestones.
-          </p>
+            <p className="text-sm sm:text-base text-ink-muted max-w-xl mx-auto mb-8 leading-relaxed">
+              Structure chapters, host high-definition video lessons with direct Cloudflare R2 storage, design interactive assessments, and track student milestones with atomic precision.
+            </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button
-              size="lg"
-              variant="pill"
-              className="px-8 shadow-md"
-              asChild
-            >
-              {user?.role === "TEACHER" || user?.role === "ADMIN" ? (
-                <Link href="/teacher">Open Teacher Dashboard</Link>
-              ) : (
-                <Link href="/register">Start Teaching Today</Link>
-              )}
-            </Button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button
+                size="lg"
+                variant="pill"
+                className="px-8 cursor-pointer"
+                asChild
+              >
+                {user?.role === "TEACHER" || user?.role === "ADMIN" ? (
+                  <Link href="/teacher">Open Teacher Dashboard</Link>
+                ) : (
+                  <Link href="/register">Start Teaching Today</Link>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -311,12 +304,19 @@ function HomeCatalogSkeleton() {
   return (
     <div className="flex flex-col flex-1 bg-canvas-soft">
       <section className="w-full py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
-        <div className="h-6 w-36 rounded-full bg-neutral-200/80 animate-pulse mx-auto mb-5" />
+        <div className="h-6 w-36 rounded-full bg-neutral-200/80 animate-pulse mx-auto mb-6" />
         <div className="h-12 w-3/4 max-w-2xl rounded-lg bg-neutral-200/80 animate-pulse mx-auto mb-4" />
         <div className="h-5 w-full max-w-md rounded-md bg-neutral-200/60 animate-pulse mx-auto mb-8" />
-        <div className="flex justify-center gap-3 mb-10">
+        <div className="flex justify-center gap-3 mb-12">
           <div className="h-11 w-36 rounded-full bg-neutral-200/80 animate-pulse" />
           <div className="h-11 w-36 rounded-full bg-neutral-200/80 animate-pulse" />
+        </div>
+        <div className="border-t border-hairline pt-8 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="h-16 rounded-md bg-neutral-200/50 animate-pulse" />
+            <div className="h-16 rounded-md bg-neutral-200/50 animate-pulse" />
+            <div className="h-16 rounded-md bg-neutral-200/50 animate-pulse" />
+          </div>
         </div>
       </section>
     </div>

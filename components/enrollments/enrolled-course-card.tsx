@@ -44,14 +44,14 @@ export function EnrolledCourseCard({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between rounded-2xl bg-surface border border-hairline shadow-notion-soft hover:shadow-notion-elevated transition-all overflow-hidden p-5 sm:p-6 gap-5",
+        "flex flex-col justify-between rounded-lg bg-surface border border-hairline hover:border-ink/20 shadow-notion-soft hover:shadow-notion-elevated transition-all overflow-hidden p-5 sm:p-6 gap-5",
         className,
       )}
     >
       <div className="flex flex-col gap-4">
         {/* Top Badges & Thumbnail Row */}
-        <div className="flex items-start gap-4">
-          <div className="relative aspect-video w-28 sm:w-36 rounded-xl overflow-hidden bg-canvas-soft border border-hairline shrink-0 flex items-center justify-center">
+        <div className="flex items-start gap-3.5 sm:gap-4">
+          <div className="relative aspect-video w-28 sm:w-32 rounded-md overflow-hidden bg-canvas-soft border border-hairline shrink-0 flex items-center justify-center">
             {course.thumbnailUrl ? (
               <img
                 src={course.thumbnailUrl}
@@ -59,25 +59,31 @@ export function EnrolledCourseCard({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="flex items-center justify-center text-notion-blue">
-                <BookOpen className="w-6 h-6" />
+              <div className="w-8 h-8 rounded-md bg-surface border border-hairline flex items-center justify-center text-ink-secondary">
+                <BookOpen className="w-4 h-4 text-notion-blue" />
               </div>
             )}
           </div>
 
-          <div className="flex flex-col gap-1.5 min-w-0">
+          <div className="flex flex-col gap-1 min-w-0">
             <div className="flex flex-wrap items-center gap-1.5">
               {course.category?.name && (
-                <Badge variant="secondary" className="text-[11px] px-2 py-0 bg-canvas-soft border-hairline text-ink-secondary">
+                <Badge
+                  variant="secondary"
+                  className="text-[11px] px-2 py-0.5 bg-canvas-soft border-hairline text-ink-secondary font-medium"
+                >
                   {course.category.name}
                 </Badge>
               )}
-              <Badge variant={levelInfo.variant} className="text-[11px] px-2 py-0 font-medium">
+              <Badge
+                variant={levelInfo.variant}
+                className="text-[11px] px-2 py-0.5 font-medium"
+              >
                 {levelInfo.label}
               </Badge>
             </div>
 
-            <h3 className="text-sm sm:text-base font-bold text-ink line-clamp-2 leading-snug">
+            <h3 className="text-sm sm:text-base font-semibold text-ink line-clamp-2 leading-snug">
               {course.title}
             </h3>
 
@@ -85,9 +91,12 @@ export function EnrolledCourseCard({
             <div className="flex items-center gap-2 mt-0.5">
               <Avatar className="w-5 h-5 border border-hairline shrink-0">
                 {course.teacher?.avatarUrl && (
-                  <AvatarImage src={course.teacher.avatarUrl} alt={course.teacher.fullName} />
+                  <AvatarImage
+                    src={course.teacher.avatarUrl}
+                    alt={course.teacher.fullName}
+                  />
                 )}
-                <AvatarFallback className="text-[9px] bg-canvas-soft font-semibold">
+                <AvatarFallback className="text-[9px] bg-canvas-soft text-ink font-semibold">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -99,27 +108,27 @@ export function EnrolledCourseCard({
         </div>
 
         {/* Progress Bar Section */}
-        <div className="flex flex-col gap-1.5 pt-2 border-t border-hairline">
+        <div className="flex flex-col gap-1.5 pt-3 border-t border-hairline">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-ink flex items-center gap-1.5">
               {isCourseComplete ? (
                 <>
                   <CheckCircle2 className="w-3.5 h-3.5 text-sticker-teal" />
-                  <span className="text-sticker-teal">Completed</span>
+                  <span className="text-sticker-teal font-semibold">Completed</span>
                 </>
               ) : (
-                <span>{roundedProgress}% Complete</span>
+                <span className="tabular-nums">{roundedProgress}% Complete</span>
               )}
             </span>
-            <span className="text-ink-muted">
+            <span className="text-ink-muted tabular-nums">
               {completedLessons} / {totalLessons} lessons
             </span>
           </div>
 
-          <div className="w-full h-2 rounded-full bg-canvas-soft border border-hairline overflow-hidden">
+          <div className="w-full h-1.5 rounded-full bg-canvas-soft border border-hairline overflow-hidden">
             <div
               className={cn(
-                "h-full rounded-full transition-all duration-500",
+                "h-full rounded-full transition-all duration-500 ease-out",
                 isCourseComplete ? "bg-sticker-teal" : "bg-notion-blue",
               )}
               style={{ width: `${Math.min(100, Math.max(0, roundedProgress))}%` }}
@@ -130,9 +139,9 @@ export function EnrolledCourseCard({
 
       {/* CTA Button */}
       <Button
-        variant={isCourseComplete ? "secondary" : "pill"}
+        variant={isCourseComplete ? "outline" : "pill"}
         size="default"
-        className="w-full font-semibold shadow-2xs gap-2"
+        className="w-full font-semibold h-10 gap-2 cursor-pointer"
         asChild
       >
         <Link href={`/learn/${course.id}`}>

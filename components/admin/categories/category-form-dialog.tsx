@@ -49,7 +49,6 @@ export function CategoryFormDialog({
     register,
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<CategoryFormValues>({
@@ -119,12 +118,12 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
         <DialogHeader className="space-y-1">
-          <DialogTitle className="text-lg font-bold text-neutral-900">
+          <DialogTitle className="text-base font-semibold text-ink">
             {isEdit ? "Edit Category" : "Create Category"}
           </DialogTitle>
-          <DialogDescription className="text-xs text-neutral-500">
+          <DialogDescription className="text-xs text-ink-muted">
             {isEdit
               ? "Update course category details and active availability."
               : "Create a new topic category for platform course classification."}
@@ -132,7 +131,7 @@ export function CategoryFormDialog({
         </DialogHeader>
 
         {submitError && (
-          <div className="rounded-lg bg-rose-50 p-3 text-xs font-medium text-rose-700 border border-rose-200">
+          <div className="rounded-md bg-rose-500/10 p-3 text-xs font-medium text-rose-600 dark:text-rose-400 border border-rose-500/20">
             {submitError}
           </div>
         )}
@@ -140,7 +139,7 @@ export function CategoryFormDialog({
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 py-2">
           {/* Category Name */}
           <div className="space-y-1.5">
-            <Label htmlFor="category-name" className="text-xs font-semibold text-neutral-700">
+            <Label htmlFor="category-name" className="text-xs font-medium text-ink">
               Category Name
             </Label>
             <Input
@@ -148,7 +147,7 @@ export function CategoryFormDialog({
               placeholder="e.g. Data Science"
               {...register("name")}
               onChange={handleNameChange}
-              className="text-xs border-neutral-200 focus-visible:ring-[#0075de]"
+              className="text-xs border-hairline bg-surface text-ink focus-visible:ring-notion-blue placeholder:text-ink-muted"
             />
             {errors.name && (
               <p className="text-[11px] font-medium text-rose-600">
@@ -159,20 +158,20 @@ export function CategoryFormDialog({
 
           {/* Slug */}
           <div className="space-y-1.5">
-            <Label htmlFor="category-slug" className="text-xs font-semibold text-neutral-700">
+            <Label htmlFor="category-slug" className="text-xs font-medium text-ink">
               Slug (URL Identifier)
             </Label>
             <Input
               id="category-slug"
               placeholder="e.g. data-science"
               {...register("slug")}
-              className="text-xs font-mono border-neutral-200 focus-visible:ring-[#0075de]"
+              className="text-xs font-mono border-hairline bg-surface text-ink focus-visible:ring-notion-blue placeholder:text-ink-muted"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-1.5">
-            <Label htmlFor="category-desc" className="text-xs font-semibold text-neutral-700">
+            <Label htmlFor="category-desc" className="text-xs font-medium text-ink">
               Description
             </Label>
             <Textarea
@@ -180,7 +179,7 @@ export function CategoryFormDialog({
               rows={3}
               placeholder="Optional overview of subjects covered under this category..."
               {...register("description")}
-              className="text-xs border-neutral-200 focus-visible:ring-[#0075de]"
+              className="text-xs border-hairline bg-surface text-ink focus-visible:ring-notion-blue placeholder:text-ink-muted resize-none"
             />
           </div>
 
@@ -190,9 +189,9 @@ export function CategoryFormDialog({
               type="checkbox"
               id="category-active"
               {...register("isActive")}
-              className="h-4 w-4 rounded border-neutral-300 text-[#0075de] focus:ring-[#0075de]"
+              className="h-4 w-4 rounded border-hairline text-notion-blue focus:ring-notion-blue"
             />
-            <Label htmlFor="category-active" className="text-xs font-medium text-neutral-700 cursor-pointer">
+            <Label htmlFor="category-active" className="text-xs font-medium text-ink cursor-pointer">
               Active and visible in course creation dropdowns
             </Label>
           </div>
@@ -202,14 +201,14 @@ export function CategoryFormDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="text-xs font-medium border-neutral-200"
+              className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-medium"
+              className="bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium"
             >
               {isSubmitting ? "Saving..." : "Save Category"}
             </Button>

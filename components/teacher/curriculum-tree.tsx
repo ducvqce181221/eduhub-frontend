@@ -151,16 +151,16 @@ function ChapterRow({
       <div
         ref={ref}
         data-testid={`chapter-card-${chapter.id}`}
-        className="rounded-xl border border-neutral-200 bg-white shadow-2xs transition-all overflow-hidden"
+        className="rounded-lg border border-hairline bg-surface shadow-notion-soft transition-all overflow-hidden"
       >
         {/* Chapter Header Bar */}
-        <div className="flex items-center justify-between border-b border-neutral-100 bg-neutral-50/70 p-3 sm:px-4 select-none hover:bg-neutral-100/60 transition-colors">
+        <div className="flex items-center justify-between border-b border-hairline bg-canvas-soft/70 px-4 py-3 select-none hover:bg-canvas-soft transition-colors">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
             {/* Grip handle button exclusively controls drag */}
             <button
               ref={handleRef}
               type="button"
-              className="cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700 p-1 -ml-1 rounded transition-colors"
+              className="cursor-grab active:cursor-grabbing text-ink-muted hover:text-ink p-1 -ml-1 rounded transition-colors"
               title="Drag to reorder chapter"
               aria-label="Drag to reorder chapter"
               data-testid={`drag-chapter-${chapter.id}`}
@@ -171,7 +171,7 @@ function ChapterRow({
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-neutral-500 hover:text-neutral-900 cursor-pointer p-0.5 rounded"
+              className="text-ink-muted hover:text-ink cursor-pointer p-0.5 rounded transition-colors"
               aria-label={isExpanded ? "Collapse chapter" : "Expand chapter"}
             >
               {isExpanded ? (
@@ -189,31 +189,31 @@ function ChapterRow({
                   onBlur={handleSaveTitle}
                   onKeyDown={(e) => e.key === "Enter" && handleSaveTitle()}
                   autoFocus
-                  className="h-7 text-xs font-semibold bg-white"
+                  className="h-7 text-xs font-semibold bg-surface border-hairline"
                 />
               </div>
             ) : (
               <span
                 onClick={() => setIsEditingTitle(true)}
-                className="cursor-pointer truncate text-sm font-semibold text-neutral-900 hover:text-[#0075de]"
+                className="cursor-pointer truncate text-sm font-semibold text-ink hover:text-notion-blue transition-colors"
                 title="Click to rename chapter"
               >
                 {chapter.title}
               </span>
             )}
 
-            <span className="text-[11px] font-medium text-neutral-400">
+            <span className="text-[11px] font-mono tabular-nums text-ink-muted">
               ({chapter.lessons?.length || 0} lessons)
             </span>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={() => onAddLesson(chapter.id, { title: `Lesson ${(chapter.lessons?.length || 0) + 1}` })}
-              className="h-7 rounded-md px-2 text-xs font-medium text-[#0075de] hover:bg-sky-50"
+              className="h-7 rounded-md px-2.5 text-xs font-medium text-notion-blue hover:bg-notion-blue/5 border border-notion-blue/20 hover:border-notion-blue/40 transition-colors"
             >
               <Plus className="mr-1 h-3 w-3" />
               Add Lesson
@@ -224,7 +224,7 @@ function ChapterRow({
               variant="ghost"
               size="icon"
               onClick={() => setIsEditingTitle(true)}
-              className="h-7 w-7 text-neutral-400 hover:text-neutral-700"
+              className="h-7 w-7 text-ink-muted hover:text-ink"
             >
               <Edit3 className="h-3.5 w-3.5" />
             </Button>
@@ -239,8 +239,8 @@ function ChapterRow({
               onClick={() => setShowDeleteModal(true)}
               className={`h-7 w-7 ${
                 isDeleteChapterBlocked
-                  ? "cursor-not-allowed text-neutral-300 opacity-50"
-                  : "text-neutral-400 hover:text-rose-600"
+                  ? "cursor-not-allowed text-ink-faint opacity-40"
+                  : "text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
               }`}
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -251,9 +251,9 @@ function ChapterRow({
         {/* Chapter Lessons List isolated in its own DragDropProvider */}
         {isExpanded && (
           <DragDropProvider onDragEnd={handleLessonDragEnd}>
-            <div className="divide-y divide-neutral-100 bg-white">
+            <div className="divide-y divide-hairline bg-surface">
               {(!chapter.lessons || chapter.lessons.length === 0) ? (
-                <div className="p-4 text-center text-xs text-neutral-400">
+                <div className="p-4 text-center text-xs text-ink-muted">
                   No lessons in this chapter. Click &quot;Add Lesson&quot; to create one.
                 </div>
               ) : (
@@ -331,14 +331,14 @@ function LessonRow({
       <div
         ref={ref}
         data-testid={`lesson-row-${lesson.id}`}
-        className="group flex items-center justify-between p-2.5 pl-4 sm:pl-6 pr-4 transition-colors hover:bg-neutral-50/90 select-none"
+        className="group flex items-center justify-between p-2.5 pl-4 sm:pl-6 pr-4 transition-colors hover:bg-canvas-soft/60 select-none"
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {/* Grip handle button exclusively controls drag */}
           <button
             ref={handleRef}
             type="button"
-            className="cursor-grab active:cursor-grabbing text-neutral-300 hover:text-neutral-600 p-1 -ml-1 rounded transition-colors"
+            className="cursor-grab active:cursor-grabbing text-ink-faint hover:text-ink p-1 -ml-1 rounded transition-colors"
             title="Drag to reorder lesson"
             aria-label="Drag to reorder lesson"
             data-testid={`drag-lesson-${lesson.id}`}
@@ -349,7 +349,7 @@ function LessonRow({
 
           <span
             onClick={() => onSelectLesson(lesson)}
-            className="truncate text-xs font-medium text-neutral-800 hover:text-[#0075de] cursor-pointer"
+            className="truncate text-xs font-medium text-ink hover:text-notion-blue cursor-pointer transition-colors"
           >
             {lesson.title}
           </span>
@@ -357,25 +357,25 @@ function LessonRow({
           {/* Indicators */}
           <div className="flex items-center gap-1.5 shrink-0">
             {lesson.video ? (
-              <span className="inline-flex items-center gap-1 rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-medium text-[#0075de]">
+              <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono tabular-nums bg-sticker-sky/15 text-sticker-sky-deep">
                 <Video className="h-3 w-3" />
                 {durationStr || "Video"}
               </span>
             ) : (
-              <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
+              <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-sticker-orange/15 text-sticker-orange-deep">
                 No Video
               </span>
             )}
 
             {lesson.quiz && (
-              <span className="inline-flex items-center gap-1 rounded bg-purple-50 px-1.5 py-0.5 text-[10px] font-medium text-purple-700">
+              <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium bg-sticker-purple/15 text-sticker-purple">
                 <HelpCircle className="h-3 w-3" />
                 Quiz
               </span>
             )}
 
             {lesson.resources && lesson.resources.length > 0 && (
-              <span className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600">
+              <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono tabular-nums bg-canvas-soft text-ink-muted border border-hairline">
                 <FileText className="h-3 w-3" />
                 {lesson.resources.length}
               </span>
@@ -389,7 +389,7 @@ function LessonRow({
             variant="ghost"
             size="sm"
             onClick={() => onSelectLesson(lesson)}
-            className="h-6 rounded px-2 text-[11px] font-medium text-neutral-500 hover:text-neutral-900"
+            className="h-6 rounded-md px-2 text-[11px] font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft transition-colors"
           >
             Edit Content
           </Button>
@@ -404,8 +404,8 @@ function LessonRow({
             onClick={() => setShowDeleteModal(true)}
             className={`h-6 w-6 ${
               isDeleteBlocked
-                ? "cursor-not-allowed text-neutral-300 opacity-50"
-                : "text-neutral-400 hover:text-rose-600"
+                ? "cursor-not-allowed text-ink-faint opacity-40"
+                : "text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
             }`}
           >
             <Trash2 className="h-3 w-3" />
@@ -560,10 +560,10 @@ export function CurriculumTree({
     <div className="relative space-y-6 pb-12">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-bold text-neutral-900">
+          <h2 className="text-lg font-bold text-ink">
             Curriculum Structure
           </h2>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-ink-muted">
             Organize chapters and lessons. Drag the grip handles to reorder sections.
           </p>
         </div>
@@ -571,7 +571,7 @@ export function CurriculumTree({
         <Button
           type="button"
           onClick={() => setIsAddingChapter(true)}
-          className="rounded-md bg-[#0075de] text-xs font-medium text-white hover:bg-[#005bab]"
+          className="rounded-md bg-notion-blue text-xs font-medium text-white hover:bg-notion-blue-active shadow-2xs"
         >
           <Plus className="mr-1.5 h-3.5 w-3.5" />
           Add Chapter
@@ -582,17 +582,17 @@ export function CurriculumTree({
       <DragDropProvider onDragEnd={handleChapterDragEnd}>
         <div className="space-y-4">
           {localChapters.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-neutral-200 bg-white p-12 text-center">
-              <h3 className="text-sm font-semibold text-neutral-900">
+            <div className="rounded-lg border border-dashed border-hairline bg-surface p-12 text-center shadow-notion-soft">
+              <h3 className="text-sm font-semibold text-ink">
                 No chapters added yet
               </h3>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs text-ink-muted">
                 Create your first chapter to begin building your course curriculum.
               </p>
               <Button
                 type="button"
                 onClick={() => setIsAddingChapter(true)}
-                className="mt-4 rounded-md bg-[#0075de] text-xs text-white hover:bg-[#005bab]"
+                className="mt-4 rounded-md bg-notion-blue text-xs font-medium text-white hover:bg-notion-blue-active shadow-2xs"
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
                 Add Chapter
@@ -622,12 +622,12 @@ export function CurriculumTree({
       {hasUnsavedChanges && (
         <div
           data-testid="unsaved-reorder-bar"
-          className="sticky bottom-6 z-40 mx-auto max-w-2xl rounded-2xl border border-neutral-200/90 bg-white/95 p-3.5 px-5 shadow-xl backdrop-blur-md transition-all animate-in fade-in slide-in-from-bottom-4"
+          className="sticky bottom-6 z-40 mx-auto max-w-2xl rounded-lg border border-hairline bg-surface p-3.5 px-5 shadow-notion-elevated transition-all animate-in fade-in slide-in-from-bottom-4"
         >
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-              <p className="text-xs font-semibold text-neutral-800">
+              <span className="flex h-2 w-2 rounded-full bg-sticker-orange animate-pulse" />
+              <p className="text-xs font-semibold text-ink">
                 You have unsaved curriculum changes
               </p>
             </div>
@@ -640,7 +640,7 @@ export function CurriculumTree({
                 disabled={isSavingReorder}
                 onClick={handleDiscard}
                 data-testid="discard-reorder-btn"
-                className="h-8 rounded-lg border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+                className="h-8 rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
               >
                 Discard
               </Button>
@@ -650,7 +650,7 @@ export function CurriculumTree({
                 disabled={isSavingReorder}
                 onClick={handleSaveChanges}
                 data-testid="save-reorder-btn"
-                className="h-8 rounded-lg bg-[#0075de] px-4 text-xs font-semibold text-white hover:bg-[#005bab] shadow-xs"
+                className="h-8 rounded-md bg-notion-blue px-4 text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
               >
                 {isSavingReorder ? (
                   <>
@@ -668,14 +668,14 @@ export function CurriculumTree({
 
       {/* Add Chapter Dialog */}
       <Dialog open={isAddingChapter} onOpenChange={setIsAddingChapter}>
-        <DialogContent className="sm:max-w-md rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-2xl">
+        <DialogContent className="sm:max-w-md rounded-lg border border-hairline bg-surface p-6 shadow-notion-elevated">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-neutral-900">
+            <DialogTitle className="text-base font-bold text-ink tracking-tight">
               New Chapter
             </DialogTitle>
           </DialogHeader>
           <div className="py-2">
-            <label className="block text-xs font-semibold text-neutral-700">
+            <label className="block text-xs font-semibold text-ink">
               Chapter Title
             </label>
             <Input
@@ -683,7 +683,7 @@ export function CurriculumTree({
               onChange={(e) => setNewChapterTitle(e.target.value)}
               placeholder={`Chapter ${localChapters.length + 1}: Introduction`}
               onKeyDown={(e) => e.key === "Enter" && handleCreateChapter()}
-              className="mt-1.5 text-xs bg-white border-neutral-200"
+              className="mt-1.5 text-xs bg-surface border-hairline"
               autoFocus
             />
           </div>
@@ -692,7 +692,7 @@ export function CurriculumTree({
               type="button"
               variant="outline"
               onClick={() => setIsAddingChapter(false)}
-              className="rounded-xl border-neutral-200 text-xs font-semibold text-neutral-700"
+              className="rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
             >
               Cancel
             </Button>
@@ -700,7 +700,7 @@ export function CurriculumTree({
               type="button"
               onClick={handleCreateChapter}
               disabled={!newChapterTitle.trim()}
-              className="rounded-xl bg-[#0075de] text-xs font-semibold text-white hover:bg-[#005bab] shadow-xs"
+              className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
             >
               Create Chapter
             </Button>

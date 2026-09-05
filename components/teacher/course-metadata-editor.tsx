@@ -100,12 +100,12 @@ export function CourseMetadataEditor({
   };
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-xs">
+    <div className="rounded-lg border border-hairline bg-surface p-6 shadow-notion-soft">
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-neutral-900">
+        <h2 className="text-lg font-bold text-ink tracking-tight">
           Course Information & Metadata
         </h2>
-        <p className="mt-1 text-xs text-neutral-500">
+        <p className="mt-1 text-xs text-ink-muted">
           Set up the title, category, target level, and cover image displayed in the public catalog.
         </p>
       </div>
@@ -114,15 +114,15 @@ export function CourseMetadataEditor({
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           {/* Thumbnail Uploader */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-700">
+            <label className="block text-xs font-semibold text-ink">
               Course Thumbnail
             </label>
-            <p className="mb-2 text-xs text-neutral-400">
+            <p className="mb-2 text-xs text-ink-muted">
               Recommended: 16:9 ratio (1280x720px, PNG or JPG).
             </p>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="relative aspect-video w-full max-w-[280px] overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50">
+              <div className="relative aspect-video w-full max-w-70 overflow-hidden rounded-md border border-hairline bg-canvas-soft">
                 {thumbnailUrl ? (
                   <>
                     <Image
@@ -135,14 +135,14 @@ export function CourseMetadataEditor({
                     <button
                       type="button"
                       onClick={handleRemoveImage}
-                      className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white transition hover:bg-black/80"
+                      className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white transition hover:bg-black/80 cursor-pointer"
                       title="Remove image"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </>
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center text-neutral-400">
+                  <div className="flex h-full w-full flex-col items-center justify-center text-ink-muted">
                     <ImageIcon className="h-8 w-8 stroke-1" />
                     <span className="mt-1 text-xs">No cover image</span>
                   </div>
@@ -150,15 +150,15 @@ export function CourseMetadataEditor({
               </div>
 
               <div>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-neutral-200 bg-white px-3 py-2 text-xs font-medium text-neutral-700 shadow-xs hover:bg-neutral-50">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-hairline bg-surface px-3 py-2 text-xs font-medium text-ink shadow-2xs hover:bg-canvas-soft transition-colors">
                   {isUploadingImage ? (
                     <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-500" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-ink-muted" />
                       Uploading to Cloudinary...
                     </>
                   ) : (
                     <>
-                      <Upload className="h-3.5 w-3.5" />
+                      <Upload className="h-3.5 w-3.5 text-notion-blue" />
                       {thumbnailUrl ? "Change Thumbnail" : "Upload Image"}
                     </>
                   )}
@@ -181,7 +181,7 @@ export function CourseMetadataEditor({
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Master NestJS and Microservices" {...field} />
+                  <Input placeholder="e.g. Master NestJS and Microservices" className="bg-surface border-hairline" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -198,7 +198,7 @@ export function CourseMetadataEditor({
                   <FormControl>
                     <select
                       aria-label="Category"
-                      className="flex h-9 w-full rounded-md border border-neutral-200 bg-white px-3 py-1 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-400"
+                      className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
                       {...field}
                     >
                       {categories.map((cat) => (
@@ -222,7 +222,7 @@ export function CourseMetadataEditor({
                   <FormControl>
                     <select
                       aria-label="Target Level"
-                      className="flex h-9 w-full rounded-md border border-neutral-200 bg-white px-3 py-1 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-400"
+                      className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
                       {...field}
                     >
                       <option value="BEGINNER">Beginner</option>
@@ -245,7 +245,7 @@ export function CourseMetadataEditor({
                 <FormControl>
                   <Textarea
                     placeholder="Provide a detailed overview of the curriculum and learning outcomes..."
-                    className="resize-none"
+                    className="resize-none bg-surface border-hairline text-xs"
                     rows={4}
                     {...field}
                   />
@@ -257,14 +257,14 @@ export function CourseMetadataEditor({
 
           <div className="flex items-center justify-end gap-3 pt-4">
             {showSavedToast && (
-              <span className="flex items-center gap-1 text-xs font-medium text-emerald-600">
+              <span className="flex items-center gap-1 text-xs font-medium text-sticker-teal">
                 <Check className="h-3.5 w-3.5" /> Saved successfully
               </span>
             )}
             <Button
               type="submit"
               disabled={isSaving}
-              className="rounded-md bg-[#0075de] text-xs font-medium text-white hover:bg-[#005bab]"
+              className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
             >
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>

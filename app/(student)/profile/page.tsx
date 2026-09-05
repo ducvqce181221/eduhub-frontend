@@ -118,7 +118,7 @@ export default function ProfilePage() {
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left Column: Avatar & Summary */}
-        <Card className="border-hairline shadow-notion-soft bg-surface rounded-xl md:col-span-1">
+        <Card className="border-hairline shadow-notion-soft bg-surface rounded-lg md:col-span-1">
           <CardHeader className="text-center pb-2">
             <div className="relative mx-auto mb-4 group w-24 h-24">
               <Avatar className="w-24 h-24 border border-hairline shadow-2xs">
@@ -161,7 +161,7 @@ export default function ProfilePage() {
             <CardDescription className="text-xs text-ink-muted">{user.email}</CardDescription>
           </CardHeader>
 
-          <CardContent className="pt-2 text-center">
+          <CardContent className="pt-2 flex flex-col items-center justify-center">
             <Badge variant={getRoleBadgeVariant(user.role)} className="text-xs uppercase tracking-wider font-semibold">
               {user.role}
             </Badge>
@@ -169,7 +169,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Right Column: Edit Profile Details */}
-        <Card className="border-hairline shadow-notion-soft bg-surface rounded-xl md:col-span-2">
+        <Card className="border-hairline shadow-notion-soft bg-surface rounded-lg md:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg font-bold text-ink">
               Account Information

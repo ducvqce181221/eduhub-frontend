@@ -41,18 +41,18 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case "ADMIN":
-        return "orange";
+        return "admin" as const;
       case "TEACHER":
-        return "purple";
+        return "teacher" as const;
       default:
-        return "secondary";
+        return "student" as const;
     }
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none rounded-full ring-offset-2 focus:ring-2 focus:ring-notion-blue/30">
-        <div className="flex items-center gap-2 p-1 rounded-full hover:bg-black/5 transition-colors cursor-pointer">
+        <div className="flex items-center gap-2 p-1 rounded-full hover:bg-canvas-soft transition-colors cursor-pointer">
           <Avatar className="h-8 w-8 border border-hairline">
             {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.fullName} />}
             <AvatarFallback className="bg-notion-blue text-white text-xs font-semibold">
@@ -65,26 +65,26 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
         </div>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-56 bg-surface border border-hairline shadow-notion-soft" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
+      <DropdownMenuContent className="w-56 bg-surface border border-hairline shadow-notion-dropdown rounded-lg p-1" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal px-2.5 py-2">
           <div className="flex flex-col space-y-1.5">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold leading-none text-ink">{user.fullName}</p>
-              <Badge variant={getRoleBadgeVariant(user.role)} className="text-xs px-2 py-0 h-4.5">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-bold leading-none text-ink truncate">{user.fullName}</p>
+              <Badge variant={getRoleBadgeVariant(user.role)} className="text-[10px] px-1.5 py-0 h-4 shrink-0 font-medium">
                 {user.role}
               </Badge>
             </div>
-            <p className="text-xs leading-none text-ink-muted truncate">{user.email}</p>
+            <p className="text-[11px] leading-none text-ink-muted truncate">{user.email}</p>
           </div>
         </DropdownMenuLabel>
 
-        <DropdownMenuSeparator className="bg-hairline" />
+        <DropdownMenuSeparator className="bg-hairline my-1" />
 
-        <DropdownMenuGroup>
+        <DropdownMenuGroup className="space-y-0.5">
           {user.role === "ADMIN" && (
             <DropdownMenuItem asChild>
-              <Link href="/admin" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">
-                <Shield className="mr-2 h-4 w-4 text-ink-muted" />
+              <Link href="/admin" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+                <Shield className="mr-2 h-3.5 w-3.5 text-ink-muted" />
                 <span>Admin Panel</span>
               </Link>
             </DropdownMenuItem>
@@ -92,8 +92,8 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
 
           {(user.role === "TEACHER" || user.role === "ADMIN") && (
             <DropdownMenuItem asChild>
-              <Link href="/teacher" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">
-                <LayoutDashboard className="mr-2 h-4 w-4 text-ink-muted" />
+              <Link href="/teacher" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+                <LayoutDashboard className="mr-2 h-3.5 w-3.5 text-ink-muted" />
                 <span>Teacher Dashboard</span>
               </Link>
             </DropdownMenuItem>
@@ -101,35 +101,35 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
 
           {user.role === "STUDENT" && (
             <DropdownMenuItem asChild>
-              <Link href="/me/enrollments" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">
-                <BookOpen className="mr-2 h-4 w-4 text-ink-muted" />
+              <Link href="/me/enrollments" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+                <BookOpen className="mr-2 h-3.5 w-3.5 text-ink-muted" />
                 <span>My Enrollments</span>
               </Link>
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem asChild>
-            <Link href="/profile" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">
-              <UserIcon className="mr-2 h-4 w-4 text-ink-muted" />
+            <Link href="/profile" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+              <UserIcon className="mr-2 h-3.5 w-3.5 text-ink-muted" />
               <span>Profile Settings</span>
             </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
-            <Link href="/change-password" className="cursor-pointer flex items-center text-ink-secondary hover:text-ink">
-              <KeyRound className="mr-2 h-4 w-4 text-ink-muted" />
+            <Link href="/change-password" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+              <KeyRound className="mr-2 h-3.5 w-3.5 text-ink-muted" />
               <span>Change Password</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
-        <DropdownMenuSeparator className="bg-hairline" />
+        <DropdownMenuSeparator className="bg-hairline my-1" />
 
         <DropdownMenuItem
           onClick={handleLogout}
-          className="cursor-pointer text-sticker-orange focus:text-sticker-orange focus:bg-sticker-orange/10"
+          className="cursor-pointer text-xs font-medium text-sticker-orange-deep hover:text-sticker-orange hover:bg-sticker-orange/10 focus:text-sticker-orange focus:bg-sticker-orange/10 rounded-md px-2.5 py-1.5"
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-2 h-3.5 w-3.5" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

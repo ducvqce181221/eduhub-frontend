@@ -31,10 +31,10 @@ export default function AdminNotificationsPage() {
 
       <div className="flex-1 space-y-6 p-6">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-neutral-900">
+          <h2 className="text-lg font-semibold tracking-tight text-ink">
             Platform Notification Broadcast
           </h2>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-ink-muted">
             Deliver immediate, platform-wide notices, maintenance warnings, or vital service announcements.
           </p>
         </div>

@@ -72,74 +72,74 @@ export default function AdminCoursesPage() {
       <div className="flex-1 space-y-6 p-6">
         {/* Header */}
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-neutral-900">
+          <h2 className="text-lg font-semibold tracking-tight text-ink">
             Platform Courses
           </h2>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-ink-muted">
             Audit published curricula, inspect author assignments, and manage life-cycle states.
           </p>
         </div>
 
         {/* Metric Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-50 text-[#0075de]">
-                <BookOpen className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-canvas-soft border border-hairline text-ink-muted">
+                <BookOpen className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
                   Total Courses
                 </p>
-                <h3 className="text-xl font-bold text-neutral-900">
+                <h3 className="text-xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                   {totalCourses}
                 </h3>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                <CheckCircle2 className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sticker-teal/15 border border-sticker-teal/20 text-sticker-teal">
+                <CheckCircle2 className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
                   Published
                 </p>
-                <h3 className="text-xl font-bold text-neutral-900">
+                <h3 className="text-xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                   {publishedCount}
                 </h3>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-                <FileEdit className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sticker-amber/15 border border-sticker-amber/20 text-sticker-amber-deep">
+                <FileEdit className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
                   Drafts
                 </p>
-                <h3 className="text-xl font-bold text-neutral-900">
+                <h3 className="text-xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                   {draftCount}
                 </h3>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600">
-                <Archive className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-canvas-soft border border-hairline text-ink-muted">
+                <Archive className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
                   Archived
                 </p>
-                <h3 className="text-xl font-bold text-neutral-900">
+                <h3 className="text-xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                   {archivedCount}
                 </h3>
               </div>

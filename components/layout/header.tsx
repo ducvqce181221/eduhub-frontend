@@ -19,12 +19,12 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
   const isAuthed = isAuthenticated || Boolean(currentUser);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-hairline bg-surface/95 backdrop-blur supports-backdrop-filter:bg-surface/80">
+    <header className="sticky top-0 z-40 w-full border-b border-hairline bg-surface">
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Left: Brand + Explore Menu */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <Link href="/" className="flex items-center gap-2.5 font-bold text-base text-ink">
-            <span className="w-7 h-7 rounded-md bg-notion-blue text-white flex items-center justify-center text-xs font-bold shadow-2xs">
+            <span className="w-7 h-7 rounded-md bg-notion-blue text-white flex items-center justify-center text-xs font-bold">
               E
             </span>
             <span className="tracking-tight text-base font-bold hidden xs:inline">EduHub</span>
@@ -35,7 +35,7 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
 
         {/* Center: Global Course Search */}
         <div className="hidden sm:flex flex-1 justify-center max-w-md lg:max-w-lg mx-2">
-          <React.Suspense fallback={<div className="w-full h-9 bg-canvas-soft rounded-full animate-pulse border border-hairline" />}>
+          <React.Suspense fallback={<div className="w-full h-9 bg-canvas-soft rounded-md animate-pulse border border-hairline" />}>
             <HeaderSearch />
           </React.Suspense>
         </div>
@@ -46,10 +46,10 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
             {isAuthed && currentUser?.role === "STUDENT" && (
               <Link
                 href="/me/enrollments"
-                className={`px-3 py-1.5 rounded-md transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   pathname === "/me/enrollments"
-                    ? "bg-black/5 text-ink font-semibold"
-                    : "hover:bg-black/5 hover:text-ink"
+                    ? "bg-canvas-soft text-ink font-semibold border border-hairline"
+                    : "hover:bg-canvas-soft hover:text-ink text-ink-secondary"
                 }`}
               >
                 My Enrollments
@@ -59,10 +59,10 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
             {isAuthed && (currentUser?.role === "TEACHER" || currentUser?.role === "ADMIN") && (
               <Link
                 href="/teacher"
-                className={`px-3 py-1.5 rounded-md transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   pathname?.startsWith("/teacher")
-                    ? "bg-black/5 text-ink font-semibold"
-                    : "hover:bg-black/5 hover:text-ink"
+                    ? "bg-canvas-soft text-ink font-semibold border border-hairline"
+                    : "hover:bg-canvas-soft hover:text-ink text-ink-secondary"
                 }`}
               >
                 Teacher Dashboard
@@ -72,10 +72,10 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
             {isAuthed && currentUser?.role === "ADMIN" && (
               <Link
                 href="/admin"
-                className={`px-3 py-1.5 rounded-md transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   pathname?.startsWith("/admin")
-                    ? "bg-black/5 text-ink font-semibold"
-                    : "hover:bg-black/5 hover:text-ink"
+                    ? "bg-canvas-soft text-ink font-semibold border border-hairline"
+                    : "hover:bg-canvas-soft hover:text-ink text-ink-secondary"
                 }`}
               >
                 Admin Panel

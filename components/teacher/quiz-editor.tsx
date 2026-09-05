@@ -134,20 +134,20 @@ export function QuizEditor({
 
   if (!quiz) {
     return (
-      <div className="rounded-xl border border-neutral-200 bg-white p-8 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
+      <div className="rounded-lg border border-dashed border-hairline bg-surface p-8 text-center shadow-notion-soft">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft text-ink-muted border border-hairline">
           <HelpCircle className="h-6 w-6 stroke-1" />
         </div>
-        <h3 className="mt-3 text-sm font-bold text-neutral-900">
+        <h3 className="mt-3 text-sm font-bold text-ink">
           No quiz attached to this lesson
         </h3>
-        <p className="mt-1 text-xs text-neutral-500">
+        <p className="mt-1 text-xs text-ink-muted">
           Add an assessment quiz to test student mastery after completing the video.
         </p>
         <Button
           type="button"
           onClick={() => onCreateQuiz({ title: "Lesson Quiz", passScore: 80 })}
-          className="mt-4 rounded-md bg-[#0075de] text-xs text-white hover:bg-[#005bab]"
+          className="mt-4 rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
         >
           <Plus className="mr-1.5 h-3.5 w-3.5" />
           Create Quiz
@@ -158,23 +158,23 @@ export function QuizEditor({
 
   return (
     <>
-      <div className="space-y-6 rounded-xl border border-neutral-200 bg-white p-5">
+      <div className="space-y-6 rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
         {/* Quiz Header & Pass Score */}
-        <div className="flex flex-col gap-4 border-b border-neutral-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-hairline pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex-1">
-            <label className="block text-xs font-semibold text-neutral-700">
+            <label className="block text-xs font-semibold text-ink">
               Quiz Title
             </label>
             <Input
               defaultValue={quiz.title}
               onBlur={(e) => onUpdateQuiz({ title: e.target.value.trim() })}
-              className="mt-1 text-sm font-semibold"
+              className="mt-1 text-sm font-semibold bg-surface border-hairline"
             />
           </div>
 
           <div className="flex items-center gap-3">
             <div>
-              <label className="block text-xs font-semibold text-neutral-700">
+              <label className="block text-xs font-semibold text-ink">
                 Pass Score (%)
               </label>
               <Input
@@ -183,7 +183,7 @@ export function QuizEditor({
                 max="100"
                 defaultValue={quiz.passScore}
                 onBlur={handlePassScoreBlur}
-                className="mt-1 h-9 w-24 text-xs font-medium"
+                className="mt-1 h-9 w-24 text-xs font-medium bg-surface border-hairline font-mono tabular-nums"
               />
             </div>
 
@@ -192,7 +192,7 @@ export function QuizEditor({
               variant="ghost"
               size="sm"
               onClick={() => setShowDeleteQuizDialog(true)}
-              className="mt-5 rounded-md text-xs text-neutral-400 hover:text-rose-600"
+              className="mt-5 rounded-md text-xs text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -202,7 +202,7 @@ export function QuizEditor({
         {/* Questions list */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-ink-muted font-mono tabular-nums">
               Questions ({quiz.questions?.length || 0})
             </h4>
 
@@ -211,7 +211,7 @@ export function QuizEditor({
                 type="button"
                 size="sm"
                 onClick={() => setIsAddingQuestion(true)}
-                className="rounded-md bg-[#0075de] text-xs text-white hover:bg-[#005bab]"
+                className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
                 Add Question
@@ -225,18 +225,18 @@ export function QuizEditor({
               {quiz.questions.map((q, qIndex) => (
                 <div
                   key={q.id}
-                  className="rounded-lg border border-neutral-200 bg-neutral-50/50 p-4"
+                  className="rounded-md border border-hairline bg-canvas-soft/40 p-4"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-start gap-2">
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-200 text-xs font-bold text-neutral-700">
+                    <div className="flex items-start gap-2.5">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface border border-hairline text-xs font-bold text-ink shrink-0 mt-0.5">
                         {qIndex + 1}
                       </span>
                       <div>
-                        <h5 className="text-sm font-semibold text-neutral-900">
+                        <h5 className="text-sm font-semibold text-ink">
                           {q.content}
                         </h5>
-                        <span className="text-[11px] font-medium text-neutral-400">
+                        <span className="text-[11px] font-mono tabular-nums text-ink-muted">
                           Weight: {q.points} pt{q.points > 1 ? "s" : ""}
                         </span>
                       </div>
@@ -247,7 +247,7 @@ export function QuizEditor({
                       variant="ghost"
                       size="icon"
                       onClick={() => setDeletingQuestionId(q.id)}
-                      className="h-6 w-6 text-neutral-400 hover:text-rose-600"
+                      className="h-6 w-6 text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -260,13 +260,13 @@ export function QuizEditor({
                         key={ans.id}
                         className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs ${
                           ans.isCorrect
-                            ? "bg-emerald-50 text-emerald-900 font-medium"
-                            : "text-neutral-600"
+                            ? "bg-sticker-teal/15 text-sticker-teal font-medium"
+                            : "text-ink-secondary"
                         }`}
                       >
                         <CheckCircle2
-                          className={`h-3.5 w-3.5 ${
-                            ans.isCorrect ? "text-emerald-600" : "text-neutral-300"
+                          className={`h-3.5 w-3.5 shrink-0 ${
+                            ans.isCorrect ? "text-sticker-teal" : "text-ink-faint"
                           }`}
                         />
                         <span>{ans.content}</span>
@@ -278,7 +278,7 @@ export function QuizEditor({
             </div>
           ) : (
             !isAddingQuestion && (
-              <div className="rounded-lg border border-dashed border-neutral-200 py-6 text-center text-xs text-neutral-400">
+              <div className="rounded-md border border-dashed border-hairline py-6 text-center text-xs text-ink-muted">
                 No questions added yet. Click &quot;Add Question&quot; to begin.
               </div>
             )
@@ -286,19 +286,19 @@ export function QuizEditor({
 
           {/* Add Question Form */}
           {isAddingQuestion && (
-            <div className="rounded-xl border-2 border-[#0075de]/30 bg-sky-50/20 p-4">
-              <h5 className="text-xs font-bold text-neutral-900">New Single-Choice Question</h5>
+            <div className="rounded-md border border-hairline bg-canvas-soft/70 p-4 space-y-3">
+              <h5 className="text-xs font-bold text-ink">New Single-Choice Question</h5>
 
               {questionError && (
-                <div className="mt-2 flex items-center gap-2 rounded-md bg-rose-50 p-2 text-xs text-rose-700">
+                <div className="flex items-center gap-2 rounded-md bg-sticker-red/15 p-2 text-xs text-sticker-red border border-transparent">
                   <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                   <span>{questionError}</span>
                 </div>
               )}
 
-              <div className="mt-3 space-y-3">
+              <div className="space-y-3">
                 <div>
-                  <label htmlFor="question-text" className="block text-xs font-medium text-neutral-700">
+                  <label htmlFor="question-text" className="block text-xs font-medium text-ink">
                     Question Text
                   </label>
                   <Input
@@ -306,12 +306,12 @@ export function QuizEditor({
                     placeholder="e.g. What is RabbitMQ?"
                     value={newQuestionText}
                     onChange={(e) => setNewQuestionText(e.target.value)}
-                    className="mt-1 text-xs bg-white"
+                    className="mt-1 text-xs bg-surface border-hairline"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-neutral-700">
+                  <label className="block text-xs font-medium text-ink">
                     Points
                   </label>
                   <Input
@@ -319,12 +319,12 @@ export function QuizEditor({
                     min="1"
                     value={newQuestionPoints}
                     onChange={(e) => setNewQuestionPoints(parseInt(e.target.value, 10) || 1)}
-                    className="mt-1 h-8 w-24 text-xs bg-white"
+                    className="mt-1 h-8 w-24 text-xs bg-surface border-hairline font-mono tabular-nums"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-neutral-700 mb-1">
+                  <label className="block text-xs font-medium text-ink mb-1">
                     Answer Options (Choose 1 correct answer)
                   </label>
                   <div className="space-y-2">
@@ -336,19 +336,19 @@ export function QuizEditor({
                           aria-label="Correct answer"
                           checked={ans.isCorrect}
                           onChange={() => handleSelectCorrect(idx)}
-                          className="h-4 w-4 text-[#0075de] focus:ring-[#0075de]"
+                          className="h-4 w-4 text-notion-blue focus:ring-notion-blue border-hairline"
                         />
                         <Input
                           placeholder={`Option ${idx + 1}`}
                           value={ans.content}
                           onChange={(e) => handleAnswerContentChange(idx, e.target.value)}
-                          className="h-8 text-xs bg-white"
+                          className="h-8 text-xs bg-surface border-hairline"
                         />
                         {newAnswers.length > 2 && (
                           <button
                             type="button"
                             onClick={() => handleRemoveOption(idx)}
-                            className="text-neutral-400 hover:text-rose-600"
+                            className="text-ink-muted hover:text-sticker-red p-1 cursor-pointer transition-colors"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -362,19 +362,19 @@ export function QuizEditor({
                     variant="ghost"
                     size="sm"
                     onClick={handleAddOption}
-                    className="mt-2 text-xs text-[#0075de] hover:bg-sky-50"
+                    className="mt-2 text-xs text-notion-blue hover:bg-notion-blue/5"
                   >
                     <Plus className="mr-1 h-3 w-3" /> Add Choice
                   </Button>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-200/60">
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-hairline">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => setIsAddingQuestion(false)}
-                    className="rounded-md border-neutral-200 text-xs"
+                    className="rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
                   >
                     Cancel
                   </Button>
@@ -383,7 +383,7 @@ export function QuizEditor({
                     size="sm"
                     disabled={isSubmitting}
                     onClick={handleSaveQuestion}
-                    className="rounded-md bg-[#0075de] text-xs text-white hover:bg-[#005bab]"
+                    className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
                   >
                     {isSubmitting ? "Saving..." : "Save Question"}
                   </Button>

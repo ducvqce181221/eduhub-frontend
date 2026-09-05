@@ -1,8 +1,16 @@
 import React from "react";
-import { Users, CheckCircle2, TrendingUp, BookOpen } from "lucide-react";
+import { Users, CheckCircle2, TrendingUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type {
   EnrolledStudentProgressItem,
   CourseAggregateProgress,
@@ -33,48 +41,48 @@ export function EnrolledStudentsTable({
       {/* Metric Summary Cards */}
       {metrics && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-50 text-[#0075de]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-canvas-soft border border-hairline text-notion-blue shrink-0">
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
                   Total Enrollments
                 </p>
-                <h3 className="text-2xl font-bold text-neutral-900">
+                <h3 className="text-2xl font-bold text-ink font-mono tabular-nums">
                   {metrics.totalEnrollments ?? metrics.totalEnrolled ?? 0}
                 </h3>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sticker-teal/15 text-sticker-teal border border-transparent shrink-0">
                 <CheckCircle2 className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
                   Completed Learners
                 </p>
-                <h3 className="text-2xl font-bold text-neutral-900">
+                <h3 className="text-2xl font-bold text-ink font-mono tabular-nums">
                   {metrics.completedCount ?? 0}
                 </h3>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-2xs">
+          <div className="rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sticker-purple/15 text-sticker-purple border border-transparent shrink-0">
                 <TrendingUp className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
                   Average Progress
                 </p>
-                <h3 className="text-2xl font-bold text-neutral-900">
+                <h3 className="text-2xl font-bold text-ink font-mono tabular-nums">
                   {Math.round(metrics.averageProgressPercentage ?? 0)}%
                 </h3>
               </div>
@@ -84,100 +92,101 @@ export function EnrolledStudentsTable({
       )}
 
       {/* Students Data Table */}
-      <div className="rounded-xl border border-neutral-200 bg-white shadow-2xs overflow-hidden">
-        <div className="border-b border-neutral-200 bg-neutral-50/60 p-4">
-          <h3 className="text-sm font-bold text-neutral-900">
+      <div className="rounded-lg border border-hairline bg-surface shadow-notion-soft overflow-hidden">
+        <div className="border-b border-hairline bg-canvas-soft/70 px-4 py-3">
+          <h3 className="text-sm font-bold text-ink">
             Enrolled Learners ({students.length})
           </h3>
         </div>
 
         {students.length === 0 ? (
-          <div className="py-12 text-center text-xs text-neutral-400">
+          <div className="py-12 text-center text-xs text-ink-muted">
             No students have enrolled in this course yet.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-neutral-200 bg-neutral-50/40 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-                  <th className="py-3 px-4">Student</th>
-                  <th className="py-3 px-4">Enrolled Date</th>
-                  <th className="py-3 px-4">Lessons Completed</th>
-                  <th className="py-3 px-4 w-48">Progress</th>
-                  <th className="py-3 px-4">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 text-xs">
-                {students.map((student) => (
-                  <tr
-                    key={student.studentId}
-                    className="transition hover:bg-neutral-50/60"
-                  >
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8 rounded-full border border-neutral-200">
-                          {student.avatarUrl ? (
-                            <AvatarImage
-                              src={student.avatarUrl}
-                              alt={student.fullName}
-                            />
-                          ) : (
-                            <AvatarFallback className="text-[11px] font-bold">
-                              {getInitials(student.fullName)}
-                            </AvatarFallback>
-                          )}
-                        </Avatar>
-                        <div>
-                          <p className="font-semibold text-neutral-900">
-                            {student.fullName}
-                          </p>
-                          <p className="text-[11px] text-neutral-400">
-                            {student.email}
-                          </p>
-                        </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Student</TableHead>
+                <TableHead>Enrolled Date</TableHead>
+                <TableHead>Lessons Completed</TableHead>
+                <TableHead className="w-48">Progress</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {students.map((student) => (
+                <TableRow key={student.studentId}>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8 rounded-full border border-hairline">
+                        {student.avatarUrl ? (
+                          <AvatarImage
+                            src={student.avatarUrl}
+                            alt={student.fullName}
+                          />
+                        ) : (
+                          <AvatarFallback className="text-[11px] font-bold bg-canvas-soft text-ink">
+                            {getInitials(student.fullName)}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-ink truncate">
+                          {student.fullName}
+                        </p>
+                        <p className="text-[11px] text-ink-muted truncate">
+                          {student.email}
+                        </p>
                       </div>
-                    </td>
+                    </div>
+                  </TableCell>
 
-                    <td className="py-3.5 px-4 text-neutral-500">
-                      {new Date(student.enrolledAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </td>
+                  <TableCell className="text-ink-muted font-mono tabular-nums">
+                    {new Date(student.enrolledAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </TableCell>
 
-                    <td className="py-3.5 px-4 text-neutral-700 font-medium">
-                      {student.completedLessons}/{student.totalLessons}
-                    </td>
+                  <TableCell className="text-ink font-medium font-mono tabular-nums">
+                    {student.completedLessons}/{student.totalLessons}
+                  </TableCell>
 
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-2">
-                        <Progress
-                          value={student.progressPercentage}
-                          className="h-1.5 flex-1"
-                        />
-                        <span className="text-[11px] font-semibold text-neutral-700 w-9 text-right">
-                          {Math.round(student.progressPercentage)}%
-                        </span>
-                      </div>
-                    </td>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Progress
+                        value={student.progressPercentage}
+                        className="h-1.5 flex-1"
+                      />
+                      <span className="text-[11px] font-semibold text-ink w-9 text-right font-mono tabular-nums">
+                        {Math.round(student.progressPercentage)}%
+                      </span>
+                    </div>
+                  </TableCell>
 
-                    <td className="py-3.5 px-4">
-                      {student.isCompleted ? (
-                        <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700 ring-1 ring-inset ring-sky-600/20">
-                          In Progress
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                  <TableCell>
+                    {student.isCompleted ? (
+                      <Badge
+                        variant="secondary"
+                        className="bg-sticker-teal/15 text-sticker-teal border-transparent font-medium"
+                      >
+                        Completed
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="bg-sticker-sky/15 text-sticker-sky-deep border-transparent font-medium"
+                      >
+                        In Progress
+                      </Badge>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>

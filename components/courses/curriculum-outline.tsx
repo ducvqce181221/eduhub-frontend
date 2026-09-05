@@ -114,7 +114,7 @@ export function CurriculumOutline({
       </div>
 
       {/* Chapters Accordion List */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5">
         {sortedChapters.map((chapter) => {
           const isExpanded = expandedChapterIds.has(chapter.id);
           const sortedLessons = [...(chapter.lessons || [])].sort((a, b) => a.order - b.order);
@@ -127,16 +127,16 @@ export function CurriculumOutline({
           return (
             <div
               key={chapter.id}
-              className="rounded-xl border border-hairline bg-surface overflow-hidden shadow-2xs transition-colors"
+              className="rounded-lg border border-hairline bg-surface overflow-hidden shadow-notion-soft transition-colors"
             >
               {/* Chapter Header Bar */}
               <button
                 type="button"
                 onClick={() => toggleChapter(chapter.id)}
-                className="w-full flex items-center justify-between p-4 text-left bg-canvas-soft/70 hover:bg-canvas-soft transition-colors cursor-pointer"
+                className="w-full flex items-center justify-between p-3.5 sm:p-4 text-left bg-canvas-soft/60 hover:bg-canvas-soft transition-colors cursor-pointer"
                 aria-expanded={isExpanded}
               >
-                <div className="flex items-center gap-3 min-w-0 pr-4">
+                <div className="flex items-center gap-2.5 min-w-0 pr-4">
                   <div className="text-ink-muted shrink-0">
                     {isExpanded ? (
                       <ChevronDown className="w-4 h-4 text-ink" />
@@ -156,7 +156,7 @@ export function CurriculumOutline({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 shrink-0 text-xs text-ink-muted">
+                <div className="flex items-center gap-2.5 shrink-0 text-xs text-ink-muted">
                   <span>
                     {chapterLessonCount} {chapterLessonCount === 1 ? "lesson" : "lessons"}
                   </span>
@@ -185,12 +185,12 @@ export function CurriculumOutline({
                       return (
                         <div
                           key={lesson.id}
-                          className="flex items-center justify-between py-3.5 px-4 sm:px-6 hover:bg-canvas-soft/50 transition-colors"
+                          className="flex items-center justify-between py-2.5 px-4 sm:px-5 hover:bg-canvas-soft/50 transition-colors"
                         >
-                          <div className="flex items-center gap-3 min-w-0 pr-3">
+                          <div className="flex items-center gap-2.5 min-w-0 pr-3">
                             <PlayCircle className="w-4 h-4 text-notion-blue shrink-0" />
                             <div className="min-w-0">
-                              <span className="text-sm text-ink font-medium leading-tight block truncate">
+                              <span className="text-xs sm:text-sm text-ink font-medium leading-tight block truncate">
                                 {lesson.title}
                               </span>
                               {lesson.description && (
@@ -203,23 +203,23 @@ export function CurriculumOutline({
 
                           <div className="flex items-center gap-2 shrink-0">
                             {hasQuiz && (
-                              <Badge variant="secondary" className="text-[11px] px-2 py-0.5 bg-sticker-teal/15 text-sticker-teal border-transparent font-medium flex items-center gap-1">
+                              <Badge variant="teal" className="text-[11px] px-2 py-0.5 font-medium flex items-center gap-1">
                                 <HelpCircle className="w-3 h-3" />
-                                Quiz
+                                <span>Quiz</span>
                               </Badge>
                             )}
 
                             {resourceCount > 0 && (
                               <Badge variant="secondary" className="text-[11px] px-2 py-0.5 bg-canvas-soft text-ink-secondary border-hairline font-normal hidden sm:inline-flex items-center gap-1">
                                 <FileText className="w-3 h-3" />
-                                {resourceCount} {resourceCount === 1 ? "resource" : "resources"}
+                                <span>{resourceCount} {resourceCount === 1 ? "resource" : "resources"}</span>
                               </Badge>
                             )}
 
                             {duration !== undefined && duration > 0 && (
-                              <span className="text-xs text-ink-muted font-mono flex items-center gap-1">
+                              <span className="text-xs text-ink-muted flex items-center gap-1">
                                 <Clock className="w-3 h-3 text-ink-faint" />
-                                {formatDuration(duration)}
+                                <span>{formatDuration(duration)}</span>
                               </span>
                             )}
                           </div>

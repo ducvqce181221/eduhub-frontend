@@ -73,7 +73,7 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
               placeholder="Search courses..."
               value={mobileSearch}
               onChange={(e) => setMobileSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-3 text-xs bg-canvas-soft border-hairline rounded-lg"
+              className="w-full h-9 pl-9 pr-3 text-xs bg-canvas-soft border-hairline rounded-md"
             />
           </div>
         </form>
@@ -82,10 +82,10 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
           <Link
             href="/#catalog"
             onClick={close}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
               pathname === "/"
-                ? "bg-black/5 text-ink font-semibold"
-                : "text-ink-secondary hover:bg-black/5 hover:text-ink"
+                ? "bg-canvas-soft text-ink font-semibold border border-hairline"
+                : "text-ink-secondary hover:bg-canvas-soft hover:text-ink"
             }`}
           >
             <Compass className="h-4 w-4 text-notion-blue" />
@@ -95,7 +95,7 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
           {/* Categories Quick List */}
           {categories.length > 0 && (
             <div className="pt-2 pb-1">
-              <div className="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
+              <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink-faint flex items-center gap-1.5">
                 <LayoutGrid className="w-3.5 h-3.5" />
                 Categories
               </div>
@@ -105,7 +105,7 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
                     key={cat.id}
                     href={`/?categoryId=${encodeURIComponent(cat.id)}#catalog`}
                     onClick={close}
-                    className="flex items-center justify-between px-3 py-1.5 rounded-md text-xs text-ink-secondary hover:bg-black/5 transition-colors"
+                    className="flex items-center justify-between px-3 py-1.5 rounded-md text-xs text-ink-secondary hover:bg-canvas-soft transition-colors"
                   >
                     <span className="truncate">{cat.name}</span>
                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal">
@@ -123,10 +123,10 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
                 <Link
                   href="/me/enrollments"
                   onClick={close}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                     pathname === "/me/enrollments"
-                      ? "bg-black/5 text-ink font-semibold"
-                      : "text-ink-secondary hover:bg-black/5 hover:text-ink"
+                      ? "bg-canvas-soft text-ink font-semibold border border-hairline"
+                      : "text-ink-secondary hover:bg-canvas-soft hover:text-ink"
                   }`}
                 >
                   <BookOpen className="h-4 w-4" />
@@ -138,10 +138,10 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
                 <Link
                   href="/teacher"
                   onClick={close}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                     pathname?.startsWith("/teacher")
-                      ? "bg-black/5 text-ink font-semibold"
-                      : "text-ink-secondary hover:bg-black/5 hover:text-ink"
+                      ? "bg-canvas-soft text-ink font-semibold border border-hairline"
+                      : "text-ink-secondary hover:bg-canvas-soft hover:text-ink"
                   }`}
                 >
                   <LayoutDashboard className="h-4 w-4" />
@@ -153,10 +153,10 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
                 <Link
                   href="/admin"
                   onClick={close}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                     pathname?.startsWith("/admin")
-                      ? "bg-black/5 text-ink font-semibold"
-                      : "text-ink-secondary hover:bg-black/5 hover:text-ink"
+                      ? "bg-canvas-soft text-ink font-semibold border border-hairline"
+                      : "text-ink-secondary hover:bg-canvas-soft hover:text-ink"
                   }`}
                 >
                   <Shield className="h-4 w-4" />
@@ -169,7 +169,7 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
               <Link
                 href="/login"
                 onClick={close}
-                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-hairline text-sm font-medium text-ink-secondary hover:bg-canvas-soft"
+                className="flex items-center justify-center gap-2 w-full py-2 rounded-md border border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
               >
                 <LogIn className="h-4 w-4" />
                 Sign In
@@ -177,7 +177,7 @@ export function MobileNav({ initialUser = null }: { initialUser?: User | null })
               <Link
                 href="/register"
                 onClick={close}
-                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full bg-notion-blue text-white text-sm font-medium hover:bg-notion-blue-active"
+                className="flex items-center justify-center gap-2 w-full py-2 rounded-full bg-notion-blue text-white text-xs font-semibold hover:bg-notion-blue-active"
               >
                 <UserPlus className="h-4 w-4" />
                 Get Started

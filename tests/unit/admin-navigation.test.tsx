@@ -61,7 +61,7 @@ describe("Admin Navigation & Layout Components", () => {
       const usersLink = screen.getByRole("link", { name: /users/i });
       expect(usersLink).toHaveAttribute("href", "/admin/users");
       // Has active background class per Notion design
-      expect(usersLink.className).toContain("bg-neutral-200");
+      expect(usersLink.className).toContain("bg-surface");
     });
   });
 

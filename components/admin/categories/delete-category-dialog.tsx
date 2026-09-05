@@ -53,21 +53,21 @@ export function DeleteCategoryDialog({
         onOpenChange(nextOpen);
       }}
     >
-      <DialogContent className="sm:max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
         <DialogHeader className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-rose-600">
-              <AlertTriangle className="h-5 w-5" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <AlertTriangle className="h-4 w-4" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-bold text-neutral-900">
+              <DialogTitle className="text-base font-semibold text-ink">
                 Delete Category
               </DialogTitle>
             </div>
           </div>
-          <DialogDescription className="text-xs text-neutral-500 pt-1">
+          <DialogDescription className="text-xs text-ink-muted pt-1">
             Are you sure you want to permanently delete the category{" "}
-            <strong className="text-neutral-900 font-semibold">
+            <strong className="text-ink font-medium">
               {category.name}
             </strong>
             ? This action cannot be undone.
@@ -75,11 +75,11 @@ export function DeleteCategoryDialog({
         </DialogHeader>
 
         {errorMessage && (
-          <div className="flex items-start gap-2.5 rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
+          <div className="flex items-start gap-2.5 rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs text-rose-600 dark:text-rose-400">
             <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-rose-600" />
             <div>
               <p className="font-semibold">{errorMessage}</p>
-              <p className="mt-0.5 text-[11px] text-rose-600">
+              <p className="mt-0.5 text-[11px] opacity-80">
                 Please reassign existing courses to another category, or set this category to Inactive instead of deleting it.
               </p>
             </div>
@@ -91,7 +91,7 @@ export function DeleteCategoryDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="text-xs font-medium border-neutral-200"
+            className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
           >
             Cancel
           </Button>

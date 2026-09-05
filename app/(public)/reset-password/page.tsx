@@ -89,12 +89,12 @@ function ResetPasswordContent() {
   return (
     <RoleGuard guestOnly>
       <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
-        <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-xl">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold tracking-tight text-ink">
+        <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-lg">
+          <CardHeader className="space-y-1.5 text-center">
+            <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-ink">
               Set New Password
             </CardTitle>
-            <CardDescription className="text-ink-muted text-sm">
+            <CardDescription className="text-ink-muted text-xs sm:text-sm">
               Please enter and confirm your new secure password
             </CardDescription>
           </CardHeader>
@@ -109,7 +109,7 @@ function ResetPasswordContent() {
                   Your password has been updated. You can now sign in with your new credentials.
                 </p>
                 <div className="pt-2">
-                  <Button className="w-full" asChild>
+                  <Button className="w-full h-10 font-semibold cursor-pointer" asChild>
                     <Link href="/login">Sign In</Link>
                   </Button>
                 </div>
@@ -124,7 +124,7 @@ function ResetPasswordContent() {
                   The password reset link is invalid or has expired. Please request a new one.
                 </p>
                 <div className="pt-2">
-                  <Button variant="outline" className="w-full" asChild>
+                  <Button variant="outline" className="w-full h-10 font-semibold cursor-pointer" asChild>
                     <Link href="/forgot-password">Request New Link</Link>
                   </Button>
                 </div>
@@ -132,7 +132,7 @@ function ResetPasswordContent() {
             ) : (
               <>
                 {errorMessage && (
-                  <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-sm text-sticker-orange-deep">
+                  <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-xs sm:text-sm text-sticker-orange-deep">
                     <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-sticker-orange" />
                     <span>{errorMessage}</span>
                   </div>
@@ -182,7 +182,7 @@ function ResetPasswordContent() {
 
                     <Button
                       type="submit"
-                      className="w-full h-9.5"
+                      className="w-full h-10 font-semibold cursor-pointer"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -218,21 +218,21 @@ function ResetPasswordContent() {
 function AuthCardSkeleton() {
   return (
     <div className="flex min-h-[80vh] items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
-      <div className="w-full max-w-md rounded-2xl border border-hairline bg-surface p-8 shadow-notion-soft space-y-6">
+      <div className="w-full max-w-md rounded-lg border border-hairline bg-surface p-6 sm:p-8 shadow-notion-soft space-y-6">
         <div className="space-y-2 text-center">
-          <div className="h-7 w-48 mx-auto rounded-md bg-neutral-200/80 animate-pulse" />
-          <div className="h-4 w-64 mx-auto rounded-md bg-neutral-200/60 animate-pulse" />
+          <div className="h-6 w-44 mx-auto rounded-md bg-neutral-200/80 animate-pulse" />
+          <div className="h-4 w-56 mx-auto rounded-md bg-neutral-200/60 animate-pulse" />
         </div>
         <div className="space-y-4 pt-2">
           <div className="space-y-2">
-            <div className="h-4 w-20 rounded-md bg-neutral-200/70 animate-pulse" />
-            <div className="h-10 w-full rounded-lg bg-neutral-200/60 animate-pulse" />
+            <div className="h-3.5 w-16 rounded-md bg-neutral-200/70 animate-pulse" />
+            <div className="h-9 w-full rounded-md bg-neutral-200/60 animate-pulse" />
           </div>
           <div className="space-y-2">
-            <div className="h-4 w-20 rounded-md bg-neutral-200/70 animate-pulse" />
-            <div className="h-10 w-full rounded-lg bg-neutral-200/60 animate-pulse" />
+            <div className="h-3.5 w-16 rounded-md bg-neutral-200/70 animate-pulse" />
+            <div className="h-9 w-full rounded-md bg-neutral-200/60 animate-pulse" />
           </div>
-          <div className="h-10 w-full rounded-full bg-neutral-200/80 animate-pulse mt-4" />
+          <div className="h-10 w-full rounded-md bg-neutral-200/80 animate-pulse mt-4" />
         </div>
       </div>
     </div>

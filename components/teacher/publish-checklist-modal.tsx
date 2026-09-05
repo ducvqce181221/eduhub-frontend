@@ -78,17 +78,17 @@ export function PublishChecklistModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-xl rounded-lg border border-hairline bg-surface p-6 shadow-notion-elevated">
         <DialogHeader>
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-50 text-amber-600 ring-1 ring-amber-200">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sticker-orange/15 text-sticker-orange-deep border border-transparent shrink-0">
               <AlertTriangle className="h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-bold text-neutral-900">
+              <DialogTitle className="text-lg font-bold text-ink">
                 Course Publish Checklist
               </DialogTitle>
-              <DialogDescription className="text-xs text-neutral-500">
+              <DialogDescription className="text-xs text-ink-muted">
                 BR-CRS-02 requires all 5 criteria to pass before publishing your course.
               </DialogDescription>
             </div>
@@ -100,23 +100,23 @@ export function PublishChecklistModal({
           {criteria.map((item) => (
             <div
               key={item.id}
-              className={`flex items-start justify-between rounded-lg border p-3 transition-colors ${
+              className={`flex items-start justify-between rounded-md border p-3 transition-colors ${
                 item.passed
-                  ? "border-emerald-100 bg-emerald-50/40"
-                  : "border-amber-200 bg-amber-50/40"
+                  ? "border-sticker-teal/25 bg-sticker-teal/5"
+                  : "border-sticker-orange/30 bg-sticker-orange/5"
               }`}
             >
               <div className="flex items-start gap-3">
                 {item.passed ? (
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-sticker-teal" />
                 ) : (
-                  <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                  <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-sticker-orange-deep" />
                 )}
                 <div>
-                  <h4 className="text-sm font-semibold text-neutral-900">
+                  <h4 className="text-sm font-semibold text-ink">
                     {item.label}
                   </h4>
-                  <p className="mt-0.5 text-xs text-neutral-500">
+                  <p className="mt-0.5 text-xs text-ink-muted leading-relaxed">
                     {item.description}
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export function PublishChecklistModal({
                     onClose();
                     onFixSection(item.targetSection);
                   }}
-                  className="ml-3 shrink-0 rounded-md border-amber-200 bg-white text-xs font-medium text-amber-800 hover:bg-amber-100"
+                  className="ml-3 shrink-0 rounded-md border-hairline bg-surface text-xs font-medium text-ink hover:bg-canvas-soft"
                 >
                   Fix <ArrowRight className="ml-1 h-3 w-3" />
                 </Button>
@@ -141,9 +141,9 @@ export function PublishChecklistModal({
 
         {/* Detailed error bullets if present */}
         {checklist.details && checklist.details.length > 0 && (
-          <div className="rounded-lg bg-neutral-50 p-3 text-xs text-neutral-700">
-            <h5 className="font-semibold text-neutral-900">Specific issues found:</h5>
-            <ul className="mt-1.5 list-inside list-disc space-y-1 text-neutral-600">
+          <div className="rounded-md bg-canvas-soft border border-hairline p-3 text-xs text-ink-secondary">
+            <h5 className="font-semibold text-ink">Specific issues found:</h5>
+            <ul className="mt-1.5 list-inside list-disc space-y-1 text-ink-muted">
               {checklist.details.map((detail, idx) => (
                 <li key={idx}>{detail}</li>
               ))}
@@ -155,7 +155,7 @@ export function PublishChecklistModal({
           <Button
             variant="outline"
             onClick={onClose}
-            className="rounded-md border-neutral-200 text-xs"
+            className="rounded-md border-hairline text-xs text-ink-secondary hover:bg-canvas-soft"
           >
             Close
           </Button>

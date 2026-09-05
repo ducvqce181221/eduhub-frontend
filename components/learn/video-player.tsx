@@ -99,14 +99,14 @@ export function VideoPlayer({
     return (
       <div
         className={cn(
-          "relative aspect-video w-full rounded-2xl bg-canvas-soft border border-hairline flex flex-col items-center justify-center p-8 text-center",
+          "relative aspect-video w-full rounded-lg bg-canvas-soft border border-hairline flex flex-col items-center justify-center p-8 text-center",
           className,
         )}
       >
-        <div className="w-14 h-14 rounded-2xl bg-surface border border-hairline flex items-center justify-center text-ink-muted mb-3 shadow-2xs">
-          <VideoOff className="w-7 h-7" />
+        <div className="w-12 h-12 rounded-md bg-surface border border-hairline flex items-center justify-center text-ink-secondary mb-3">
+          <VideoOff className="w-6 h-6" />
         </div>
-        <h3 className="text-base font-semibold text-ink mb-1">
+        <h3 className="text-sm sm:text-base font-semibold text-ink mb-1">
           No video content for this lesson
         </h3>
         <p className="text-xs text-ink-muted max-w-sm">
@@ -119,7 +119,7 @@ export function VideoPlayer({
   return (
     <div
       className={cn(
-        "flex flex-col rounded-2xl overflow-hidden bg-black border border-hairline shadow-notion-elevated",
+        "flex flex-col rounded-lg overflow-hidden bg-black border border-hairline shadow-notion-soft",
         className,
       )}
     >
@@ -142,17 +142,17 @@ export function VideoPlayer({
       </div>
 
       {/* Video Footer Status Bar */}
-      <div className="bg-surface border-t border-hairline px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className="bg-surface border-t border-hairline px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 min-w-0">
           <PlayCircle className="w-4 h-4 text-notion-blue shrink-0" />
-          <span className="text-sm font-semibold text-ink truncate leading-none">
+          <span className="text-xs sm:text-sm font-semibold text-ink truncate leading-none">
             {lessonTitle}
           </span>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
           {durationSeconds > 0 && (
-            <div className="flex items-center gap-1.5 text-xs text-ink-muted font-mono">
+            <div className="flex items-center gap-1.5 text-xs text-ink-muted font-mono tabular-nums">
               <Clock className="w-3.5 h-3.5 text-ink-faint" />
               <span>
                 {formatDuration(currentSeconds)} / {formatDuration(durationSeconds)}
@@ -161,12 +161,12 @@ export function VideoPlayer({
           )}
 
           {isCompleted || is90PercentReached ? (
-            <Badge variant="teal" className="text-xs px-2.5 py-0.5 font-semibold flex items-center gap-1">
+            <Badge variant="teal" className="text-xs px-2.5 py-0.5 font-medium flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              Completed (≥90%)
+              <span>Completed (≥90%)</span>
             </Badge>
           ) : (
-            <Badge variant="secondary" className="text-xs px-2.5 py-0.5 bg-canvas-soft text-ink-muted border-hairline">
+            <Badge variant="secondary" className="text-xs px-2.5 py-0.5 bg-canvas-soft text-ink-secondary border-hairline font-medium tabular-nums">
               {durationSeconds > 0
                 ? `${Math.round((currentSeconds / durationSeconds) * 100)}% Watched`
                 : "In Progress"}

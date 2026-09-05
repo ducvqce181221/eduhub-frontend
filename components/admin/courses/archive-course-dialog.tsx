@@ -46,21 +46,21 @@ export function ArchiveCourseDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
         <DialogHeader className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-              <Archive className="h-5 w-5" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-sticker-amber/20 bg-sticker-amber/15 text-sticker-amber-deep">
+              <Archive className="h-4 w-4" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-bold text-neutral-900">
+              <DialogTitle className="text-base font-semibold text-ink">
                 Archive Course
               </DialogTitle>
             </div>
           </div>
-          <DialogDescription className="text-xs text-neutral-500 pt-1">
+          <DialogDescription className="text-xs text-ink-muted pt-1">
             Retire{" "}
-            <strong className="text-neutral-900 font-semibold">
+            <strong className="text-ink font-medium">
               {course.title}
             </strong>{" "}
             from public discovery and new enrollments.
@@ -68,17 +68,17 @@ export function ArchiveCourseDialog({
         </DialogHeader>
 
         {errorMessage && (
-          <div className="rounded-lg bg-rose-50 p-3 text-xs font-medium text-rose-700 border border-rose-200">
+          <div className="rounded-md bg-rose-500/10 p-3 text-xs font-medium text-rose-600 dark:text-rose-400 border border-rose-500/20">
             {errorMessage}
           </div>
         )}
 
-        <div className="rounded-lg border border-amber-200 bg-amber-50/70 p-3.5 text-xs text-amber-800 space-y-1">
-          <div className="flex items-center gap-2 font-semibold text-amber-900">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+        <div className="rounded-md border border-sticker-amber/20 bg-sticker-amber/10 p-3.5 text-xs text-sticker-amber-deep space-y-1">
+          <div className="flex items-center gap-2 font-semibold">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-sticker-amber-deep" />
             <span>Terminal State Policy (BR-CRS-04)</span>
           </div>
-          <p className="text-[11px] leading-relaxed text-amber-700">
+          <p className="text-[11px] leading-relaxed opacity-90">
             Archiving a course is a permanent terminal state in MVP. Once archived, the course is hidden from catalog discovery and accepts no new enrollments. Existing enrolled learners will retain read-only access.
           </p>
         </div>
@@ -88,7 +88,7 @@ export function ArchiveCourseDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="text-xs font-medium border-neutral-200"
+            className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
           >
             Cancel
           </Button>

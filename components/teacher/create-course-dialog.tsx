@@ -77,12 +77,12 @@ export function CreateCourseDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-2xl">
+      <DialogContent className="sm:max-w-lg rounded-lg border border-hairline bg-surface p-6 shadow-notion-elevated">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-neutral-900">
+          <DialogTitle className="text-xl font-bold text-ink tracking-tight">
             Create New Course
           </DialogTitle>
-          <DialogDescription className="text-xs text-neutral-500">
+          <DialogDescription className="text-xs text-ink-muted leading-relaxed">
             Give your course a title and choose its initial level and category. You can add chapters and lessons in the Course Builder.
           </DialogDescription>
         </DialogHeader>
@@ -94,12 +94,12 @@ export function CreateCourseDialog({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="course-title-input" className="text-xs font-semibold text-neutral-700">Course Title</FormLabel>
+                  <FormLabel htmlFor="course-title-input" className="text-xs font-semibold text-ink">Course Title</FormLabel>
                   <FormControl>
                     <Input
                       id="course-title-input"
                       placeholder="e.g. Master NestJS and Microservices"
-                      className="text-xs bg-white border-neutral-200"
+                      className="text-xs bg-surface border-hairline"
                       {...field}
                     />
                   </FormControl>
@@ -114,11 +114,11 @@ export function CreateCourseDialog({
                 name="categoryId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-semibold text-neutral-700">Category</FormLabel>
+                    <FormLabel className="text-xs font-semibold text-ink">Category</FormLabel>
                     <FormControl>
                       <select
                         aria-label="Category"
-                        className="flex h-9 w-full rounded-md border border-neutral-200 bg-white px-3 py-1 text-xs shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0075de]"
+                        className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-xs text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
                         {...field}
                       >
                         {categories.map((cat) => (
@@ -138,11 +138,11 @@ export function CreateCourseDialog({
                 name="level"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-semibold text-neutral-700">Target Level</FormLabel>
+                    <FormLabel className="text-xs font-semibold text-ink">Target Level</FormLabel>
                     <FormControl>
                       <select
                         aria-label="Target Level"
-                        className="flex h-9 w-full rounded-md border border-neutral-200 bg-white px-3 py-1 text-xs shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0075de]"
+                        className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-xs text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
                         {...field}
                       >
                         <option value="BEGINNER">Beginner</option>
@@ -161,11 +161,11 @@ export function CreateCourseDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-semibold text-neutral-700">Brief Description (Optional)</FormLabel>
+                  <FormLabel className="text-xs font-semibold text-ink">Brief Description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Summarize what learners will achieve..."
-                      className="resize-none text-xs bg-white border-neutral-200"
+                      className="resize-none text-xs bg-surface border-hairline"
                       rows={3}
                       {...field}
                     />
@@ -181,14 +181,14 @@ export function CreateCourseDialog({
                 variant="outline"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="rounded-xl border-neutral-200 text-xs font-semibold text-neutral-700 hover:bg-neutral-50"
+                className="rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-xl bg-[#0075de] text-xs font-semibold text-white hover:bg-[#005bab] shadow-xs"
+                className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
               >
                 {isSubmitting ? "Creating..." : "Create Course"}
               </Button>

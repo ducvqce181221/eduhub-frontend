@@ -50,20 +50,20 @@ export function TeacherCourseCard({
     switch (status) {
       case "PUBLISHED":
         return (
-          <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+          <span className="inline-flex items-center rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-xs font-semibold text-sticker-teal border border-transparent">
             PUBLISHED
           </span>
         );
       case "ARCHIVED":
         return (
-          <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs font-semibold text-neutral-600 ring-1 ring-inset ring-neutral-500/20">
+          <span className="inline-flex items-center rounded-full bg-canvas-soft px-2.5 py-0.5 text-xs font-semibold text-ink-muted border border-hairline">
             ARCHIVED
           </span>
         );
       case "DRAFT":
       default:
         return (
-          <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-600/20">
+          <span className="inline-flex items-center rounded-full bg-sticker-orange/15 px-2.5 py-0.5 text-xs font-semibold text-sticker-orange-deep border border-transparent">
             DRAFT
           </span>
         );
@@ -73,29 +73,29 @@ export function TeacherCourseCard({
   const getLevelBadge = (level: Course["level"]) => {
     switch (level) {
       case "BEGINNER":
-        return <Badge variant="secondary" className="bg-sky-50 text-sky-700 border-sky-200">BEGINNER</Badge>;
+        return <Badge variant="secondary" className="bg-sticker-sky/15 text-sticker-sky-deep border-transparent">BEGINNER</Badge>;
       case "INTERMEDIATE":
-        return <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200">INTERMEDIATE</Badge>;
+        return <Badge variant="secondary" className="bg-sticker-purple/15 text-sticker-purple border-transparent">INTERMEDIATE</Badge>;
       case "ADVANCED":
-        return <Badge variant="secondary" className="bg-rose-50 text-rose-700 border-rose-200">ADVANCED</Badge>;
+        return <Badge variant="secondary" className="bg-sticker-orange/15 text-sticker-orange-deep border-transparent">ADVANCED</Badge>;
     }
   };
 
   return (
     <>
-      <div className="group flex flex-col rounded-xl border border-neutral-200 bg-white shadow-xs transition-all duration-200 hover:shadow-md">
+      <div className="group flex flex-col rounded-lg border border-hairline bg-surface shadow-notion-soft transition-all duration-200 hover:border-ink/20">
         {/* Thumbnail header */}
-        <div className="relative aspect-video w-full overflow-hidden rounded-t-xl bg-neutral-100">
+        <div className="relative aspect-video w-full overflow-hidden rounded-t-lg bg-canvas-soft border-b border-hairline">
           {course.thumbnailUrl ? (
             <Image
               src={course.thumbnailUrl}
               alt={course.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-neutral-400">
+            <div className="flex h-full w-full items-center justify-center bg-canvas-soft text-ink-muted">
               <Layers className="h-10 w-10 stroke-1" />
             </div>
           )}
@@ -107,7 +107,7 @@ export function TeacherCourseCard({
         {/* Card Body */}
         <div className="flex flex-1 flex-col p-4 sm:p-5">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-neutral-500">
+            <span className="text-xs font-medium text-ink-muted">
               {course.category?.name || "General"}
             </span>
             {getLevelBadge(course.level)}
@@ -115,27 +115,27 @@ export function TeacherCourseCard({
 
           <Link
             href={`/teacher/courses/${course.id}/builder`}
-            className="line-clamp-2 text-base font-semibold text-neutral-900 transition-colors hover:text-[#0075de]"
+            className="line-clamp-2 text-base font-semibold text-ink transition-colors hover:text-notion-blue"
           >
             {course.title}
           </Link>
 
           {course.description && (
-            <p className="mt-1 line-clamp-2 text-xs text-neutral-500">
+            <p className="mt-1 line-clamp-2 text-xs text-ink-muted leading-relaxed">
               {course.description}
             </p>
           )}
 
           {/* Metrics Footer */}
           <div className="mt-auto pt-4">
-            <div className="flex items-center justify-between border-t border-neutral-100 pt-3 text-xs text-neutral-500">
+            <div className="flex items-center justify-between border-t border-hairline pt-3 text-xs text-ink-muted">
               <div className="flex items-center gap-3">
-                <span className="flex items-center gap-1">
-                  <Users className="h-3.5 w-3.5" />
+                <span className="flex items-center gap-1 tabular-nums font-mono">
+                  <Users className="h-3.5 w-3.5 text-ink-faint" />
                   {totalStudents} {totalStudents === 1 ? "student" : "students"}
                 </span>
-                <span className="flex items-center gap-1">
-                  <BookOpen className="h-3.5 w-3.5" />
+                <span className="flex items-center gap-1 tabular-nums font-mono">
+                  <BookOpen className="h-3.5 w-3.5 text-ink-faint" />
                   {totalLessons} {totalLessons === 1 ? "lesson" : "lessons"}
                 </span>
               </div>
@@ -143,12 +143,12 @@ export function TeacherCourseCard({
               {/* Actions dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-500 hover:text-neutral-900">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-ink-muted hover:text-ink">
                     <MoreVertical className="h-4 w-4" />
                     <span className="sr-only">Actions</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 shadow-notion-dropdown">
                   <DropdownMenuItem asChild>
                     <Link href={`/teacher/courses/${course.id}/builder`} className="cursor-pointer">
                       <Edit3 className="mr-2 h-4 w-4" />
@@ -166,7 +166,7 @@ export function TeacherCourseCard({
                   {course.status === "DRAFT" && (
                     <DropdownMenuItem
                       onClick={() => setShowPublishDialog(true)}
-                      className="cursor-pointer text-emerald-600 focus:text-emerald-700"
+                      className="cursor-pointer text-sticker-teal focus:text-sticker-teal"
                     >
                       <UploadCloud className="mr-2 h-4 w-4" />
                       Publish
@@ -176,7 +176,7 @@ export function TeacherCourseCard({
                   {course.status === "PUBLISHED" && (
                     <DropdownMenuItem
                       onClick={() => setShowUnpublishDialog(true)}
-                      className="cursor-pointer text-amber-600 focus:text-amber-700"
+                      className="cursor-pointer text-sticker-orange-deep focus:text-sticker-orange-deep"
                     >
                       <EyeOff className="mr-2 h-4 w-4" />
                       Unpublish to Draft
@@ -186,7 +186,7 @@ export function TeacherCourseCard({
                   {course.status !== "ARCHIVED" && (
                     <DropdownMenuItem
                       onClick={() => setShowArchiveDialog(true)}
-                      className="cursor-pointer text-rose-600 focus:text-rose-700"
+                      className="cursor-pointer text-sticker-red focus:text-sticker-red"
                     >
                       <Archive className="mr-2 h-4 w-4" />
                       Archive Course
@@ -202,7 +202,7 @@ export function TeacherCourseCard({
                 asChild
                 variant="outline"
                 size="sm"
-                className="flex-1 rounded-md border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+                className="flex-1 rounded-md border-hairline text-xs font-medium text-ink hover:bg-canvas-soft"
               >
                 <Link href={`/teacher/courses/${course.id}/builder`}>
                   Edit in Builder
@@ -213,7 +213,7 @@ export function TeacherCourseCard({
                 <Button
                   size="sm"
                   onClick={() => setShowPublishDialog(true)}
-                  className="rounded-md bg-[#0075de] px-3 text-xs font-medium text-white hover:bg-[#005bab] shrink-0"
+                  className="rounded-md bg-notion-blue px-3 text-xs font-medium text-white hover:bg-notion-blue-active shrink-0 shadow-2xs"
                 >
                   Publish
                 </Button>
@@ -222,7 +222,7 @@ export function TeacherCourseCard({
                   asChild
                   size="sm"
                   variant="outline"
-                  className="rounded-md border-neutral-200 px-3 text-xs font-medium text-neutral-700 hover:bg-neutral-50 shrink-0"
+                  className="rounded-md border-hairline px-3 text-xs font-medium text-ink hover:bg-canvas-soft shrink-0"
                 >
                   <Link href={`/teacher/courses/${course.id}/analytics`}>
                     Analytics

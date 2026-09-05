@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { CreateUserPayload, Role } from "@/types/api";
+import type { CreateUserPayload } from "@/types/api";
 
 const createUserSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters long"),
@@ -77,18 +77,18 @@ export function CreateUserDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
         <DialogHeader className="space-y-1">
-          <DialogTitle className="text-lg font-bold text-neutral-900">
+          <DialogTitle className="text-base font-semibold text-ink">
             Create New Account
           </DialogTitle>
-          <DialogDescription className="text-xs text-neutral-500">
+          <DialogDescription className="text-xs text-ink-muted">
             Provision a new operational account (Teacher or Administrator) directly.
           </DialogDescription>
         </DialogHeader>
 
         {submitError && (
-          <div className="rounded-lg bg-rose-50 p-3 text-xs font-medium text-rose-700 border border-rose-200">
+          <div className="rounded-md bg-rose-500/10 p-3 text-xs font-medium text-rose-600 dark:text-rose-400 border border-rose-500/20">
             {submitError}
           </div>
         )}
@@ -96,14 +96,14 @@ export function CreateUserDialog({
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 py-2">
           {/* Full Name */}
           <div className="space-y-1.5">
-            <Label htmlFor="fullName" className="text-xs font-semibold text-neutral-700">
+            <Label htmlFor="fullName" className="text-xs font-medium text-ink">
               Full Name
             </Label>
             <Input
               id="fullName"
               placeholder="e.g. Jane Educator"
               {...register("fullName")}
-              className="text-xs border-neutral-200 focus-visible:ring-[#0075de]"
+              className="text-xs border-hairline bg-surface text-ink focus-visible:ring-notion-blue placeholder:text-ink-muted"
             />
             {errors.fullName && (
               <p className="text-[11px] font-medium text-rose-600">
@@ -114,7 +114,7 @@ export function CreateUserDialog({
 
           {/* Email */}
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-xs font-semibold text-neutral-700">
+            <Label htmlFor="email" className="text-xs font-medium text-ink">
               Email Address
             </Label>
             <Input
@@ -122,7 +122,7 @@ export function CreateUserDialog({
               type="email"
               placeholder="e.g. educator@eduhub.dev"
               {...register("email")}
-              className="text-xs border-neutral-200 focus-visible:ring-[#0075de]"
+              className="text-xs border-hairline bg-surface text-ink focus-visible:ring-notion-blue placeholder:text-ink-muted"
             />
             {errors.email && (
               <p className="text-[11px] font-medium text-rose-600">
@@ -133,7 +133,7 @@ export function CreateUserDialog({
 
           {/* Password */}
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-xs font-semibold text-neutral-700">
+            <Label htmlFor="password" className="text-xs font-medium text-ink">
               Password
             </Label>
             <Input
@@ -141,7 +141,7 @@ export function CreateUserDialog({
               type="password"
               placeholder="Min 8 chars with uppercase, lowercase, number"
               {...register("password")}
-              className="text-xs border-neutral-200 focus-visible:ring-[#0075de]"
+              className="text-xs border-hairline bg-surface text-ink focus-visible:ring-notion-blue placeholder:text-ink-muted"
             />
             {errors.password && (
               <p className="text-[11px] font-medium text-rose-600">
@@ -152,13 +152,13 @@ export function CreateUserDialog({
 
           {/* Role */}
           <div className="space-y-1.5">
-            <Label htmlFor="role" className="text-xs font-semibold text-neutral-700">
+            <Label htmlFor="role" className="text-xs font-medium text-ink">
               Assigned Role
             </Label>
             <select
               id="role"
               {...register("role")}
-              className="w-full h-9 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-800 shadow-2xs focus:border-[#0075de] focus:outline-none"
+              className="w-full h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
             >
               <option value="TEACHER">Teacher (Course Creator & Instructor)</option>
               <option value="ADMIN">Administrator (Full Platform Governance)</option>
@@ -171,14 +171,14 @@ export function CreateUserDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="text-xs font-medium border-neutral-200"
+              className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-medium"
+              className="bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium"
             >
               {isSubmitting ? "Creating..." : "Create User"}
             </Button>

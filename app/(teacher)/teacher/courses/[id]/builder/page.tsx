@@ -235,9 +235,9 @@ export default function CourseBuilderPage({ params }: PageProps) {
 
   if (isLoading || !course) {
     return (
-      <div className="min-h-screen bg-[#f6f5f4] pb-20">
+      <div className="min-h-[100dvh] bg-canvas pb-20">
         {/* Top App Header Skeleton */}
-        <div className="sticky top-0 z-30 border-b border-neutral-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-30 border-b border-hairline bg-surface px-4 py-3 sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Skeleton className="h-8 w-20 rounded-md" />
@@ -253,7 +253,7 @@ export default function CourseBuilderPage({ params }: PageProps) {
 
         <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8 space-y-6">
           {/* Tab Switcher Skeleton */}
-          <div className="flex gap-4 border-b border-neutral-200 pb-2">
+          <div className="flex gap-4 border-b border-hairline pb-2">
             <Skeleton className="h-8 w-28 rounded-md" />
             <Skeleton className="h-8 w-36 rounded-md" />
           </div>
@@ -265,7 +265,7 @@ export default function CourseBuilderPage({ params }: PageProps) {
               <Skeleton className="h-8 w-32 rounded-md" />
             </div>
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-neutral-200 bg-white p-5 space-y-4">
+              <div key={i} className="rounded-lg border border-hairline bg-surface p-5 space-y-4 shadow-notion-soft">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-5 w-5 rounded-md" />
@@ -276,9 +276,9 @@ export default function CourseBuilderPage({ params }: PageProps) {
                     <Skeleton className="h-7 w-7 rounded-md" />
                   </div>
                 </div>
-                <div className="pl-6 space-y-2 border-l-2 border-neutral-100 ml-2">
-                  <Skeleton className="h-12 w-full rounded-lg" />
-                  <Skeleton className="h-12 w-full rounded-lg" />
+                <div className="pl-6 space-y-2 border-l-2 border-hairline ml-2">
+                  <Skeleton className="h-12 w-full rounded-md" />
+                  <Skeleton className="h-12 w-full rounded-md" />
                 </div>
               </div>
             ))}
@@ -289,7 +289,7 @@ export default function CourseBuilderPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] pb-20">
+    <div className="min-h-[100dvh] bg-canvas pb-20">
       {/* Top App Header */}
       <CourseBuilderHeader
         course={course}
@@ -301,14 +301,14 @@ export default function CourseBuilderPage({ params }: PageProps) {
 
       <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8 space-y-6">
         {/* Navigation Tabs Bar */}
-        <div className="flex border-b border-neutral-200">
+        <div className="flex border-b border-hairline">
           <button
             type="button"
             onClick={() => setActiveTab("curriculum")}
-            className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition ${
+            className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition cursor-pointer ${
               activeTab === "curriculum"
-                ? "border-[#0075de] text-[#0075de]"
-                : "border-transparent text-neutral-500 hover:text-neutral-800"
+                ? "border-notion-blue text-notion-blue"
+                : "border-transparent text-ink-muted hover:text-ink"
             }`}
           >
             <Layers className="h-4 w-4" />
@@ -318,10 +318,10 @@ export default function CourseBuilderPage({ params }: PageProps) {
           <button
             type="button"
             onClick={() => setActiveTab("metadata")}
-            className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition ${
+            className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition cursor-pointer ${
               activeTab === "metadata"
-                ? "border-[#0075de] text-[#0075de]"
-                : "border-transparent text-neutral-500 hover:text-neutral-800"
+                ? "border-notion-blue text-notion-blue"
+                : "border-transparent text-ink-muted hover:text-ink"
             }`}
           >
             <Settings className="h-4 w-4" />

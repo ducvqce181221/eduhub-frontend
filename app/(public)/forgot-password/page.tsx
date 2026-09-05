@@ -61,12 +61,12 @@ export default function ForgotPasswordPage() {
   return (
     <RoleGuard guestOnly>
       <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-canvas-soft">
-        <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-xl">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold tracking-tight text-ink">
+        <Card className="w-full max-w-md border-hairline shadow-notion-soft bg-surface rounded-lg">
+          <CardHeader className="space-y-1.5 text-center">
+            <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-ink">
               Reset Your Password
             </CardTitle>
-            <CardDescription className="text-ink-muted text-sm">
+            <CardDescription className="text-ink-muted text-xs sm:text-sm">
               Enter your email address and we&apos;ll send you instructions to reset your password
             </CardDescription>
           </CardHeader>
@@ -84,19 +84,19 @@ export default function ForgotPasswordPage() {
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full h-10 font-semibold cursor-pointer"
                   asChild
                 >
                   <Link href="/login">
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Sign In
+                    <span>Back to Sign In</span>
                   </Link>
                 </Button>
               </div>
             ) : (
               <>
                 {errorMessage && (
-                  <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-sm text-sticker-orange-deep">
+                  <div className="mb-4 p-3 rounded-md bg-sticker-orange/10 border border-sticker-orange/20 flex items-start gap-2.5 text-xs sm:text-sm text-sticker-orange-deep">
                     <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-sticker-orange" />
                     <span>{errorMessage}</span>
                   </div>
@@ -126,7 +126,7 @@ export default function ForgotPasswordPage() {
 
                     <Button
                       type="submit"
-                      className="w-full h-9.5"
+                      className="w-full h-10 font-semibold cursor-pointer"
                       disabled={isLoading}
                     >
                       {isLoading ? (

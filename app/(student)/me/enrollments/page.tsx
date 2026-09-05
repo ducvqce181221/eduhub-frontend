@@ -89,7 +89,7 @@ export default function MyEnrollmentsPage() {
               </p>
             </div>
 
-            <Button variant="pill" size="default" asChild className="gap-2 shadow-2xs">
+            <Button variant="pill" size="default" asChild className="gap-2 cursor-pointer">
               <Link href="/courses">
                 <Compass className="w-4 h-4" />
                 <span>Explore Catalog</span>
@@ -106,7 +106,7 @@ export default function MyEnrollmentsPage() {
                 placeholder="Filter my enrolled courses..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-10 bg-surface border-hairline rounded-lg text-xs sm:text-sm"
+                className="pl-9 h-10 bg-surface border-hairline rounded-md text-xs sm:text-sm"
               />
             </div>
           )}
@@ -120,39 +120,39 @@ export default function MyEnrollmentsPage() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={`skeleton-${i}`}
-                className="p-6 rounded-2xl bg-surface border border-hairline flex flex-col gap-4 animate-pulse"
+                className="p-5 sm:p-6 rounded-lg bg-surface border border-hairline flex flex-col gap-4 animate-pulse shadow-notion-soft"
               >
-                <div className="flex items-start gap-4">
-                  <Skeleton className="w-28 aspect-video rounded-xl" />
+                <div className="flex items-start gap-3.5">
+                  <Skeleton className="w-28 sm:w-32 aspect-video rounded-md" />
                   <div className="flex flex-col gap-2 flex-1">
-                    <Skeleton className="h-4 w-20 rounded-full" />
+                    <Skeleton className="h-4 w-16 rounded-full" />
                     <Skeleton className="h-5 w-full rounded-md" />
-                    <Skeleton className="h-4 w-24 rounded-md" />
+                    <Skeleton className="h-3.5 w-24 rounded-md" />
                   </div>
                 </div>
-                <Skeleton className="h-2 w-full rounded-full" />
-                <Skeleton className="h-10 w-full rounded-xl" />
+                <Skeleton className="h-1.5 w-full rounded-full" />
+                <Skeleton className="h-10 w-full rounded-md" />
               </div>
             ))}
           </div>
         ) : enrollments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-hairline bg-surface/60">
-            <div className="w-14 h-14 rounded-2xl bg-canvas-soft border border-hairline flex items-center justify-center text-notion-blue mb-4 shadow-2xs">
-              <BookOpen className="w-7 h-7" />
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-lg border border-dashed border-hairline bg-surface">
+            <div className="w-12 h-12 rounded-lg bg-canvas-soft border border-hairline flex items-center justify-center text-notion-blue mb-4">
+              <BookOpen className="w-6 h-6" />
             </div>
 
-            <h3 className="text-lg font-bold text-ink mb-1.5">
+            <h3 className="text-base sm:text-lg font-bold text-ink mb-1.5">
               You haven&apos;t enrolled in any courses yet
             </h3>
 
-            <p className="text-sm text-ink-muted max-w-md mb-6 leading-relaxed">
+            <p className="text-xs sm:text-sm text-ink-muted max-w-md mb-6 leading-relaxed">
               Explore our curated engineering and design catalog to start learning with video streams, quizzes, and automated progress milestones.
             </p>
 
-            <Button variant="pill" size="default" asChild className="px-6 shadow-xs">
+            <Button variant="pill" size="default" asChild className="px-6 cursor-pointer">
               <Link href="/courses">
                 <Compass className="w-4 h-4 mr-2" />
-                Browse Course Catalog
+                <span>Browse Course Catalog</span>
               </Link>
             </Button>
           </div>

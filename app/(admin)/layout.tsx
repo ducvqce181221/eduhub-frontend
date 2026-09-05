@@ -11,9 +11,9 @@ export default function AdminLayout({
 }) {
   return (
     <RoleGuard requireAuth allowedRoles={["ADMIN"]}>
-      <div className="flex h-screen w-full overflow-hidden bg-white text-neutral-900 antialiased">
+      <div className="flex h-screen w-full overflow-hidden bg-canvas text-ink antialiased">
         <AdminSidebar />
-        <main className="flex flex-1 flex-col overflow-y-auto bg-[#faf9f8]">
+        <main className="flex flex-1 flex-col overflow-y-auto bg-canvas">
           {children}
         </main>
       </div>

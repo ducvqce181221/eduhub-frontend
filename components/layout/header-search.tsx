@@ -108,7 +108,7 @@ export function HeaderSearch({ className }: { className?: string }) {
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           placeholder="Search courses, topics, instructors..."
-          className="w-full h-9 pl-9 pr-8 bg-canvas-soft hover:bg-black/5 focus:bg-surface border-hairline rounded-full text-xs sm:text-sm text-ink placeholder:text-ink-faint transition-all focus:border-notion-blue focus:ring-1 focus:ring-notion-blue"
+          className="w-full h-9 pl-9 pr-8 bg-canvas-soft hover:bg-canvas-soft/80 focus:bg-surface border-hairline rounded-md text-xs sm:text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-notion-blue focus:ring-1 focus:ring-notion-blue"
         />
 
         {term && (

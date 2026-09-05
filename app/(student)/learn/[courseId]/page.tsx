@@ -41,12 +41,12 @@ export default function CourseLearnRedirectPage() {
     <div className="flex flex-col flex-1 bg-canvas-soft min-h-[85vh] p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 flex flex-col gap-6">
-          <Skeleton className="aspect-video w-full rounded-2xl" />
-          <Skeleton className="h-8 w-3/4 rounded-lg" />
-          <Skeleton className="h-24 w-full rounded-xl" />
+          <Skeleton className="aspect-video w-full rounded-lg" />
+          <Skeleton className="h-8 w-3/4 rounded-md" />
+          <Skeleton className="h-24 w-full rounded-lg" />
         </div>
         <div className="lg:col-span-1">
-          <Skeleton className="h-[550px] w-full rounded-2xl" />
+          <Skeleton className="h-137.5 w-full rounded-lg" />
         </div>
       </div>
     </div>
