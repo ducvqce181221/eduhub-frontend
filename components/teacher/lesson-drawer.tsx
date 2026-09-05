@@ -14,7 +14,9 @@ import { ResourcesManager } from "./resources-manager";
 import { QuizEditor } from "./quiz-editor";
 import {
   upsertLessonVideo,
+  attachVideoFromLibrary,
   createLessonResource,
+  attachResourceFromLibrary,
   deleteLessonResource,
   createLessonQuiz,
   updateLessonQuiz,
@@ -102,8 +104,18 @@ export function LessonDrawer({
     await onRefreshLesson();
   };
 
+  const handleAttachVideo = async (assetId: string, customTitle?: string) => {
+    await attachVideoFromLibrary(lesson.id, { assetId, customTitle });
+    await onRefreshLesson();
+  };
+
   const handleAddResource = async (payload: CreateResourcePayload) => {
     await createLessonResource(lesson.id, payload);
+    await onRefreshLesson();
+  };
+
+  const handleAttachResource = async (assetId: string, customName?: string) => {
+    await attachResourceFromLibrary(lesson.id, { assetId, customName });
     await onRefreshLesson();
   };
 
@@ -274,6 +286,7 @@ export function LessonDrawer({
             <VideoUploader
               currentVideo={lesson.video}
               onSaveVideo={handleSaveVideo}
+              onAttachFromLibrary={handleAttachVideo}
             />
           )}
 
@@ -282,6 +295,7 @@ export function LessonDrawer({
               resources={lesson.resources || []}
               onAddResource={handleAddResource}
               onDeleteResource={handleDeleteResource}
+              onAttachFromLibrary={handleAttachResource}
             />
           )}
 

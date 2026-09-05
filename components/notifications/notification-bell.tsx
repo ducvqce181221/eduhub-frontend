@@ -88,10 +88,24 @@ function NotificationBellContent({ className }: { className?: string }) {
     }
   };
 
-  const getTypeIcon = (type: NotificationType) => {
+  const getTypeIcon = (type: NotificationType, isRead: boolean = false) => {
+    if (isRead) {
+      switch (type) {
+        case "SYSTEM_BROADCAST":
+          return <Megaphone className="h-3.5 w-3.5 text-ink-muted" />;
+        case "COURSE_ENROLLED":
+          return <BookOpen className="h-3.5 w-3.5 text-ink-muted" />;
+        case "QUIZ_SUBMITTED":
+          return <Award className="h-3.5 w-3.5 text-ink-muted" />;
+        case "COURSE_COMPLETED":
+          return <CheckCircle2 className="h-3.5 w-3.5 text-ink-muted" />;
+        default:
+          return <Bell className="h-3.5 w-3.5 text-ink-muted" />;
+      }
+    }
     switch (type) {
       case "SYSTEM_BROADCAST":
-        return <Megaphone className="h-3.5 w-3.5 text-sticker-purple" />;
+        return <Megaphone className="h-3.5 w-3.5 text-sticker-purple-deep" />;
       case "COURSE_ENROLLED":
         return <BookOpen className="h-3.5 w-3.5 text-sticker-teal" />;
       case "QUIZ_SUBMITTED":
@@ -99,7 +113,7 @@ function NotificationBellContent({ className }: { className?: string }) {
       case "COURSE_COMPLETED":
         return <CheckCircle2 className="h-3.5 w-3.5 text-sticker-green" />;
       default:
-        return <Bell className="h-3.5 w-3.5 text-ink-muted" />;
+        return <Bell className="h-3.5 w-3.5 text-ink-secondary" />;
     }
   };
 
@@ -109,7 +123,7 @@ function NotificationBellContent({ className }: { className?: string }) {
     }
     switch (type) {
       case "SYSTEM_BROADCAST":
-        return "bg-sticker-purple/15 border-sticker-purple/25";
+        return "bg-sticker-purple/25 border-sticker-purple/40 text-sticker-purple-deep";
       case "COURSE_ENROLLED":
         return "bg-sticker-teal/15 border-sticker-teal/25";
       case "QUIZ_SUBMITTED":
@@ -249,7 +263,7 @@ function NotificationBellContent({ className }: { className?: string }) {
                     getIconWrapperClass(item.type, item.isRead),
                   )}
                 >
-                  {getTypeIcon(item.type)}
+                  {getTypeIcon(item.type, item.isRead)}
                 </div>
 
                 {/* Content */}

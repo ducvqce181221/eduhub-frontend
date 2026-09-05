@@ -3,6 +3,8 @@ import type {
   GetPresignedUrlPayload,
   PresignedUrlResponse,
   UploadImageResponse,
+  CheckDuplicatePayload,
+  CheckDuplicateResponse,
 } from "@/types/api";
 
 export async function uploadImage(file: File): Promise<UploadImageResponse> {
@@ -18,6 +20,16 @@ export async function getPresignedUrl(
 ): Promise<PresignedUrlResponse> {
   const response = await apiClient.post<PresignedUrlResponse>(
     "/upload/presigned-url",
+    payload
+  );
+  return response.data;
+}
+
+export async function checkDuplicateAsset(
+  payload: CheckDuplicatePayload
+): Promise<CheckDuplicateResponse> {
+  const response = await apiClient.post<CheckDuplicateResponse>(
+    "/upload/check-duplicate",
     payload
   );
   return response.data;

@@ -368,7 +368,7 @@ function LessonRow({
             )}
 
             {lesson.quiz && (
-              <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium bg-sticker-purple/15 text-sticker-purple">
+              <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium bg-sticker-purple/20 text-sticker-purple-deep">
                 <HelpCircle className="h-3 w-3" />
                 Quiz
               </span>

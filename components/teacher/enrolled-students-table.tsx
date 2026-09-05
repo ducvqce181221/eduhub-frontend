@@ -75,7 +75,7 @@ export function EnrolledStudentsTable({
 
           <div className="rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sticker-purple/15 text-sticker-purple border border-transparent shrink-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sticker-purple/25 text-sticker-purple-deep border border-sticker-purple/40 shrink-0">
                 <TrendingUp className="h-5 w-5" />
               </div>
               <div>

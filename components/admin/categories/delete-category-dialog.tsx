@@ -86,7 +86,7 @@ export function DeleteCategoryDialog({
           </div>
         )}
 
-        <DialogFooter className="pt-3 gap-2 sm:gap-0">
+        <DialogFooter className="pt-3 gap-2 sm:gap-2.5">
           <Button
             type="button"
             variant="outline"

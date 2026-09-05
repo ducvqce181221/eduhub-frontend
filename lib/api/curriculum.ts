@@ -18,6 +18,8 @@ import type {
   UpdateQuizPayload,
   CreateQuestionPayload,
   UpdateQuestionPayload,
+  AttachResourceFromLibraryPayload,
+  AttachVideoFromLibraryPayload,
 } from "@/types/api";
 
 // Chapter CRUD
@@ -85,12 +87,34 @@ export async function upsertLessonVideo(
   return response.data;
 }
 
+export async function attachVideoFromLibrary(
+  lessonId: string,
+  payload: AttachVideoFromLibraryPayload
+): Promise<LessonVideo> {
+  const response = await apiClient.put<LessonVideo>(
+    `/lessons/${lessonId}/video/from-library`,
+    payload
+  );
+  return response.data;
+}
+
 // Lesson Resources
 export async function createLessonResource(
   lessonId: string,
   payload: CreateResourcePayload
 ): Promise<LessonResource> {
   const response = await apiClient.post<LessonResource>(`/lessons/${lessonId}/resources`, payload);
+  return response.data;
+}
+
+export async function attachResourceFromLibrary(
+  lessonId: string,
+  payload: AttachResourceFromLibraryPayload
+): Promise<LessonResource> {
+  const response = await apiClient.post<LessonResource>(
+    `/lessons/${lessonId}/resources/from-library`,
+    payload
+  );
   return response.data;
 }
 

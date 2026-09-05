@@ -63,7 +63,10 @@ export interface LessonVideo {
   id: string;
   videoUrl: string;
   durationSeconds: number;
+  title?: string | null;
   createdAt?: string;
+  assetId?: string | null;
+  isExternal?: boolean;
 }
 
 export interface LessonResource {
@@ -72,6 +75,8 @@ export interface LessonResource {
   fileUrl: string;
   fileType?: string | null;
   fileSize?: number | null;
+  assetId?: string | null;
+  isExternal?: boolean;
 }
 
 export interface LessonQuiz {
@@ -293,6 +298,9 @@ export interface UpdateLessonPayload {
 export interface UpsertVideoPayload {
   videoUrl: string;
   durationSeconds: number;
+  title?: string;
+  contentHash?: string;
+  assetId?: string;
 }
 
 export interface CreateResourcePayload {
@@ -300,6 +308,63 @@ export interface CreateResourcePayload {
   fileUrl: string;
   fileType?: string;
   fileSize?: number;
+  contentHash?: string;
+  assetId?: string;
+}
+
+export type MediaType = "VIDEO" | "DOCUMENT";
+export type AssetSource = "R2_UPLOAD" | "EXTERNAL_URL";
+
+export interface MediaAsset {
+  id: string;
+  uploaderId: string;
+  name: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number | null;
+  durationSeconds: number | null;
+  contentHash: string | null;
+  source: AssetSource;
+  mediaType: MediaType;
+  usageCount?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CheckDuplicatePayload {
+  hash: string;
+  mediaType: MediaType;
+  fileSize?: number;
+}
+
+export interface CheckDuplicateResponse {
+  isDuplicate: boolean;
+  asset: MediaAsset | null;
+}
+
+export interface QueryMediaAssetsParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  mediaType?: MediaType;
+  source?: AssetSource;
+}
+
+export interface CreateExternalAssetPayload {
+  name: string;
+  url: string;
+  mediaType: MediaType;
+  durationSeconds?: number;
+}
+
+export interface AttachResourceFromLibraryPayload {
+  assetId: string;
+  customName?: string;
+}
+
+export interface AttachVideoFromLibraryPayload {
+  assetId: string;
+  customTitle?: string;
 }
 
 export interface UpdateResourcePayload {

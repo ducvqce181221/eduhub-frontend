@@ -23,6 +23,7 @@ import {
   BookOpen,
   CheckCircle2,
   Download,
+  ExternalLink,
   FileText,
   HelpCircle,
   Layers,
@@ -198,10 +199,21 @@ export default function LessonLearnPage() {
                     className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-canvas-soft/70 transition-colors"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <FileText className="w-4 h-4 text-ink-muted shrink-0" />
-                      <span className="text-xs sm:text-sm font-medium text-ink truncate">
-                        {res.name}
-                      </span>
+                      {res.isExternal ? (
+                        <ExternalLink className="w-4 h-4 text-notion-blue shrink-0" />
+                      ) : (
+                        <FileText className="w-4 h-4 text-ink-muted shrink-0" />
+                      )}
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-xs sm:text-sm font-medium text-ink truncate">
+                          {res.name}
+                        </span>
+                        {res.isExternal && (
+                          <Badge variant="secondary" className="text-[10px] font-normal py-0 px-1.5 h-4 shrink-0">
+                            External
+                          </Badge>
+                        )}
+                      </div>
                     </div>
 
                     <Button
@@ -210,9 +222,23 @@ export default function LessonLearnPage() {
                       className="h-7 text-xs border-hairline rounded-md hover:bg-surface shrink-0 gap-1.5 cursor-pointer"
                       asChild
                     >
-                      <a href={res.fileUrl} target="_blank" rel="noopener noreferrer" download>
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download</span>
+                      <a
+                        href={res.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download={res.isExternal ? undefined : res.name}
+                      >
+                        {res.isExternal ? (
+                          <>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span>Open Link</span>
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Download</span>
+                          </>
+                        )}
                       </a>
                     </Button>
                   </div>

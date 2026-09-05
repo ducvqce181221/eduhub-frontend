@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
 
           <div className="rounded-lg border border-hairline bg-surface p-4 shadow-notion-soft">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sticker-purple/15 border border-sticker-purple/20 text-sticker-purple">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sticker-purple/25 border border-sticker-purple/40 text-sticker-purple-deep">
                 <GraduationCap className="h-4 w-4" />
               </div>
               <div>
