@@ -28,12 +28,31 @@ type TokenGetter = () => string | null;
 type TokenSetter = (token: string | null) => void;
 type UnauthorizedCallback = () => void;
 
-let getAccessTokenFn: TokenGetter = () => null;
+let memoryAccessToken: string | null = null;
+let customTokenGetter: TokenGetter | null = null;
 let setAccessTokenFn: TokenSetter = () => {};
 let onUnauthorizedFn: UnauthorizedCallback = () => {};
 
-export function setAuthTokenGetter(getter: TokenGetter) {
-  getAccessTokenFn = getter;
+export function getAccessToken(): string | null {
+  if (customTokenGetter) {
+    return customTokenGetter();
+  }
+  return memoryAccessToken;
+}
+
+export function setAccessToken(token: string | null): void {
+  memoryAccessToken = token;
+  if (setAccessTokenFn) {
+    try {
+      setAccessTokenFn(token);
+    } catch {
+      // ignore
+    }
+  }
+}
+
+export function setAuthTokenGetter(getter: TokenGetter | null) {
+  customTokenGetter = getter;
 }
 
 export function setAuthTokenSetter(setter: TokenSetter) {
@@ -53,46 +72,49 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-let isRefreshing = false;
-let refreshSubscribers: Array<(token: string | null) => void> = [];
+let refreshPromise: Promise<string | null> | null = null;
 
-function subscribeTokenRefresh(cb: (token: string | null) => void) {
-  refreshSubscribers.push(cb);
-}
+export async function performTokenRefresh(): Promise<string | null> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
 
-function onRefreshed(token: string | null) {
-  refreshSubscribers.forEach((cb) => cb(token));
-  refreshSubscribers = [];
-}
+  refreshPromise = (async () => {
+    try {
+      const refreshUrl = `${BASE_URL.replace(/\/+$/, "")}/api/v1/auth/refresh`;
+      const res = await fetch(refreshUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
 
-async function performRefresh(): Promise<string | null> {
-  try {
-    const refreshUrl = `${BASE_URL.replace(/\/+$/, "")}/api/v1/auth/refresh`;
-    const res = await fetch(refreshUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
+      if (!res.ok) {
+        setAccessToken(null);
+        onUnauthorizedFn();
+        return null;
+      }
 
-    if (!res.ok) {
-      setAccessTokenFn(null);
+      const data = await res.json();
+      const newAccessToken = data?.data?.accessToken || null;
+      if (newAccessToken) {
+        setAccessToken(newAccessToken);
+      } else {
+        setAccessToken(null);
+        onUnauthorizedFn();
+      }
+      return newAccessToken;
+    } catch {
+      setAccessToken(null);
       onUnauthorizedFn();
       return null;
+    } finally {
+      refreshPromise = null;
     }
+  })();
 
-    const data = await res.json();
-    const newAccessToken = data?.data?.accessToken || null;
-    if (newAccessToken) {
-      setAccessTokenFn(newAccessToken);
-    }
-    return newAccessToken;
-  } catch {
-    setAccessTokenFn(null);
-    onUnauthorizedFn();
-    return null;
-  }
+  return refreshPromise;
 }
 
 async function request<T = unknown>(
@@ -106,6 +128,38 @@ async function request<T = unknown>(
     urlPath = `/api/v1${urlPath}`;
   }
 
+  // Handle /auth/refresh endpoint requests to share the same refresh promise
+  if (endpoint.includes("/auth/refresh") && !_retry) {
+    const newToken = await performTokenRefresh();
+    if (!newToken) {
+      throw new ApiError({
+        statusCode: 401,
+        error: "Unauthorized",
+        message: "Invalid or expired refresh token",
+      });
+    }
+    return {
+      success: true,
+      data: { accessToken: newToken } as unknown as T,
+    };
+  }
+
+  let token = getAccessToken();
+
+  // If this request requires auth, has no token, but a refresh is in flight (or user has session cookie),
+  // wait for refresh so we can send the request with Authorization header directly and avoid an unnecessary 401.
+  if (!token && !skipAuth && !endpoint.includes("/auth/")) {
+    if (refreshPromise) {
+      token = await refreshPromise;
+    } else if (
+      !_retry &&
+      typeof document !== "undefined" &&
+      document.cookie.includes("eduhub_user=")
+    ) {
+      token = await performTokenRefresh();
+    }
+  }
+
   const url = new URL(`${BASE_URL.replace(/\/+$/, "")}${urlPath}`);
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
@@ -117,7 +171,6 @@ async function request<T = unknown>(
 
   const reqHeaders = new Headers(headers);
 
-  const token = getAccessTokenFn();
   if (token && !skipAuth && !reqHeaders.has("Authorization")) {
     reqHeaders.set("Authorization", `Bearer ${token}`);
   }
@@ -141,37 +194,9 @@ async function request<T = unknown>(
 
   // Handle 401 Silent Refresh
   if (response.status === 401 && !_retry && !endpoint.includes("/auth/refresh") && !endpoint.includes("/auth/login")) {
-    if (!isRefreshing) {
-      isRefreshing = true;
-      const newToken = await performRefresh();
-      isRefreshing = false;
-      onRefreshed(newToken);
-
-      if (newToken) {
-        return request<T>(endpoint, { ...options, _retry: true });
-      }
-    } else {
-      // Queue requests while refresh is ongoing
-      return new Promise((resolve, reject) => {
-        subscribeTokenRefresh(async (newToken) => {
-          if (!newToken) {
-            reject(
-              new ApiError({
-                statusCode: 401,
-                error: "Unauthorized",
-                message: "Session expired. Please log in again.",
-              }),
-            );
-            return;
-          }
-          try {
-            const res = await request<T>(endpoint, { ...options, _retry: true });
-            resolve(res);
-          } catch (err) {
-            reject(err);
-          }
-        });
-      });
+    const newToken = await performTokenRefresh();
+    if (newToken) {
+      return request<T>(endpoint, { ...options, _retry: true });
     }
   }
 

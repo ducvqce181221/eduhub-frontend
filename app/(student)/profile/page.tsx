@@ -49,11 +49,11 @@ export default function ProfilePage() {
     formData.append("file", file);
 
     try {
-      const res = await apiClient.post<{ url: string }>("/upload/image", {
+      const res = await apiClient.post<{ url: string; secureUrl?: string }>("/upload/image", {
         body: formData,
       });
 
-      const uploadedUrl = res.data?.url;
+      const uploadedUrl = res.data?.secureUrl || res.data?.url;
       if (uploadedUrl) {
         setAvatarUrl(uploadedUrl);
         await apiClient.patch<User>("/auth/me", {

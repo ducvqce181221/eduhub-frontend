@@ -19,6 +19,16 @@ export function GoogleSignInButton({
 }: GoogleSignInButtonProps) {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
+  React.useEffect(() => {
+    const handlePageShow = () => {
+      setIsRedirecting(false);
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
+
   const handleClick = () => {
     setIsRedirecting(true);
     const apiBase =

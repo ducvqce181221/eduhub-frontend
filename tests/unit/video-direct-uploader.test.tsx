@@ -51,10 +51,12 @@ describe("VideoUploader (Cloudflare R2 Direct Upload)", () => {
     fireEvent.click(saveBtn);
 
     await waitFor(() => {
-      expect(onSaveVideo).toHaveBeenCalledWith({
-        videoUrl: "https://pub-r2.dev/videos/lesson1.mp4",
-        durationSeconds: 360,
-      });
+      expect(onSaveVideo).toHaveBeenCalledWith(
+        expect.objectContaining({
+          videoUrl: "https://pub-r2.dev/videos/lesson1.mp4",
+          durationSeconds: 360,
+        })
+      );
     });
   });
 

@@ -51,7 +51,7 @@ export function ResourcesManager({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const executeUpload = async (file: File) => {
+  const executeUpload = async (file: File, contentHash?: string) => {
     setIsUploading(true);
     setErrorMessage(null);
 
@@ -66,12 +66,13 @@ export function ResourcesManager({
       // 2. Direct binary upload to Cloudflare R2
       await uploadDirectToR2(presigned.uploadUrl, file);
 
-      // 3. Save resource record to backend
+      // 3. Save resource record to backend with contentHash persisted
       await onAddResource({
         name: file.name,
         fileUrl: presigned.fileUrl,
         fileType: file.type || "application/octet-stream",
         fileSize: file.size,
+        contentHash: contentHash || undefined,
       });
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to upload resource attachment");
@@ -85,17 +86,21 @@ export function ResourcesManager({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    let computedHash: string | undefined = undefined;
+
     // Check for duplicate asset via SHA-256 hash
     try {
       const hash = await computeFileHash(file);
+      computedHash = hash;
       const dup = await checkDuplicateAsset({
         hash,
         fileSize: file.size,
         mediaType: "DOCUMENT",
       });
 
-      if (dup?.isDuplicate && dup.existingAsset) {
-        setDuplicateAsset(dup.existingAsset);
+      const matchedAsset = dup?.asset || dup?.existingAsset;
+      if (dup?.isDuplicate && matchedAsset) {
+        setDuplicateAsset(matchedAsset);
         setPendingFile(file);
         if (fileInputRef.current) fileInputRef.current.value = "";
         return;
@@ -104,7 +109,7 @@ export function ResourcesManager({
       // If duplicate check endpoint fails or is in unmocked test environment, proceed with direct upload
     }
 
-    await executeUpload(file);
+    await executeUpload(file, computedHash);
   };
 
   const handleUseExistingFromDuplicate = async () => {
@@ -119,6 +124,7 @@ export function ResourcesManager({
           fileType: duplicateAsset.fileType,
           fileSize: duplicateAsset.fileSize,
           isExternal: duplicateAsset.source === "EXTERNAL_URL",
+          assetId: duplicateAsset.id,
         });
       }
     } catch (err: any) {
@@ -134,7 +140,8 @@ export function ResourcesManager({
       const file = pendingFile;
       setDuplicateAsset(null);
       setPendingFile(null);
-      await executeUpload(file);
+      const hash = await computeFileHash(file).catch(() => undefined);
+      await executeUpload(file, hash);
     }
   };
 

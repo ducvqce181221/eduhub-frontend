@@ -60,7 +60,17 @@ export function VideoUploader({
   const [isExternalUrlOpen, setIsExternalUrlOpen] = useState(false);
   const [duplicateAsset, setDuplicateAsset] = useState<MediaAsset | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [fileHash, setFileHash] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Synchronize internal state when currentVideo prop updates
+  React.useEffect(() => {
+    setUploadedUrl(currentVideo?.videoUrl || null);
+    setDurationSeconds(currentVideo?.durationSeconds || 0);
+    setVideoTitle(currentVideo?.title || "");
+    setSelectedAssetId(currentVideo?.assetId || null);
+    setIsExternal(!!currentVideo?.isExternal);
+  }, [currentVideo]);
 
   const formatSeconds = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
@@ -68,7 +78,7 @@ export function VideoUploader({
     return `${mins}m ${secs.toString().padStart(2, "0")}s`;
   };
 
-  const executeVideoUpload = async (file: File) => {
+  const executeVideoUpload = async (file: File, contentHash?: string) => {
     setIsUploading(true);
     setUploadProgress(0);
     setErrorMessage(null);
@@ -90,16 +100,31 @@ export function VideoUploader({
       setSelectedAssetId(null);
       setIsExternal(false);
 
-      // Attempt auto-detect duration
+      const defaultTitle = videoTitle.trim() || file.name.replace(/\.[^/.]+$/, "");
+      setVideoTitle(defaultTitle);
+
+      // Non-blocking auto-detect duration & auto-save
       if (typeof document !== "undefined") {
-        const videoElement = document.createElement("video");
-        videoElement.preload = "metadata";
-        videoElement.onloadedmetadata = () => {
-          if (videoElement.duration && !isNaN(videoElement.duration)) {
-            setDurationSeconds(Math.round(videoElement.duration));
-          }
-        };
-        videoElement.src = URL.createObjectURL(file);
+        try {
+          const videoElement = document.createElement("video");
+          videoElement.preload = "metadata";
+          videoElement.onloadedmetadata = () => {
+            if (videoElement.duration && !isNaN(videoElement.duration)) {
+              const detected = Math.round(videoElement.duration);
+              setDurationSeconds(detected);
+              // Auto-save to prevent orphan files in Cloudflare R2 once duration is known
+              onSaveVideo({
+                videoUrl: presigned.fileUrl,
+                durationSeconds: detected,
+                title: defaultTitle,
+                contentHash: contentHash || undefined,
+              }).catch(() => {});
+            }
+          };
+          videoElement.src = URL.createObjectURL(file);
+        } catch {
+          // Ignore
+        }
       }
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to upload video to Cloudflare R2");
@@ -123,18 +148,22 @@ export function VideoUploader({
     }
 
     setErrorMessage(null);
+    let computedHash: string | undefined = undefined;
 
     // Duplicate detection check
     try {
       const hash = await computeFileHash(file);
+      computedHash = hash;
+      setFileHash(hash);
       const dup = await checkDuplicateAsset({
         hash,
         fileSize: file.size,
         mediaType: "VIDEO",
       });
 
-      if (dup?.isDuplicate && dup.existingAsset) {
-        setDuplicateAsset(dup.existingAsset);
+      const matchedAsset = dup?.asset || dup?.existingAsset;
+      if (dup?.isDuplicate && matchedAsset) {
+        setDuplicateAsset(matchedAsset);
         setPendingFile(file);
         if (fileInputRef.current) fileInputRef.current.value = "";
         return;
@@ -143,18 +172,39 @@ export function VideoUploader({
       // If duplicate check fails or unmocked in tests, proceed with upload
     }
 
-    await executeVideoUpload(file);
+    await executeVideoUpload(file, computedHash);
   };
 
-  const handleUseExistingFromDuplicate = () => {
+  const handleUseExistingFromDuplicate = async () => {
     if (!duplicateAsset) return;
-    setUploadedUrl(duplicateAsset.fileUrl);
-    setDurationSeconds(duplicateAsset.durationSeconds || 0);
-    setVideoTitle(duplicateAsset.name);
-    setSelectedAssetId(duplicateAsset.id);
-    setIsExternal(duplicateAsset.source === "EXTERNAL_URL");
-    setDuplicateAsset(null);
-    setPendingFile(null);
+    try {
+      setIsSaving(true);
+      setErrorMessage(null);
+      const titleToUse = pendingFile?.name?.replace(/\.[^/.]+$/, "") || duplicateAsset.name;
+
+      if (onAttachFromLibrary) {
+        await onAttachFromLibrary(duplicateAsset.id, titleToUse);
+      } else {
+        await onSaveVideo({
+          videoUrl: duplicateAsset.fileUrl,
+          durationSeconds: duplicateAsset.durationSeconds || 1,
+          title: titleToUse,
+          assetId: duplicateAsset.id,
+        });
+      }
+
+      setUploadedUrl(duplicateAsset.fileUrl);
+      setDurationSeconds(duplicateAsset.durationSeconds || 1);
+      setVideoTitle(titleToUse);
+      setSelectedAssetId(duplicateAsset.id);
+      setIsExternal(duplicateAsset.source === "EXTERNAL_URL");
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to attach existing video");
+    } finally {
+      setIsSaving(false);
+      setDuplicateAsset(null);
+      setPendingFile(null);
+    }
   };
 
   const handleUploadAnywayFromDuplicate = async () => {
@@ -162,7 +212,8 @@ export function VideoUploader({
       const file = pendingFile;
       setDuplicateAsset(null);
       setPendingFile(null);
-      await executeVideoUpload(file);
+      const hash = fileHash || (await computeFileHash(file).catch(() => undefined));
+      await executeVideoUpload(file, hash);
     }
   };
 
@@ -203,6 +254,9 @@ export function VideoUploader({
         };
         if (videoTitle.trim()) {
           payload.title = videoTitle.trim();
+        }
+        if (fileHash) {
+          payload.contentHash = fileHash;
         }
         if (selectedAssetId) {
           payload.assetId = selectedAssetId;

@@ -88,6 +88,16 @@ export default function CourseBuilderPage({ params }: PageProps) {
       ]);
       setCourse(fetchedCourse);
       setCategories(fetchedCategories);
+
+      // Synchronize selectedLesson if drawer is open or lesson is selected
+      setSelectedLesson((prevSelected) => {
+        if (!prevSelected) return null;
+        for (const ch of fetchedCourse.chapters || []) {
+          const matched = ch.lessons?.find((l: Lesson) => l.id === prevSelected.id);
+          if (matched) return matched;
+        }
+        return prevSelected;
+      });
     } catch {
       // Handled
     } finally {

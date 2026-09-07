@@ -60,7 +60,8 @@ export async function uploadDirectToR2(
           if (onProgress) onProgress(100);
           resolve();
         } else {
-          reject(new Error(`Upload failed with status ${xhr.status}`));
+          const detail = xhr.responseText ? `: ${xhr.responseText}` : "";
+          reject(new Error(`Upload failed with status ${xhr.status}${detail}`));
         }
       };
 
@@ -79,7 +80,9 @@ export async function uploadDirectToR2(
   });
 
   if (!response.ok) {
-    throw new Error(`Upload failed with status ${response.status}`);
+    const errorText = await response.text().catch(() => "");
+    const detail = errorText ? `: ${errorText}` : "";
+    throw new Error(`Upload failed with status ${response.status}${detail}`);
   }
 
   if (onProgress) onProgress(100);

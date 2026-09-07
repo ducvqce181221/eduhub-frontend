@@ -1,12 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { apiClient, setAuthTokenGetter, setOnUnauthorizedCallback, ApiError } from "@/lib/api/client";
+import {
+  apiClient,
+  setAccessToken,
+  setAuthTokenGetter,
+  setOnUnauthorizedCallback,
+  performTokenRefresh,
+  ApiError,
+} from "@/lib/api/client";
 
 describe("Slice 2: Frontend API Client & Envelope Unwrapper & Silent Refresh", () => {
   let originalFetch: typeof global.fetch;
 
   beforeEach(() => {
     originalFetch = global.fetch;
-    setAuthTokenGetter(() => null);
+    setAccessToken(null);
+    setAuthTokenGetter(null);
     setOnUnauthorizedCallback(() => { });
   });
 
@@ -161,5 +169,84 @@ describe("Slice 2: Frontend API Client & Envelope Unwrapper & Silent Refresh", (
 
     await expect(apiClient.get("/auth/me")).rejects.toThrow(ApiError);
     expect(onUnauthorizedMock).toHaveBeenCalled();
+  });
+
+  it("should deduplicate concurrent refresh requests into a single network call", async () => {
+    let refreshCallCount = 0;
+    global.fetch = vi.fn().mockImplementation(async (url: string) => {
+      if (url.includes("/auth/refresh")) {
+        refreshCallCount++;
+        // Simulate network latency
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            success: true,
+            data: { accessToken: "shared-refreshed-token" },
+          }),
+        };
+      }
+      return { ok: false, status: 404, json: async () => ({ success: false }) };
+    });
+
+    const [res1, res2, res3] = await Promise.all([
+      performTokenRefresh(),
+      performTokenRefresh(),
+      apiClient.post("/auth/refresh"),
+    ]);
+
+    expect(refreshCallCount).toBe(1);
+    expect(res1).toBe("shared-refreshed-token");
+    expect(res2).toBe("shared-refreshed-token");
+    expect((res3 as any).data.accessToken).toBe("shared-refreshed-token");
+  });
+
+  it("should wait for pending refresh before dispatching protected request with token", async () => {
+    let refreshCompleted = false;
+    let authHeaderSent: string | null = null;
+
+    global.fetch = vi.fn().mockImplementation(async (url: string, config?: RequestInit) => {
+      if (url.includes("/auth/refresh")) {
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        refreshCompleted = true;
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            success: true,
+            data: { accessToken: "preflight-token-123" },
+          }),
+        };
+      }
+
+      if (url.includes("/notifications")) {
+        const headers = config?.headers as Headers;
+        authHeaderSent = headers?.get("Authorization");
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            success: true,
+            data: [{ id: "n1", title: "Test" }],
+          }),
+        };
+      }
+
+      return { ok: false, status: 404, json: async () => ({ success: false }) };
+    });
+
+    // Start a refresh in the background
+    const refreshTask = performTokenRefresh();
+
+    // Concurrently, an authenticated request is initiated while token is not yet ready
+    const notificationTask = apiClient.get("/notifications?limit=30");
+
+    const [token, notifResult] = await Promise.all([refreshTask, notificationTask]);
+
+    expect(token).toBe("preflight-token-123");
+    expect(authHeaderSent).toBe("Bearer preflight-token-123");
+    expect(refreshCompleted).toBe(true);
+    expect((notifResult.data as any)[0].id).toBe("n1");
   });
 });

@@ -24,6 +24,7 @@ import {
   useMarkNotificationAsReadMutation,
   useMarkAllNotificationsAsReadMutation,
 } from "@/hooks/use-notifications";
+import { useAuthSafe } from "@/lib/auth/auth-context";
 import type { NotificationItem, NotificationType } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -57,7 +58,10 @@ function NotificationBellContent({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "unread">("all");
 
-  const { data, isLoading } = useNotificationsQuery({ limit: 30 });
+  const auth = useAuthSafe();
+  const isEnabled = auth ? Boolean(auth.isAuthenticated && auth.accessToken) : true;
+
+  const { data, isLoading } = useNotificationsQuery({ limit: 30 }, isEnabled);
   const markAsReadMutation = useMarkNotificationAsReadMutation();
   const markAllMutation = useMarkAllNotificationsAsReadMutation();
 

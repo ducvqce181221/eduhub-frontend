@@ -340,6 +340,7 @@ export interface CheckDuplicatePayload {
 export interface CheckDuplicateResponse {
   isDuplicate: boolean;
   asset: MediaAsset | null;
+  existingAsset?: MediaAsset | null;
 }
 
 export interface QueryMediaAssetsParams {

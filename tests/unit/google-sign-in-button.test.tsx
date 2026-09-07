@@ -47,4 +47,19 @@ describe("Phase 12 - GoogleSignInButton Component (TDD: Red)", () => {
     expect(button).toBeDisabled();
     expect(screen.getByText(/connecting to google/i)).toBeInTheDocument();
   });
+
+  it("should reset loading state when window receives pageshow event (bfcache navigation)", () => {
+    render(<GoogleSignInButton mode="signin" />);
+
+    const button = screen.getByRole("button", { name: /sign in with google/i });
+    fireEvent.click(button);
+
+    expect(screen.getByText(/connecting to google/i)).toBeInTheDocument();
+
+    // Trigger pageshow event
+    fireEvent(window, new Event("pageshow"));
+
+    expect(button).not.toBeDisabled();
+    expect(screen.getByText(/sign in with google/i)).toBeInTheDocument();
+  });
 });

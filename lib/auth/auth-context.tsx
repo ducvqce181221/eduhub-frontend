@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import {
   apiClient,
+  setAccessToken as setClientAccessToken,
   setAuthTokenGetter,
   setAuthTokenSetter,
   setOnUnauthorizedCallback,
@@ -100,6 +101,7 @@ export function AuthProvider({
     setOnUnauthorizedCallback(() => {
       tokenRef.current = null;
       setAccessToken(null);
+      setClientAccessToken(null);
       persistUser(null);
     });
   }, [persistUser]);
@@ -114,6 +116,7 @@ export function AuthProvider({
       if (newToken) {
         tokenRef.current = newToken;
         setAccessToken(newToken);
+        setClientAccessToken(newToken);
 
         const profileRes = await apiClient.get<User>("/auth/me");
         if (profileRes.data) {
@@ -125,6 +128,7 @@ export function AuthProvider({
     } catch {
       tokenRef.current = null;
       setAccessToken(null);
+      setClientAccessToken(null);
       persistUser(null);
       return false;
     }
@@ -179,6 +183,7 @@ export function AuthProvider({
     const authData = response.data;
     tokenRef.current = authData.accessToken;
     setAccessToken(authData.accessToken);
+    setClientAccessToken(authData.accessToken);
     persistUser(authData.user);
     return authData;
   }, [persistUser]);
@@ -192,6 +197,7 @@ export function AuthProvider({
     const authData = response.data;
     tokenRef.current = authData.accessToken;
     setAccessToken(authData.accessToken);
+    setClientAccessToken(authData.accessToken);
     persistUser(authData.user);
     return authData;
   }, [persistUser]);
@@ -212,6 +218,7 @@ export function AuthProvider({
     } finally {
       tokenRef.current = null;
       setAccessToken(null);
+      setClientAccessToken(null);
       persistUser(null);
     }
   }, [persistUser]);
@@ -259,4 +266,8 @@ export function useAuth(): AuthContextType {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
+}
+
+export function useAuthSafe(): AuthContextType | null {
+  return useContext(AuthContext) ?? null;
 }

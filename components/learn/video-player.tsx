@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, PlayCircle, VideoOff, Clock } from "lucide-react";
 import type { LessonVideo } from "@/types/api";
 import { formatDuration } from "@/components/courses/curriculum-outline";
+import { useAuthSafe } from "@/lib/auth/auth-context";
 import { cn } from "@/lib/utils";
 
 interface VideoPlayerProps {
@@ -26,6 +27,29 @@ export function VideoPlayer({
   onProgressHeartbeat,
   className,
 }: VideoPlayerProps) {
+  const auth = useAuthSafe();
+  const user = auth?.user;
+  const watermarkText = user?.email
+    ? `${user.email} • ID: ${user.id.slice(0, 8)}`
+    : "";
+
+  const [watermarkPos, setWatermarkPos] = useState<number>(0);
+
+  useEffect(() => {
+    if (!watermarkText) return;
+    const interval = setInterval(() => {
+      setWatermarkPos((prev) => (prev + 1) % 4);
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [watermarkText]);
+
+  const watermarkPositionClasses = [
+    "top-4 right-6",
+    "bottom-12 right-6",
+    "bottom-12 left-6",
+    "top-4 left-6",
+  ];
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSeconds, setCurrentSeconds] = useState(initialWatchedSeconds);
@@ -123,14 +147,18 @@ export function VideoPlayer({
         className,
       )}
     >
-      {/* Video Container */}
-      <div className="relative aspect-video w-full bg-black flex items-center justify-center">
+      {/* Video Container with Right-Click Protection & Dynamic Watermarking */}
+      <div
+        className="relative aspect-video w-full bg-black flex items-center justify-center select-none"
+        onContextMenu={(e) => e.preventDefault()}
+      >
         <video
           ref={videoRef}
           data-testid="learning-video-element"
           src={video.videoUrl}
           controls
-          controlsList="nodownload"
+          controlsList="nodownload noplaybackrate"
+          disablePictureInPicture
           playsInline
           onLoadedMetadata={handleLoadedMetadata}
           onTimeUpdate={handleTimeUpdate}
@@ -139,6 +167,19 @@ export function VideoPlayer({
           onEnded={handleEnded}
           className="w-full h-full object-contain"
         />
+
+        {/* Dynamic Watermark to deter screen recording and leak distribution */}
+        {watermarkText && (
+          <div
+            data-testid="video-watermark"
+            className={cn(
+              "absolute pointer-events-none select-none z-10 text-[11px] font-mono text-white/25 tracking-wider px-2 py-0.5 rounded bg-black/10 backdrop-blur-[1px] transition-all duration-1000",
+              watermarkPositionClasses[watermarkPos],
+            )}
+          >
+            {watermarkText}
+          </div>
+        )}
       </div>
 
       {/* Video Footer Status Bar */}

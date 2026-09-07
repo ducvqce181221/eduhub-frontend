@@ -66,8 +66,9 @@ export function CourseMetadataEditor({
     try {
       setIsUploadingImage(true);
       const res = await uploadImage(file);
-      setThumbnailUrl(res.url);
-      await onSave({ thumbnailUrl: res.url });
+      const imageUrl = res.secureUrl || res.url;
+      setThumbnailUrl(imageUrl);
+      await onSave({ thumbnailUrl: imageUrl });
     } catch (err) {
       // Error handled
     } finally {

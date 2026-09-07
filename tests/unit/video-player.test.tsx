@@ -88,4 +88,22 @@ describe("VideoPlayer Component", () => {
 
     expect(screen.getByText(/No video content for this lesson/i)).toBeInTheDocument();
   });
+
+  it("prevents context menu (right-click) on video container to deter saving", () => {
+    render(
+      <VideoPlayer
+        video={mockVideo}
+        lessonTitle="Introduction to NestJS"
+        initialWatchedSeconds={0}
+        isCompleted={false}
+      />,
+    );
+
+    const videoEl = screen.getByTestId("learning-video-element");
+    const container = videoEl.parentElement;
+    expect(container).toBeInTheDocument();
+
+    const preventDefault = vi.fn();
+    fireEvent.contextMenu(container!, { preventDefault });
+  });
 });
