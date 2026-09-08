@@ -1,6 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { VideoPlayer } from "@/components/learn/video-player";
 import type { LessonVideo } from "@/types/api";
 
@@ -106,4 +107,67 @@ describe("VideoPlayer Component", () => {
     const preventDefault = vi.fn();
     fireEvent.contextMenu(container!, { preventDefault });
   });
+
+  it("does not have native controls attribute on video element (eliminating browser download menu)", () => {
+    render(
+      <VideoPlayer
+        video={mockVideo}
+        lessonTitle="Introduction to NestJS"
+        initialWatchedSeconds={0}
+        isCompleted={false}
+      />,
+    );
+
+    const videoEl = screen.getByTestId("learning-video-element");
+    // Native controls attribute must be absent to eliminate browser 3-dot download menu
+    expect(videoEl).not.toHaveAttribute("controls");
+  });
+
+  it("renders custom play/pause button and toggles playback state", () => {
+    render(
+      <VideoPlayer
+        video={mockVideo}
+        lessonTitle="Introduction to NestJS"
+        initialWatchedSeconds={0}
+        isCompleted={false}
+      />,
+    );
+
+    const playPauseBtn = screen.getByTestId("player-play-pause-btn");
+    expect(playPauseBtn).toBeInTheDocument();
+    expect(playPauseBtn).toHaveAttribute("aria-label", "Play");
+
+    // Click play
+    fireEvent.click(playPauseBtn);
+    const videoEl = screen.getByTestId("learning-video-element");
+    fireEvent.play(videoEl);
+
+    expect(playPauseBtn).toHaveAttribute("aria-label", "Pause");
+  });
+
+  it("renders quality resolution badge and settings menu with quality explanation", () => {
+    render(
+      <VideoPlayer
+        video={mockVideo}
+        lessonTitle="Introduction to NestJS"
+        initialWatchedSeconds={0}
+        isCompleted={false}
+      />,
+    );
+
+    // Resolution badge rendered on player
+    expect(screen.getByText("1080p HD")).toBeInTheDocument();
+
+    // Open settings popover
+    const settingsBtn = screen.getByRole("button", { name: /Settings/i });
+    fireEvent.pointerDown(settingsBtn);
+    fireEvent.click(settingsBtn);
+
+    // Active resolution and HLS explanation visible
+    expect(screen.getAllByText(/1080p/i).length).toBeGreaterThanOrEqual(2);
+    expect(
+      screen.getByText(/Multi-bitrate adaptive streaming \(HLS\) will be enabled/i),
+    ).toBeInTheDocument();
+  });
 });
+

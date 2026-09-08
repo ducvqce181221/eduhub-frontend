@@ -106,8 +106,11 @@ export function CoursePreviewModal({
               ref={videoRef}
               src={previewData.previewUrl || previewData.videoUrl}
               controls
+              controlsList="nodownload noplaybackrate"
+              disablePictureInPicture
               playsInline
               autoPlay
+              onContextMenu={(e) => e.preventDefault()}
               className="w-full h-full object-contain"
             >
               Your browser does not support the video tag.
