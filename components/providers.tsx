@@ -10,15 +10,21 @@ import type { Category, User } from "@/types/api";
 import { COURSE_QUERY_KEYS } from "@/hooks/use-course-catalog";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 import { LanguageProvider } from "@/lib/i18n/language-context";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/dictionaries/en";
 
 export function Providers({
   children,
   initialUser = null,
   initialCategories = [],
+  locale = "en",
+  dictionary,
 }: {
   children: React.ReactNode;
   initialUser?: User | null;
   initialCategories?: Category[];
+  locale?: Locale;
+  dictionary?: Dictionary;
 }) {
   const [queryClient] = useState(() => {
     const client = new QueryClient({
@@ -40,7 +46,7 @@ export function Providers({
 
   return (
     <ThemeProvider defaultTheme="light">
-      <LanguageProvider defaultLanguage="en">
+      <LanguageProvider locale={locale} dictionary={dictionary}>
         <NuqsAdapter>
           <QueryClientProvider client={queryClient}>
             <AuthProvider initialUser={initialUser}>

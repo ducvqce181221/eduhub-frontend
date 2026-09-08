@@ -141,14 +141,14 @@ describe("CourseFilters Component", () => {
       />,
     );
 
-    expect(screen.getByText(/Keyword: “Microservices”/i)).toBeInTheDocument();
-    expect(screen.getByText(/Category: Backend Development/i)).toBeInTheDocument();
-    expect(screen.getByText(/Level: INTERMEDIATE/i)).toBeInTheDocument();
+    expect(screen.getByText("Microservices")).toBeInTheDocument();
+    expect(screen.getAllByText("Backend Development").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Intermediate").length).toBeGreaterThanOrEqual(1);
 
-    const resetBtn = screen.getByRole("button", { name: /Reset All/i });
-    expect(resetBtn).toBeInTheDocument();
+    const resetBtns = screen.getAllByRole("button", { name: /reset/i });
+    expect(resetBtns.length).toBeGreaterThanOrEqual(1);
 
-    await user.click(resetBtn);
+    await user.click(resetBtns[0]);
     expect(handleReset).toHaveBeenCalled();
   });
 });

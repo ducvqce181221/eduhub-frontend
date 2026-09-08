@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
+import { LocalizedLink } from "@/components/common/localized-link";
+import { useTranslation } from "@/lib/i18n/language-context";
 import { Badge } from "@/components/ui/badge";
 import {
   BookOpen,
@@ -39,6 +40,8 @@ export function LearningSidebar({
   onSelectLesson,
   className,
 }: LearningSidebarProps) {
+  const { t } = useTranslation();
+
   // Sort chapters
   const sortedChapters = [...chapters].sort((a, b) => a.order - b.order);
 
@@ -89,13 +92,13 @@ export function LearningSidebar({
     >
       {/* Sidebar Header: Course Title & Progress Bar */}
       <div className="p-4 sm:p-5 border-b border-hairline bg-canvas-soft/60 flex flex-col gap-2.5">
-        <Link
+        <LocalizedLink
           href={`/courses/${courseId}`}
           className="text-xs font-medium text-ink-muted hover:text-notion-blue transition-colors flex items-center gap-1.5 w-fit"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
-          <span>Back to Course Overview</span>
-        </Link>
+          <span>{t.learn.backToOverview}</span>
+        </LocalizedLink>
 
         <h2 className="text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2">
           {courseTitle}
@@ -105,10 +108,10 @@ export function LearningSidebar({
         <div className="flex flex-col gap-1.5 pt-1">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-ink tabular-nums">
-              {roundedProgress}% Complete
+              {t.learn.percentComplete.replace("{progress}", String(roundedProgress))}
             </span>
             <span className="text-ink-muted tabular-nums">
-              {completedCount} of {totalLessons} lessons
+              {t.learn.lessonsProgress.replace("{completed}", String(completedCount)).replace("{total}", String(totalLessons))}
             </span>
           </div>
 
@@ -150,7 +153,9 @@ export function LearningSidebar({
                 </div>
 
                 <span className="text-[11px] text-ink-muted shrink-0 tabular-nums font-mono">
-                  {sortedLessons.length} {sortedLessons.length === 1 ? "lesson" : "lessons"}
+                  {sortedLessons.length === 1
+                    ? t.learn.oneLesson
+                    : t.learn.lessonCount.replace("{count}", String(sortedLessons.length))}
                 </span>
               </button>
 
@@ -203,7 +208,7 @@ export function LearningSidebar({
                               )}
                               {hasQuiz && (
                                 <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-sticker-teal/15 text-sticker-teal border-transparent font-medium">
-                                  Quiz
+                                  {t.course.quiz}
                                 </Badge>
                               )}
                             </div>
@@ -233,7 +238,7 @@ export function LearningSidebar({
           )}
         >
           <ChevronLeft className="w-3.5 h-3.5" />
-          <span>Previous</span>
+          <span>{t.learn.previousLesson}</span>
         </button>
 
         <button
@@ -247,7 +252,7 @@ export function LearningSidebar({
               : "opacity-40 text-ink-muted cursor-not-allowed bg-transparent border border-hairline",
           )}
         >
-          <span>Next Lesson</span>
+          <span>{t.learn.nextLesson}</span>
           <ChevronRight className="w-3.5 h-3.5" />
         </button>
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
 import {
@@ -16,12 +15,15 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { User as UserIcon, KeyRound, LogOut, BookOpen, LayoutDashboard, Shield } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { LocalizedLink } from "@/components/common/localized-link";
 
 import type { User } from "@/types/api";
 
 export function UserMenu({ initialUser }: { initialUser?: User | null }) {
   const router = useRouter();
   const { user: authUser, logout } = useAuth();
+  const { t, language } = useTranslation();
   const user = authUser || initialUser;
 
   if (!user) return null;
@@ -35,7 +37,7 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
 
   const handleLogout = async () => {
     await logout();
-    window.location.href = "/login";
+    router.push(`/${language}/login`);
   };
 
   const getRoleBadgeVariant = (role: string) => {
@@ -71,7 +73,7 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-bold leading-none text-ink truncate">{user.fullName}</p>
               <Badge variant={getRoleBadgeVariant(user.role)} className="text-[10px] px-1.5 py-0 h-4 shrink-0 font-medium">
-                {user.role}
+                {t.enums.role[user.role] || user.role}
               </Badge>
             </div>
             <p className="text-[11px] leading-none text-ink-muted truncate">{user.email}</p>
@@ -83,43 +85,43 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
         <DropdownMenuGroup className="space-y-0.5">
           {user.role === "ADMIN" && (
             <DropdownMenuItem asChild>
-              <Link href="/admin" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+              <LocalizedLink href="/admin" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
                 <Shield className="mr-2 h-3.5 w-3.5 text-ink-muted" />
-                <span>Admin Panel</span>
-              </Link>
+                <span>{t.nav.adminPanel}</span>
+              </LocalizedLink>
             </DropdownMenuItem>
           )}
 
           {(user.role === "TEACHER" || user.role === "ADMIN") && (
             <DropdownMenuItem asChild>
-              <Link href="/teacher" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+              <LocalizedLink href="/teacher" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
                 <LayoutDashboard className="mr-2 h-3.5 w-3.5 text-ink-muted" />
-                <span>Teacher Dashboard</span>
-              </Link>
+                <span>{t.nav.teacherDashboard}</span>
+              </LocalizedLink>
             </DropdownMenuItem>
           )}
 
           {user.role === "STUDENT" && (
             <DropdownMenuItem asChild>
-              <Link href="/me/enrollments" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+              <LocalizedLink href="/me/enrollments" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
                 <BookOpen className="mr-2 h-3.5 w-3.5 text-ink-muted" />
-                <span>My Enrollments</span>
-              </Link>
+                <span>{t.nav.myLearning}</span>
+              </LocalizedLink>
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem asChild>
-            <Link href="/profile" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+            <LocalizedLink href="/profile" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
               <UserIcon className="mr-2 h-3.5 w-3.5 text-ink-muted" />
-              <span>Profile Settings</span>
-            </Link>
+              <span>{t.nav.profile}</span>
+            </LocalizedLink>
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
-            <Link href="/change-password" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
+            <LocalizedLink href="/change-password" className="cursor-pointer flex items-center text-xs font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft rounded-md px-2.5 py-1.5">
               <KeyRound className="mr-2 h-3.5 w-3.5 text-ink-muted" />
-              <span>Change Password</span>
-            </Link>
+              <span>{t.nav.changePassword}</span>
+            </LocalizedLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -130,7 +132,7 @@ export function UserMenu({ initialUser }: { initialUser?: User | null }) {
           className="cursor-pointer text-xs font-medium text-sticker-orange-deep hover:text-sticker-orange hover:bg-sticker-orange/10 focus:text-sticker-orange focus:bg-sticker-orange/10 rounded-md px-2.5 py-1.5"
         >
           <LogOut className="mr-2 h-3.5 w-3.5" />
-          <span>Log out</span>
+          <span>{t.nav.logout}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

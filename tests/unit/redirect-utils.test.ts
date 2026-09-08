@@ -52,47 +52,50 @@ describe("redirect-utils", () => {
   });
 
   describe("getDefaultLandingPage", () => {
-    it("returns /admin for ADMIN", () => {
-      expect(getDefaultLandingPage("ADMIN")).toBe("/admin");
+    it("returns /en/admin for ADMIN", () => {
+      expect(getDefaultLandingPage("ADMIN")).toBe("/en/admin");
+      expect(getDefaultLandingPage("ADMIN", "vi")).toBe("/vi/admin");
     });
 
-    it("returns /teacher for TEACHER", () => {
-      expect(getDefaultLandingPage("TEACHER")).toBe("/teacher");
+    it("returns /en/teacher for TEACHER", () => {
+      expect(getDefaultLandingPage("TEACHER")).toBe("/en/teacher");
+      expect(getDefaultLandingPage("TEACHER", "vi")).toBe("/vi/teacher");
     });
 
-    it("returns / for STUDENT", () => {
-      expect(getDefaultLandingPage("STUDENT")).toBe("/");
+    it("returns /en for STUDENT", () => {
+      expect(getDefaultLandingPage("STUDENT")).toBe("/en");
+      expect(getDefaultLandingPage("STUDENT", "vi")).toBe("/vi");
     });
   });
 
   describe("getPostLoginRedirect", () => {
     it("redirects to default landing page when returnUrl is empty, root, or auth page", () => {
-      expect(getPostLoginRedirect("ADMIN", null)).toBe("/admin");
-      expect(getPostLoginRedirect("TEACHER", "")).toBe("/teacher");
-      expect(getPostLoginRedirect("STUDENT", "/")).toBe("/");
-      expect(getPostLoginRedirect("ADMIN", "/login")).toBe("/admin");
-      expect(getPostLoginRedirect("STUDENT", "/register")).toBe("/");
+      expect(getPostLoginRedirect("ADMIN", null)).toBe("/en/admin");
+      expect(getPostLoginRedirect("TEACHER", "")).toBe("/en/teacher");
+      expect(getPostLoginRedirect("STUDENT", "/")).toBe("/en");
+      expect(getPostLoginRedirect("ADMIN", "/login")).toBe("/en/admin");
+      expect(getPostLoginRedirect("STUDENT", "/register")).toBe("/en");
     });
 
     it("preserves valid returnUrl when role is permitted", () => {
-      expect(getPostLoginRedirect("ADMIN", "/admin/users")).toBe("/admin/users");
-      expect(getPostLoginRedirect("TEACHER", "/teacher/courses")).toBe("/teacher/courses");
-      expect(getPostLoginRedirect("STUDENT", "/learn/my-course/lesson-1")).toBe("/learn/my-course/lesson-1");
-      expect(getPostLoginRedirect("STUDENT", "/profile")).toBe("/profile");
+      expect(getPostLoginRedirect("ADMIN", "/admin/users")).toBe("/en/admin/users");
+      expect(getPostLoginRedirect("TEACHER", "/teacher/courses")).toBe("/en/teacher/courses");
+      expect(getPostLoginRedirect("STUDENT", "/learn/my-course/lesson-1")).toBe("/en/learn/my-course/lesson-1");
+      expect(getPostLoginRedirect("STUDENT", "/profile")).toBe("/en/profile");
     });
 
     it("safely falls back to default landing page when returnUrl is prohibited for role", () => {
       // The exact bug described by the user: Student logging in with returnUrl=/admin/users
-      expect(getPostLoginRedirect("STUDENT", "/admin/users")).toBe("/");
-      expect(getPostLoginRedirect("STUDENT", "/teacher")).toBe("/");
-      expect(getPostLoginRedirect("TEACHER", "/admin/users")).toBe("/teacher");
-      expect(getPostLoginRedirect("ADMIN", "/me/enrollments")).toBe("/admin");
+      expect(getPostLoginRedirect("STUDENT", "/admin/users")).toBe("/en");
+      expect(getPostLoginRedirect("STUDENT", "/teacher")).toBe("/en");
+      expect(getPostLoginRedirect("TEACHER", "/admin/users")).toBe("/en/teacher");
+      expect(getPostLoginRedirect("ADMIN", "/me/enrollments")).toBe("/en/admin");
     });
 
     it("rejects malicious or external returnUrl and falls back to default landing page", () => {
-      expect(getPostLoginRedirect("STUDENT", "https://malicious.com")).toBe("/");
-      expect(getPostLoginRedirect("ADMIN", "//malicious.com")).toBe("/admin");
-      expect(getPostLoginRedirect("TEACHER", "javascript:alert(1)")).toBe("/teacher");
+      expect(getPostLoginRedirect("STUDENT", "https://malicious.com")).toBe("/en");
+      expect(getPostLoginRedirect("ADMIN", "//malicious.com")).toBe("/en/admin");
+      expect(getPostLoginRedirect("TEACHER", "javascript:alert(1)")).toBe("/en/teacher");
     });
   });
 });

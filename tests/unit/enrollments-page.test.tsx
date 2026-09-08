@@ -52,7 +52,7 @@ describe("EnrolledCourseCard Component", () => {
     );
 
     expect(screen.getByText("60% Complete")).toBeInTheDocument();
-    expect(screen.getByText("6 / 10 lessons")).toBeInTheDocument();
+    expect(screen.getByText("6 of 10 lessons")).toBeInTheDocument();
   });
 
   it("links directly to the learning player route /learn/[courseId]", () => {
@@ -66,7 +66,7 @@ describe("EnrolledCourseCard Component", () => {
     );
 
     const resumeLink = screen.getByRole("link", { name: /Resume Learning/i });
-    expect(resumeLink).toHaveAttribute("href", "/learn/course-1");
+    expect(resumeLink).toHaveAttribute("href", "/en/learn/course-1");
   });
 });
 
@@ -102,7 +102,7 @@ vi.mock("@/hooks/use-student-learning", () => ({
   }),
 }));
 
-import MyEnrollmentsPage from "@/app/(student)/me/enrollments/page";
+import MyEnrollmentsPage from "@/app/[locale]/(student)/me/enrollments/page";
 
 describe("MyEnrollmentsPage Role Redirects", () => {
   it("redirects ADMIN to /admin and renders nothing", () => {
@@ -110,7 +110,7 @@ describe("MyEnrollmentsPage Role Redirects", () => {
     mockCurrentUser = { id: "a1", role: "ADMIN", email: "admin@test.com" };
 
     const { container } = render(<MyEnrollmentsPage />);
-    expect(mockReplace).toHaveBeenCalledWith("/admin");
+    expect(mockReplace).toHaveBeenCalledWith("/en/admin");
     expect(container.firstChild).toBeNull();
   });
 
@@ -119,7 +119,7 @@ describe("MyEnrollmentsPage Role Redirects", () => {
     mockCurrentUser = { id: "t1", role: "TEACHER", email: "teacher@test.com" };
 
     const { container } = render(<MyEnrollmentsPage />);
-    expect(mockReplace).toHaveBeenCalledWith("/teacher");
+    expect(mockReplace).toHaveBeenCalledWith("/en/teacher");
     expect(container.firstChild).toBeNull();
   });
 
@@ -129,7 +129,7 @@ describe("MyEnrollmentsPage Role Redirects", () => {
 
     render(<MyEnrollmentsPage />);
     expect(mockReplace).not.toHaveBeenCalled();
-    expect(screen.getByText("My Enrolled Courses")).toBeInTheDocument();
+    expect(screen.getByText("My Learning")).toBeInTheDocument();
     expect(screen.getByText("Fullstack NestJS Masterclass")).toBeInTheDocument();
   });
 });

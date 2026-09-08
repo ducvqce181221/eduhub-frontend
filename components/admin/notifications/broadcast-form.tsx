@@ -118,7 +118,7 @@ export function BroadcastNotificationForm({
               className="text-xs border-hairline bg-surface text-ink placeholder:text-ink-muted focus-visible:ring-notion-blue"
             />
             {errors.title && (
-              <p className="text-[11px] font-medium text-rose-600">
+              <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
                 {errors.title.message}
               </p>
             )}
@@ -140,7 +140,7 @@ export function BroadcastNotificationForm({
               className="text-xs border-hairline bg-surface text-ink placeholder:text-ink-muted focus-visible:ring-notion-blue resize-none"
             />
             {errors.message && (
-              <p className="text-[11px] font-medium text-rose-600">
+              <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
                 {errors.message.message}
               </p>
             )}
@@ -204,7 +204,7 @@ export function BroadcastNotificationForm({
 
             <div className="pt-2 border-t border-hairline flex items-center justify-between text-[11px] text-ink-muted">
               <span>Channel: Platform In-App Notification</span>
-              <span className="font-medium text-sticker-teal">Unread</span>
+              <span className="font-medium text-sticker-teal dark:text-teal-300">Unread</span>
             </div>
           </div>
         </div>
@@ -215,7 +215,7 @@ export function BroadcastNotificationForm({
         <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
           <DialogHeader className="space-y-1">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-sticker-amber/20 bg-sticker-amber/15 text-sticker-amber-deep">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-sticker-amber/20 bg-sticker-amber/15 text-sticker-amber-deep dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
                 <AlertTriangle className="h-4 w-4" />
               </div>
               <div>
@@ -245,7 +245,7 @@ export function BroadcastNotificationForm({
               type="button"
               variant="outline"
               onClick={() => setIsConfirmOpen(false)}
-              className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
+              className="rounded-full text-xs font-medium border-hairline text-ink hover:bg-canvas-soft px-4"
             >
               Cancel
             </Button>
@@ -253,7 +253,7 @@ export function BroadcastNotificationForm({
               type="button"
               disabled={isSubmitting}
               onClick={handleConfirmedDispatch}
-              className="bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium"
+              className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium px-4 shadow-notion-soft"
             >
               {isSubmitting ? "Dispatching..." : "Confirm & Dispatch"}
             </Button>

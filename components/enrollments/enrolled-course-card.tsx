@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { LocalizedLink } from "@/components/common/localized-link";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { translateCourseLevel } from "@/lib/i18n/formatters";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,10 +27,12 @@ export function EnrolledCourseCard({
   totalLessons = 0,
   className,
 }: EnrolledCourseCardProps) {
+  const { t } = useTranslation();
   const course = enrollment.course;
   if (!course) return null;
 
   const levelInfo = getLevelBadgeVariant(course.level);
+  const localizedLevel = translateCourseLevel(course.level, t);
   const initials = course.teacher?.fullName
     ? course.teacher.fullName
         .split(" ")
@@ -79,7 +83,7 @@ export function EnrolledCourseCard({
                 variant={levelInfo.variant}
                 className="text-[11px] px-2 py-0.5 font-medium"
               >
-                {levelInfo.label}
+                {localizedLevel}
               </Badge>
             </div>
 
@@ -101,7 +105,7 @@ export function EnrolledCourseCard({
                 </AvatarFallback>
               </Avatar>
               <span className="text-xs text-ink-muted truncate">
-                {course.teacher?.fullName || "EduHub Instructor"}
+                {course.teacher?.fullName || t.course.instructor}
               </span>
             </div>
           </div>
@@ -114,14 +118,16 @@ export function EnrolledCourseCard({
               {isCourseComplete ? (
                 <>
                   <CheckCircle2 className="w-3.5 h-3.5 text-sticker-teal" />
-                  <span className="text-sticker-teal font-semibold">Completed</span>
+                  <span className="text-sticker-teal font-semibold">{t.student.completedBadge}</span>
                 </>
               ) : (
-                <span className="tabular-nums">{roundedProgress}% Complete</span>
+                <span className="tabular-nums">
+                  {t.learn.percentComplete.replace("{progress}", String(roundedProgress))}
+                </span>
               )}
             </span>
             <span className="text-ink-muted tabular-nums">
-              {completedLessons} / {totalLessons} lessons
+              {t.learn.lessonsProgress.replace("{completed}", String(completedLessons)).replace("{total}", String(totalLessons))}
             </span>
           </div>
 
@@ -144,11 +150,11 @@ export function EnrolledCourseCard({
         className="w-full font-semibold h-10 gap-2 cursor-pointer"
         asChild
       >
-        <Link href={`/learn/${course.id}`}>
+        <LocalizedLink href={`/learn/${course.id}`}>
           <PlayCircle className="w-4 h-4" />
-          <span>{isCourseComplete ? "Review Course" : "Resume Learning"}</span>
+          <span>{isCourseComplete ? t.student.reviewCourse : t.student.resumeLearning}</span>
           <ArrowRight className="w-3.5 h-3.5 ml-auto" />
-        </Link>
+        </LocalizedLink>
       </Button>
     </div>
   );

@@ -76,7 +76,7 @@ export function DeleteCategoryDialog({
 
         {errorMessage && (
           <div className="flex items-start gap-2.5 rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs text-rose-600 dark:text-rose-400">
-            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-rose-600" />
+            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-rose-600 dark:text-rose-400" />
             <div>
               <p className="font-semibold">{errorMessage}</p>
               <p className="mt-0.5 text-[11px] opacity-80">
@@ -91,7 +91,7 @@ export function DeleteCategoryDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
+            className="rounded-full text-xs font-medium border-hairline text-ink hover:bg-canvas-soft px-4"
           >
             Cancel
           </Button>
@@ -99,7 +99,7 @@ export function DeleteCategoryDialog({
             type="button"
             disabled={isSubmitting}
             onClick={handleDelete}
-            className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium"
+            className="rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium px-4 shadow-notion-soft"
           >
             {isSubmitting ? "Deleting..." : "Delete Category"}
           </Button>

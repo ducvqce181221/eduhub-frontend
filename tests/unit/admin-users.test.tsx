@@ -70,9 +70,9 @@ describe("User Management Components (Admin)", () => {
       expect(screen.getByText("Alice Learner")).toBeInTheDocument();
 
       // Badges
-      expect(screen.getByText("ADMIN")).toBeInTheDocument();
-      expect(screen.getByText("TEACHER")).toBeInTheDocument();
-      expect(screen.getByText("STUDENT")).toBeInTheDocument();
+      expect(screen.getAllByText("Administrator").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Teacher").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Student").length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText("Active")).toHaveLength(3); // 1 in filter dropdown, 2 in table rows
       expect(screen.getAllByText("Inactive")).toHaveLength(2); // 1 in filter dropdown, 1 in table rows
     });

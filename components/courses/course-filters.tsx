@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import { Input } from "@/components/ui/input";
+import React, { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/search-input";
-import { Search, X, SlidersHorizontal, RotateCcw } from "lucide-react";
+import { X, SlidersHorizontal, RotateCcw } from "lucide-react";
 import type { Category, CourseLevel } from "@/types/api";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/language-context";
 
 interface CourseFiltersProps {
   categories: Category[];
@@ -21,13 +21,6 @@ interface CourseFiltersProps {
   className?: string;
 }
 
-const LEVELS: { label: string; value: CourseLevel | "" }[] = [
-  { label: "All Levels", value: "" },
-  { label: "Beginner", value: "BEGINNER" },
-  { label: "Intermediate", value: "INTERMEDIATE" },
-  { label: "Advanced", value: "ADVANCED" },
-];
-
 export function CourseFilters({
   categories,
   selectedCategory,
@@ -40,7 +33,18 @@ export function CourseFilters({
   showSearch = false,
   className,
 }: CourseFiltersProps) {
+  const { t } = useTranslation();
   const hasActiveFilters = Boolean(searchValue || selectedCategory || selectedLevel);
+
+  const levels: { label: string; value: CourseLevel | "" }[] = useMemo(
+    () => [
+      { label: t.catalog.allLevels, value: "" },
+      { label: t.enums.level.BEGINNER, value: "BEGINNER" },
+      { label: t.enums.level.INTERMEDIATE, value: "INTERMEDIATE" },
+      { label: t.enums.level.ADVANCED, value: "ADVANCED" },
+    ],
+    [t],
+  );
 
   return (
     <div
@@ -54,7 +58,7 @@ export function CourseFilters({
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <div className="w-full">
             <SearchInput
-              placeholder="Search courses by title or keyword..."
+              placeholder={t.catalog.searchFilterPlaceholder}
               value={searchValue}
               onSearch={onSearchChange}
               className="h-10 pl-10 pr-9 bg-canvas-soft border-hairline rounded-md text-sm"
@@ -68,11 +72,13 @@ export function CourseFilters({
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider flex items-center gap-1.5">
             <SlidersHorizontal className="w-3.5 h-3.5 text-notion-blue" />
-            <span>Categories</span>
+            <span>{t.catalog.categoriesFilterTitle}</span>
           </span>
           {categories.length > 0 && (
             <span suppressHydrationWarning className="text-[11px] text-ink-muted">
-              {categories.length} {categories.length === 1 ? "track" : "tracks"}
+              {categories.length === 1
+                ? t.catalog.oneTrack
+                : t.catalog.tracksCount.replace("{count}", String(categories.length))}
             </span>
           )}
         </div>
@@ -89,7 +95,7 @@ export function CourseFilters({
                 : "border-hairline text-ink-secondary bg-surface hover:bg-canvas-soft",
             )}
           >
-            All Categories
+            {t.catalog.allCategories}
           </Button>
           {categories.map((cat) => {
             const isSelected = selectedCategory === cat.id;
@@ -117,10 +123,10 @@ export function CourseFilters({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-hairline">
         <div className="flex items-center gap-2.5">
           <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider shrink-0">
-            Level:
+            {t.catalog.levelFilterTitle}:
           </span>
           <div className="inline-flex bg-canvas-soft p-0.5 rounded-md border border-hairline flex-wrap gap-0.5">
-            {LEVELS.map((lvl) => {
+            {levels.map((lvl) => {
               const isSelected = selectedLevel === lvl.value;
               return (
                 <button
@@ -149,7 +155,7 @@ export function CourseFilters({
             className="h-7 text-xs px-2.5 rounded-md border-hairline text-ink-muted hover:text-ink hover:bg-canvas-soft gap-1.5 self-start sm:self-auto cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
-            <span>Reset filters</span>
+            <span>{t.catalog.resetFilters}</span>
           </Button>
         )}
       </div>
@@ -157,11 +163,11 @@ export function CourseFilters({
       {/* 3. Active Filter Chips Row */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-hairline text-xs">
-          <span className="text-ink-muted font-medium">Active filters:</span>
+          <span className="text-ink-muted font-medium">{t.common.filter}:</span>
 
           {searchValue && (
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-notion-blue/10 text-notion-blue border border-notion-blue/20">
-              <span>Keyword: &ldquo;{searchValue}&rdquo;</span>
+              <span>{searchValue}</span>
               <button
                 type="button"
                 onClick={() => onSearchChange("")}
@@ -176,14 +182,12 @@ export function CourseFilters({
           {selectedCategory && (
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-canvas-soft text-ink border border-hairline">
               <span>
-                Category:{" "}
-                {categories.find((c) => c.id === selectedCategory)?.name ||
-                  selectedCategory}
+                {categories.find((c) => c.id === selectedCategory)?.name || selectedCategory}
               </span>
               <button
                 type="button"
                 onClick={() => onCategoryChange("")}
-                className="p-0.5 hover:bg-neutral-200 rounded-full cursor-pointer"
+                className="p-0.5 hover:bg-canvas-muted rounded-full cursor-pointer"
                 aria-label="Clear category filter"
               >
                 <X className="w-3 h-3" />
@@ -193,11 +197,11 @@ export function CourseFilters({
 
           {selectedLevel && (
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-canvas-soft text-ink border border-hairline">
-              <span>Level: {selectedLevel}</span>
+              <span>{t.enums.level[selectedLevel as CourseLevel] || selectedLevel}</span>
               <button
                 type="button"
                 onClick={() => onLevelChange("")}
-                className="p-0.5 hover:bg-neutral-200 rounded-full cursor-pointer"
+                className="p-0.5 hover:bg-canvas-muted rounded-full cursor-pointer"
                 aria-label="Clear level filter"
               >
                 <X className="w-3 h-3" />
@@ -212,7 +216,7 @@ export function CourseFilters({
             className="h-6 text-xs px-2 text-ink-muted hover:text-ink hover:bg-canvas-soft rounded-md ml-auto gap-1 cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
-            <span>Reset All</span>
+            <span>{t.catalog.resetFilters}</span>
           </Button>
         </div>
       )}

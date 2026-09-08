@@ -11,6 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { formatDate } from "@/lib/i18n/formatters";
 import type {
   EnrolledStudentProgressItem,
   CourseAggregateProgress,
@@ -27,6 +29,8 @@ export function EnrolledStudentsTable({
   metrics,
   isLoading,
 }: EnrolledStudentsTableProps) {
+  const { t, language } = useTranslation();
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -48,7 +52,7 @@ export function EnrolledStudentsTable({
               </div>
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
-                  Total Enrollments
+                  {t.teacher.totalEnrollmentsMetric}
                 </p>
                 <h3 className="text-2xl font-bold text-ink font-mono tabular-nums">
                   {metrics.totalEnrollments ?? metrics.totalEnrolled ?? 0}
@@ -64,7 +68,7 @@ export function EnrolledStudentsTable({
               </div>
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
-                  Completed Learners
+                  {t.teacher.completedLearnersMetric}
                 </p>
                 <h3 className="text-2xl font-bold text-ink font-mono tabular-nums">
                   {metrics.completedCount ?? 0}
@@ -80,7 +84,7 @@ export function EnrolledStudentsTable({
               </div>
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
-                  Average Progress
+                  {t.teacher.averageProgressMetric}
                 </p>
                 <h3 className="text-2xl font-bold text-ink font-mono tabular-nums">
                   {Math.round(metrics.averageProgressPercentage ?? 0)}%
@@ -95,23 +99,26 @@ export function EnrolledStudentsTable({
       <div className="rounded-lg border border-hairline bg-surface shadow-notion-soft overflow-hidden">
         <div className="border-b border-hairline bg-canvas-soft/70 px-4 py-3">
           <h3 className="text-sm font-bold text-ink">
-            Enrolled Learners ({students.length})
+            {t.teacher.enrolledLearnersHeader.replace(
+              "{count}",
+              String(students.length)
+            )}
           </h3>
         </div>
 
         {students.length === 0 ? (
           <div className="py-12 text-center text-xs text-ink-muted">
-            No students have enrolled in this course yet.
+            {t.teacher.noStudentsEnrolledYet}
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead>Enrolled Date</TableHead>
-                <TableHead>Lessons Completed</TableHead>
-                <TableHead className="w-48">Progress</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t.teacher.tableStudent}</TableHead>
+                <TableHead>{t.teacher.tableEnrolledDate}</TableHead>
+                <TableHead>{t.teacher.tableLessonsCompleted}</TableHead>
+                <TableHead className="w-48">{t.teacher.tableProgress}</TableHead>
+                <TableHead>{t.teacher.tableStatus}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -143,11 +150,7 @@ export function EnrolledStudentsTable({
                   </TableCell>
 
                   <TableCell className="text-ink-muted font-mono tabular-nums">
-                    {new Date(student.enrolledAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {formatDate(student.enrolledAt, "PPP", language)}
                   </TableCell>
 
                   <TableCell className="text-ink font-medium font-mono tabular-nums">
@@ -172,14 +175,14 @@ export function EnrolledStudentsTable({
                         variant="secondary"
                         className="bg-sticker-teal/15 text-sticker-teal border-transparent font-medium"
                       >
-                        Completed
+                        {t.teacher.statusCompleted}
                       </Badge>
                     ) : (
                       <Badge
                         variant="secondary"
                         className="bg-sticker-sky/15 text-sticker-sky-deep border-transparent font-medium"
                       >
-                        In Progress
+                        {t.teacher.statusInProgress}
                       </Badge>
                     )}
                   </TableCell>

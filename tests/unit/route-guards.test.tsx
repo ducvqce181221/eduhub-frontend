@@ -67,7 +67,7 @@ describe("Slice 4: Frontend Route Guards & Layouts", () => {
       </RoleGuard>,
     );
 
-    expect(mockPush).toHaveBeenCalledWith("/login?returnUrl=%2Ftest-protected");
+    expect(mockPush).toHaveBeenCalledWith("/en/login?returnUrl=%2Ftest-protected");
     expect(screen.queryByText("Protected Content")).not.toBeInTheDocument();
   });
 
@@ -162,7 +162,7 @@ describe("Slice 4: Frontend Route Guards & Layouts", () => {
       </RoleGuard>,
     );
 
-    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(mockPush).toHaveBeenCalledWith("/en");
     expect(screen.queryByText("Login Page Content")).not.toBeInTheDocument();
   });
 });

@@ -1,10 +1,11 @@
+"use client";
+
 import React from "react";
 import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
   ArrowRight,
-  ExternalLink,
 } from "lucide-react";
 import {
   Dialog,
@@ -15,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n/language-context";
 
 export interface PublishChecklistState {
   hasMetadata: boolean;
@@ -38,39 +40,41 @@ export function PublishChecklistModal({
   onFixSection,
   checklist,
 }: PublishChecklistModalProps) {
+  const { t } = useTranslation();
+
   const criteria = [
     {
       id: "metadata",
-      label: "Basic Information & Thumbnail",
-      description: "Title, non-empty description, active category, level, and thumbnail image.",
+      label: t.teacher.criterionMetadata,
+      description: t.teacher.criterionMetadataDesc,
       passed: checklist.hasMetadata,
       targetSection: "metadata" as const,
     },
     {
       id: "chapters",
-      label: "Curriculum Chapters (≥ 1 Chapter)",
-      description: "Course must have at least one structured chapter.",
+      label: t.teacher.criterionChapters,
+      description: t.teacher.criterionChaptersDesc,
       passed: checklist.hasChapters,
       targetSection: "curriculum" as const,
     },
     {
       id: "lessons",
-      label: "Chapter Lessons (≥ 1 Lesson per Chapter)",
-      description: "Every chapter must contain at least one learning lesson.",
+      label: t.teacher.criterionLessons,
+      description: t.teacher.criterionLessonsDesc,
       passed: checklist.hasLessons,
       targetSection: "curriculum" as const,
     },
     {
       id: "videos",
-      label: "Lesson Videos (Uploaded & Duration > 0)",
-      description: "Every lesson must strictly possess a valid video with duration > 0s.",
+      label: t.teacher.criterionVideos,
+      description: t.teacher.criterionVideosDesc,
       passed: checklist.hasVideos,
       targetSection: "curriculum" as const,
     },
     {
       id: "quizzes",
-      label: "Lesson Quizzes (Valid Questions & Answers)",
-      description: "Any attached quiz must have ≥ 1 question with ≥ 2 answers & 1 correct option.",
+      label: t.teacher.criterionQuizzes,
+      description: t.teacher.criterionQuizzesDesc,
       passed: checklist.hasValidQuizzes,
       targetSection: "quiz" as const,
     },
@@ -86,10 +90,10 @@ export function PublishChecklistModal({
             </div>
             <div>
               <DialogTitle className="text-lg font-bold text-ink">
-                Course Publish Checklist
+                {t.teacher.checklistTitle}
               </DialogTitle>
               <DialogDescription className="text-xs text-ink-muted">
-                BR-CRS-02 requires all 5 criteria to pass before publishing your course.
+                {t.teacher.checklistDescBr}
               </DialogDescription>
             </div>
           </div>
@@ -100,17 +104,17 @@ export function PublishChecklistModal({
           {criteria.map((item) => (
             <div
               key={item.id}
-              className={`flex items-start justify-between rounded-md border p-3 transition-colors ${
+              className={`flex items-start justify-between rounded-lg border p-3 transition-colors ${
                 item.passed
-                  ? "border-sticker-teal/25 bg-sticker-teal/5"
-                  : "border-sticker-orange/30 bg-sticker-orange/5"
+                  ? "border-sticker-teal/25 bg-sticker-teal/5 dark:bg-teal-500/10 dark:border-teal-500/25"
+                  : "border-sticker-orange/30 bg-sticker-orange/5 dark:bg-orange-500/10 dark:border-orange-500/25"
               }`}
             >
               <div className="flex items-start gap-3">
                 {item.passed ? (
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-sticker-teal" />
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-sticker-teal dark:text-teal-400" />
                 ) : (
-                  <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-sticker-orange-deep" />
+                  <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-sticker-orange-deep dark:text-orange-400" />
                 )}
                 <div>
                   <h4 className="text-sm font-semibold text-ink">
@@ -130,9 +134,9 @@ export function PublishChecklistModal({
                     onClose();
                     onFixSection(item.targetSection);
                   }}
-                  className="ml-3 shrink-0 rounded-md border-hairline bg-surface text-xs font-medium text-ink hover:bg-canvas-soft"
+                  className="ml-3 shrink-0 rounded-full border-hairline bg-surface text-xs font-medium text-ink hover:bg-canvas-soft cursor-pointer"
                 >
-                  Fix <ArrowRight className="ml-1 h-3 w-3" />
+                  {t.teacher.fixSection} <ArrowRight className="ml-1 h-3 w-3" />
                 </Button>
               )}
             </div>
@@ -141,8 +145,8 @@ export function PublishChecklistModal({
 
         {/* Detailed error bullets if present */}
         {checklist.details && checklist.details.length > 0 && (
-          <div className="rounded-md bg-canvas-soft border border-hairline p-3 text-xs text-ink-secondary">
-            <h5 className="font-semibold text-ink">Specific issues found:</h5>
+          <div className="rounded-lg bg-canvas-soft border border-hairline p-3 text-xs text-ink-secondary">
+            <h5 className="font-semibold text-ink">{t.teacher.checklistIssuesFound}</h5>
             <ul className="mt-1.5 list-inside list-disc space-y-1 text-ink-muted">
               {checklist.details.map((detail, idx) => (
                 <li key={idx}>{detail}</li>
@@ -155,9 +159,9 @@ export function PublishChecklistModal({
           <Button
             variant="outline"
             onClick={onClose}
-            className="rounded-md border-hairline text-xs text-ink-secondary hover:bg-canvas-soft"
+            className="rounded-full border-hairline text-xs text-ink-secondary hover:bg-canvas-soft px-4 cursor-pointer"
           >
-            Close
+            {t.common.close}
           </Button>
         </DialogFooter>
       </DialogContent>

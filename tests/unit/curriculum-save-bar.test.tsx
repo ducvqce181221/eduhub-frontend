@@ -95,7 +95,7 @@ describe("CurriculumTree Option 2 Save Changes Bar", () => {
     expect(screen.getByText("You have unsaved curriculum changes")).toBeInTheDocument();
 
     const saveBtn = screen.getByTestId("save-reorder-btn");
-    expect(saveBtn).toHaveTextContent("Save Changes");
+    expect(saveBtn).toHaveTextContent("Save Curriculum Order");
 
     const discardBtn = screen.getByTestId("discard-reorder-btn");
     expect(discardBtn).toHaveTextContent("Discard");

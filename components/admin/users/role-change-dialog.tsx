@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { User, Role } from "@/types/api";
 
 interface RoleChangeDialogProps {
@@ -27,6 +28,7 @@ export function RoleChangeDialog({
   onOpenChange,
   onConfirm,
 }: RoleChangeDialogProps) {
+  const { t } = useTranslation();
   const [selectedRole, setSelectedRole] = useState<Role>("STUDENT");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export function RoleChangeDialog({
       await onConfirm(selectedRole);
       onOpenChange(false);
     } catch (err: any) {
-      setErrorMessage(err.message || "Failed to update user role");
+      setErrorMessage(err.message || t.admin.userRoleUpdateFailed);
     } finally {
       setIsSubmitting(false);
     }
@@ -58,10 +60,10 @@ export function RoleChangeDialog({
       <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-base font-semibold text-ink">
-            Change Role for {user.fullName}
+            {t.admin.changeRoleModalTitle.replace("{name}", user.fullName)}
           </DialogTitle>
           <DialogDescription className="text-xs text-ink-muted">
-            Select a new authorization tier for {user.email}.
+            {t.admin.changeRoleModalDesc.replace("{name}", user.email)}
           </DialogDescription>
         </DialogHeader>
 
@@ -74,24 +76,24 @@ export function RoleChangeDialog({
         <div className="space-y-4 py-3">
           <div className="space-y-1.5">
             <Label htmlFor="role-select" className="text-xs font-medium text-ink">
-              Assigned Role
+              {t.admin.assignedRoleLabel}
             </Label>
             <select
               id="role-select"
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value as Role)}
-              className="w-full h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
+              className="w-full h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
             >
-              <option value="STUDENT">STUDENT — Regular course learner</option>
-              <option value="TEACHER">TEACHER — Course creator and curriculum instructor</option>
-              <option value="ADMIN">ADMIN — Complete administrative and operational governance</option>
+              <option value="STUDENT">{t.admin.roleStudentOptionDesc}</option>
+              <option value="TEACHER">{t.admin.roleTeacherOptionDesc}</option>
+              <option value="ADMIN">{t.admin.roleAdminOptionDesc}</option>
             </select>
           </div>
 
           <div className="flex items-start gap-2.5 rounded-md border border-hairline bg-canvas-soft p-3 text-xs text-ink-secondary">
-            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-sticker-amber-deep" />
+            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-sticker-amber-deep dark:text-amber-300" />
             <p>
-              Modifying an account&apos;s role immediately reshapes their platform permissions, access guards, and capabilities.
+              {t.admin.roleChangeNotice}
             </p>
           </div>
         </div>
@@ -101,17 +103,17 @@ export function RoleChangeDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
+            className="rounded-full text-xs font-medium border-hairline text-ink hover:bg-canvas-soft px-4"
           >
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button
             type="button"
             disabled={isSubmitting}
             onClick={handleSubmit}
-            className="bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium"
+            className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium px-4 shadow-notion-soft"
           >
-            {isSubmitting ? "Updating..." : "Update Role"}
+            {isSubmitting ? t.admin.updatingRole : t.admin.updateRoleBtn}
           </Button>
         </DialogFooter>
       </DialogContent>

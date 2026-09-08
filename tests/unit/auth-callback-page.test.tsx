@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import AuthCallbackPage from "@/app/(public)/auth/callback/page";
+import AuthCallbackPage from "@/app/[locale]/(public)/auth/callback/page";
 import * as authContext from "@/lib/auth/auth-context";
 
 const mockPush = vi.fn();
@@ -51,7 +51,7 @@ describe("Phase 12 - Auth Callback Page (TDD: Red)", () => {
 
     await waitFor(() => {
       expect(mockRefreshSession).toHaveBeenCalled();
-      expect(mockPush).toHaveBeenCalledWith("/courses/advanced-react");
+      expect(mockPush).toHaveBeenCalledWith("/en/courses/advanced-react");
     });
   });
 
@@ -62,7 +62,7 @@ describe("Phase 12 - Auth Callback Page (TDD: Red)", () => {
 
     await waitFor(() => {
       expect(mockRefreshSession).toHaveBeenCalled();
-      expect(mockPush).toHaveBeenCalledWith("/courses");
+      expect(mockPush).toHaveBeenCalledWith("/en/courses");
     });
   });
 

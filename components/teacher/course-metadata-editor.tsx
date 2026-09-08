@@ -199,7 +199,7 @@ export function CourseMetadataEditor({
                   <FormControl>
                     <select
                       aria-label="Category"
-                      className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
+                      className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue [&>option]:bg-surface [&>option]:text-ink"
                       {...field}
                     >
                       {categories.map((cat) => (
@@ -223,7 +223,7 @@ export function CourseMetadataEditor({
                   <FormControl>
                     <select
                       aria-label="Target Level"
-                      className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
+                      className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue [&>option]:bg-surface [&>option]:text-ink"
                       {...field}
                     >
                       <option value="BEGINNER">Beginner</option>

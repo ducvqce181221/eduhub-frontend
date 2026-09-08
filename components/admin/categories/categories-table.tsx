@@ -11,6 +11,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { Category } from "@/types/api";
 
 interface CategoriesTableProps {
@@ -26,16 +27,18 @@ export function CategoriesTable({
   onDeleteCategory,
   isLoading = false,
 }: CategoriesTableProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="overflow-hidden rounded-lg border border-hairline bg-surface shadow-notion-soft">
       <Table className="border-0 rounded-none">
         <TableHeader>
           <TableRow>
-            <TableHead>Category</TableHead>
-            <TableHead>Slug</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t.admin.columnCategory}</TableHead>
+            <TableHead>{t.admin.columnSlug}</TableHead>
+            <TableHead>{t.admin.columnDescription}</TableHead>
+            <TableHead>{t.admin.columnStatus}</TableHead>
+            <TableHead className="text-right">{t.admin.columnActions}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -45,7 +48,7 @@ export function CategoriesTable({
                 colSpan={5}
                 className="py-12 text-center text-xs text-ink-muted"
               >
-                Loading categories...
+                {t.admin.loadingCategories}
               </TableCell>
             </TableRow>
           ) : categories.length === 0 ? (
@@ -54,7 +57,7 @@ export function CategoriesTable({
                 colSpan={5}
                 className="py-12 text-center text-xs text-ink-muted"
               >
-                No course categories found.
+                {t.admin.noCategoriesFound}
               </TableCell>
             </TableRow>
           ) : (
@@ -81,21 +84,21 @@ export function CategoriesTable({
                 {/* Description */}
                 <TableCell className="text-ink-secondary text-xs max-w-xs truncate">
                   {category.description || (
-                    <span className="text-ink-muted italic">No description</span>
+                    <span className="text-ink-muted italic">{t.admin.noDescription}</span>
                   )}
                 </TableCell>
 
                 {/* Status Badge */}
                 <TableCell>
                   {category.isActive ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-teal border border-sticker-teal/20">
-                      <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal" />
-                      Active
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-teal border border-sticker-teal/20 dark:text-teal-300 dark:border-teal-500/30 dark:bg-teal-500/15">
+                      <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal dark:bg-teal-400" />
+                      {t.common.active}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-0.5 text-[11px] font-medium text-ink-muted border border-hairline">
                       <EyeOff className="h-3 w-3 text-ink-muted" />
-                      Hidden
+                      {t.common.inactive}
                     </span>
                   )}
                 </TableCell>
@@ -111,7 +114,7 @@ export function CategoriesTable({
                       className="h-7 rounded-md px-2 text-[11px] font-medium text-ink border-hairline hover:bg-canvas-soft"
                     >
                       <Pencil className="mr-1 h-3 w-3 text-ink-muted" />
-                      Edit
+                      {t.common.edit}
                     </Button>
 
                     <Button
@@ -122,7 +125,7 @@ export function CategoriesTable({
                       className="h-7 rounded-md px-2 text-[11px] font-medium text-rose-600 border-hairline hover:bg-rose-500/10 hover:border-rose-300"
                     >
                       <Trash2 className="mr-1 h-3 w-3" />
-                      Delete
+                      {t.common.delete}
                     </Button>
                   </div>
                 </TableCell>

@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "@/lib/i18n/language-context";
 import { VideoUploader } from "./video-uploader";
 import { ResourcesManager } from "./resources-manager";
 import { QuizEditor } from "./quiz-editor";
@@ -52,6 +53,7 @@ export function LessonDrawer({
   onUpdateLesson,
   onRefreshLesson,
 }: LessonDrawerProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"general" | "video" | "resources" | "quiz">("general");
   const [title, setTitle] = useState(lesson?.title || "");
   const [description, setDescription] = useState(lesson?.description || "");
@@ -146,14 +148,15 @@ export function LessonDrawer({
 
   const handleAddQuestion = async (payload: CreateQuestionPayload) => {
     if (!quizDetail) return;
-    const newQuestion = await createQuizQuestion(quizDetail.id, payload);
+    const question = await createQuizQuestion(quizDetail.id, payload);
     setQuizDetail((prev) =>
-      prev ? { ...prev, questions: [...(prev.questions || []), newQuestion] } : null
+      prev ? { ...prev, questions: [...(prev.questions || []), question] } : null
     );
     await onRefreshLesson();
   };
 
   const handleUpdateQuestion = async (questionId: string, payload: any) => {
+    if (!quizDetail) return;
     const updated = await updateQuizQuestion(questionId, payload);
     setQuizDetail((prev) =>
       prev
@@ -167,6 +170,7 @@ export function LessonDrawer({
   };
 
   const handleDeleteQuestion = async (questionId: string) => {
+    if (!quizDetail) return;
     await deleteQuizQuestion(questionId);
     setQuizDetail((prev) =>
       prev
@@ -182,13 +186,13 @@ export function LessonDrawer({
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl overflow-y-auto p-0 border-l border-hairline bg-surface shadow-notion-elevated">
-        <div className="sticky top-0 z-10 border-b border-hairline bg-surface p-6 pb-4">
+        <div className="sticky top-0 z-10 border-b border-hairline bg-surface p-6 pr-14 pb-4">
           <SheetHeader>
             <SheetTitle className="text-xl font-bold text-ink tracking-tight">
-              Edit Lesson
+              {t.teacher.editLesson}
             </SheetTitle>
             <SheetDescription className="text-xs text-ink-muted">
-              Configure lesson content, Cloudflare R2 video, attachments, and quiz.
+              {t.teacher.editLessonSubtitle}
             </SheetDescription>
           </SheetHeader>
 
@@ -203,7 +207,7 @@ export function LessonDrawer({
                   : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
-              General Info
+              {t.teacher.tabGeneral}
             </button>
             <button
               type="button"
@@ -214,7 +218,7 @@ export function LessonDrawer({
                   : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
-              Video {lesson.video ? "✓" : ""}
+              {t.teacher.tabVideo} {lesson.video ? "✓" : ""}
             </button>
             <button
               type="button"
@@ -225,7 +229,7 @@ export function LessonDrawer({
                   : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
-              Resources ({lesson.resources?.length || 0})
+              {t.teacher.tabResources} ({lesson.resources?.length || 0})
             </button>
             <button
               type="button"
@@ -236,7 +240,7 @@ export function LessonDrawer({
                   : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
               }`}
             >
-              Quiz {lesson.quiz ? "✓" : ""}
+              {t.course.quiz} {lesson.quiz ? "✓" : ""}
             </button>
           </div>
         </div>
@@ -244,29 +248,29 @@ export function LessonDrawer({
         {/* Tab Body */}
         <div className="p-6">
           {activeTab === "general" && (
-            <div className="space-y-4 rounded-lg border border-hairline bg-surface p-5 shadow-notion-soft">
+            <div className="space-y-4 rounded-lg border border-hairline bg-canvas-soft/40 p-5 shadow-notion-soft">
               <div>
                 <label className="block text-xs font-semibold text-ink">
-                  Lesson Title
+                  {t.teacher.lessonTitleLabel}
                 </label>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. 1.1 Architecture Overview"
-                  className="mt-1 text-sm bg-surface border-hairline"
+                  placeholder={t.teacher.lessonTitlePlaceholder}
+                  className="mt-1 text-sm bg-surface border-hairline text-ink"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-ink">
-                  Lesson Description / Notes
+                  {t.teacher.lessonDescriptionLabel}
                 </label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Provide overview notes, timestamps, or instructions..."
+                  placeholder={t.teacher.lessonDescriptionPlaceholder}
                   rows={4}
-                  className="mt-1 text-xs resize-none bg-surface border-hairline"
+                  className="mt-1 text-xs resize-none bg-surface border-hairline text-ink"
                 />
               </div>
 
@@ -274,9 +278,9 @@ export function LessonDrawer({
                 <Button
                   onClick={handleSaveGeneral}
                   disabled={isSavingGeneral || !title.trim()}
-                  className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+                  className="rounded-full bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-hover shadow-notion-soft px-4 cursor-pointer"
                 >
-                  {isSavingGeneral ? "Saving..." : "Save Details"}
+                  {isSavingGeneral ? t.common.saving : t.teacher.saveLessonDetails}
                 </Button>
               </div>
             </div>

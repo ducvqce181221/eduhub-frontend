@@ -4,6 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/language-context";
 
 interface PaginationProps {
   page: number;
@@ -22,6 +23,8 @@ export function Pagination({
   onPageChange,
   className,
 }: PaginationProps) {
+  const { t } = useTranslation();
+
   if (totalPages <= 1) {
     return null;
   }
@@ -49,6 +52,9 @@ export function Pagination({
 
   const pages = getPageNumbers();
 
+  const from = total !== undefined && limit !== undefined ? Math.min((page - 1) * limit + 1, total) : 0;
+  const to = total !== undefined && limit !== undefined ? Math.min(page * limit, total) : 0;
+
   return (
     <div
       className={cn(
@@ -58,9 +64,10 @@ export function Pagination({
     >
       {total !== undefined && limit !== undefined && (
         <p className="text-xs text-ink-muted">
-          Showing <span className="font-medium text-ink">{Math.min((page - 1) * limit + 1, total)}</span> to{" "}
-          <span className="font-medium text-ink">{Math.min(page * limit, total)}</span> of{" "}
-          <span className="font-medium text-ink">{total}</span> courses
+          {t.common.showingCoursesPagination
+            .replace("{from}", String(from))
+            .replace("{to}", String(to))
+            .replace("{total}", String(total))}
         </p>
       )}
 
@@ -71,10 +78,10 @@ export function Pagination({
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
           className="h-8 px-2.5 rounded-md border-hairline hover:bg-accent"
-          aria-label="Previous page"
+          aria-label={t.common.prev}
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
-          <span className="hidden sm:inline text-xs">Prev</span>
+          <span className="hidden sm:inline text-xs">{t.common.prev}</span>
         </Button>
 
         <div className="flex items-center gap-1">
@@ -119,9 +126,9 @@ export function Pagination({
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
           className="h-8 px-2.5 rounded-md border-hairline hover:bg-accent"
-          aria-label="Next page"
+          aria-label={t.common.next}
         >
-          <span className="hidden sm:inline text-xs">Next</span>
+          <span className="hidden sm:inline text-xs">{t.common.next}</span>
           <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>

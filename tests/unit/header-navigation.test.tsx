@@ -70,7 +70,7 @@ describe("Header Navigation", () => {
     await user.click(exploreBtn);
 
     await waitFor(() => {
-      expect(screen.getByText("Course Categories")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /categories/i })).toBeInTheDocument();
       expect(screen.getByText("Backend Engineering")).toBeInTheDocument();
       expect(screen.getByText("10")).toBeInTheDocument();
       expect(screen.getByText("DevOps & Cloud")).toBeInTheDocument();

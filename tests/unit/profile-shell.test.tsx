@@ -2,8 +2,8 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { Header } from "@/components/layout/header";
-import ProfilePage from "@/app/(student)/profile/page";
-import ChangePasswordPage from "@/app/(student)/change-password/page";
+import ProfilePage from "@/app/[locale]/(student)/profile/page";
+import ChangePasswordPage from "@/app/[locale]/(student)/change-password/page";
 import * as authContext from "@/lib/auth/auth-context";
 import { apiClient } from "@/lib/api/client";
 import type { User } from "@/types/api";
@@ -144,7 +144,7 @@ describe("Slice 6: Frontend App Shell & Navigation & Profile / Change Password",
         target: { value: "Jane Smith" },
       });
 
-      fireEvent.click(screen.getByRole("button", { name: /save changes/i }));
+      fireEvent.click(screen.getByRole("button", { name: /save/i }));
 
       await waitFor(() => {
         expect(apiClient.patch).toHaveBeenCalledWith("/auth/me", {
@@ -170,7 +170,7 @@ describe("Slice 6: Frontend App Shell & Navigation & Profile / Change Password",
       fireEvent.change(screen.getByLabelText(/^new password/i), {
         target: { value: "NewPassword123!" },
       });
-      fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      fireEvent.change(screen.getByLabelText(/confirm password/i), {
         target: { value: "NewPassword123!" },
       });
 

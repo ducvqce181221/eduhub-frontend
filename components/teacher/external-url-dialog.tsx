@@ -172,19 +172,17 @@ export function ExternalUrlDialog({
           <DialogFooter className="pt-2 flex justify-end gap-2">
             <Button
               type="button"
-              variant="ghost"
-              size="sm"
+              variant="outline"
               onClick={onClose}
               disabled={isVerifying}
-              className="text-xs text-ink-muted hover:text-ink"
+              className="rounded-full border-hairline text-xs font-medium text-ink hover:bg-canvas-soft px-4"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              size="sm"
               disabled={isVerifying || !name.trim() || !url.trim()}
-              className="bg-notion-blue text-white text-xs font-semibold hover:bg-notion-blue-active shadow-2xs"
+              className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium px-4 shadow-notion-soft"
             >
               {isVerifying ? (
                 <>

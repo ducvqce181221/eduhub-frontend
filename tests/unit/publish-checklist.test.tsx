@@ -27,7 +27,7 @@ describe("PublishChecklistModal (BR-CRS-02)", () => {
       />
     );
 
-    expect(screen.getByText("Course Publish Checklist")).toBeInTheDocument();
+    expect(screen.getByText("Course Publishing Checklist")).toBeInTheDocument();
     expect(screen.getByText("Basic Information & Thumbnail")).toBeInTheDocument();
     expect(screen.getByText("Curriculum Chapters (≥ 1 Chapter)")).toBeInTheDocument();
     expect(screen.getByText("Chapter Lessons (≥ 1 Lesson per Chapter)")).toBeInTheDocument();

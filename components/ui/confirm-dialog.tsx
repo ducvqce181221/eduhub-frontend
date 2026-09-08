@@ -58,13 +58,13 @@ export function ConfirmDialog({
         );
       case "warning":
         return (
-          <div className="flex h-10 w-10 items-center justify-center rounded-md border border-sticker-amber/20 bg-sticker-amber/15 text-sticker-amber-deep">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md border border-sticker-amber/20 bg-sticker-amber/15 text-sticker-amber-deep dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
             <AlertTriangle className="h-5 w-5" />
           </div>
         );
       case "primary":
         return (
-          <div className="flex h-10 w-10 items-center justify-center rounded-md border border-sticker-teal/20 bg-sticker-teal/15 text-sticker-teal">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md border border-sticker-teal/20 bg-sticker-teal/15 text-sticker-teal dark:border-teal-500/30 dark:bg-teal-500/15 dark:text-teal-300">
             <CheckCircle2 className="h-5 w-5" />
           </div>
         );
@@ -80,13 +80,12 @@ export function ConfirmDialog({
   const getConfirmButtonClasses = () => {
     switch (variant) {
       case "danger":
-        return "bg-rose-600 hover:bg-rose-700 text-white";
+        return "bg-rose-600 hover:bg-rose-700 text-white shadow-notion-soft";
       case "warning":
-        return "bg-amber-600 hover:bg-amber-700 text-white";
+        return "bg-amber-600 hover:bg-amber-700 text-white shadow-notion-soft";
       case "primary":
-        return "bg-notion-blue hover:bg-notion-blue-hover text-white";
       default:
-        return "bg-ink hover:bg-ink/90 text-surface";
+        return "bg-notion-blue hover:bg-notion-blue-hover text-white shadow-notion-soft";
     }
   };
 
@@ -116,7 +115,7 @@ export function ConfirmDialog({
             variant="outline"
             disabled={loading}
             onClick={() => onOpenChange(false)}
-            className="w-full rounded-md border border-hairline bg-surface py-2 text-xs font-medium text-ink hover:bg-canvas-soft transition-colors"
+            className="w-full rounded-full border border-hairline bg-surface py-2 text-xs font-medium text-ink hover:bg-canvas-soft transition-colors"
           >
             {cancelLabel}
           </Button>
@@ -125,7 +124,7 @@ export function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={handleConfirm}
-            className={`w-full rounded-md py-2 text-xs font-medium transition-colors ${getConfirmButtonClasses()}`}
+            className={`w-full rounded-full py-2 text-xs font-medium transition-colors ${getConfirmButtonClasses()}`}
           >
             {loading ? (
               <>

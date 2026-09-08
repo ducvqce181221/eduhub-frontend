@@ -8,6 +8,8 @@ import type { Role } from "@/types/api";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { useLanguage } from "@/lib/i18n/language-context";
+
 interface RoleGuardProps {
   children: React.ReactNode;
   allowedRoles?: Role[];
@@ -24,6 +26,7 @@ export function RoleGuard({
   const router = useRouter();
   const pathname = usePathname();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { language } = useLanguage();
 
   const isUserAuthenticated = isAuthenticated || Boolean(user);
 
@@ -31,12 +34,12 @@ export function RoleGuard({
     if (isLoading) return;
 
     if (requireAuth && !isUserAuthenticated) {
-      const returnUrl = encodeURIComponent(pathname || "/");
-      router.push(`/login?returnUrl=${returnUrl}`);
+      const returnUrl = encodeURIComponent(pathname || `/${language}`);
+      router.push(`/${language}/login?returnUrl=${returnUrl}`);
     } else if (guestOnly && isUserAuthenticated) {
-      router.push("/");
+      router.push(`/${language}`);
     }
-  }, [isLoading, isUserAuthenticated, requireAuth, guestOnly, pathname, router]);
+  }, [isLoading, isUserAuthenticated, requireAuth, guestOnly, pathname, router, language]);
 
   if (isLoading && !user) {
     return (

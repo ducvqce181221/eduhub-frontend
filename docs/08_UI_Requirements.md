@@ -54,7 +54,7 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 | **System notification broadcast** | FR-N06 | Simple form: title + message → `POST /notifications/system`. |
 
 ## 6. Cross-cutting
-- **Localization (i18n):** Full bilingual support with English as default (`en`) and instant toggle to Vietnamese (`vi`).
+- **Localization (i18n):** Full bilingual support with English as default (`en`) and Vietnamese (`vi`) using native Next.js 16 sub-path routing (`/[locale]/...`), cookie & header negotiation via middleware, and SSR dictionary hydration.
 - **Dark Mode:** Adaptive theme switching with CSS variables supporting system preference, persistent light/dark selection, and Notion-inspired warm/dark aesthetic.
 - Every list screen above with pagination reads `meta.page/limit/total/totalPages` from
   the envelope (`06_Frontend_Architecture.md` §4) — build one reusable pagination

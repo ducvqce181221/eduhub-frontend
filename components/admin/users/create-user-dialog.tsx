@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { CreateUserPayload } from "@/types/api";
 
+import { useTranslation } from "@/lib/i18n/language-context";
+
 const createUserSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters long"),
   email: z.string().email("Invalid email address"),
@@ -43,6 +45,7 @@ export function CreateUserDialog({
   onOpenChange,
   onSubmit,
 }: CreateUserDialogProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -69,7 +72,7 @@ export function CreateUserDialog({
       reset();
       onOpenChange(false);
     } catch (err: any) {
-      setSubmitError(err.message || "Failed to create user account");
+      setSubmitError(err.message || t.admin.userCreateFailed);
     } finally {
       setIsSubmitting(false);
     }
@@ -80,10 +83,10 @@ export function CreateUserDialog({
       <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-base font-semibold text-ink">
-            Create New Account
+            {t.admin.createUserModalTitle}
           </DialogTitle>
           <DialogDescription className="text-xs text-ink-muted">
-            Provision a new operational account (Teacher or Administrator) directly.
+            {t.admin.createUserModalDesc}
           </DialogDescription>
         </DialogHeader>
 
@@ -97,7 +100,7 @@ export function CreateUserDialog({
           {/* Full Name */}
           <div className="space-y-1.5">
             <Label htmlFor="fullName" className="text-xs font-medium text-ink">
-              Full Name
+              {t.admin.fullNameLabel}
             </Label>
             <Input
               id="fullName"
@@ -115,7 +118,7 @@ export function CreateUserDialog({
           {/* Email */}
           <div className="space-y-1.5">
             <Label htmlFor="email" className="text-xs font-medium text-ink">
-              Email Address
+              {t.admin.emailLabel}
             </Label>
             <Input
               id="email"
@@ -134,7 +137,7 @@ export function CreateUserDialog({
           {/* Password */}
           <div className="space-y-1.5">
             <Label htmlFor="password" className="text-xs font-medium text-ink">
-              Password
+              {t.admin.passwordLabel}
             </Label>
             <Input
               id="password"
@@ -153,16 +156,16 @@ export function CreateUserDialog({
           {/* Role */}
           <div className="space-y-1.5">
             <Label htmlFor="role" className="text-xs font-medium text-ink">
-              Assigned Role
+              {t.admin.assignedRoleLabel}
             </Label>
             <select
               id="role"
               {...register("role")}
-              className="w-full h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
+              className="w-full h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
             >
-              <option value="TEACHER">Teacher (Course Creator & Instructor)</option>
-              <option value="ADMIN">Administrator (Full Platform Governance)</option>
-              <option value="STUDENT">Student (Standard Learner)</option>
+              <option value="TEACHER">{t.admin.optionTeacher}</option>
+              <option value="ADMIN">{t.admin.optionAdmin}</option>
+              <option value="STUDENT">{t.admin.optionStudent}</option>
             </select>
           </div>
 
@@ -171,16 +174,16 @@ export function CreateUserDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
+              className="rounded-full text-xs font-medium border-hairline text-ink hover:bg-canvas-soft px-4"
             >
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium"
+              className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium px-4 shadow-notion-soft"
             >
-              {isSubmitting ? "Creating..." : "Create User"}
+              {isSubmitting ? t.common.creating : t.admin.createUserBtn}
             </Button>
           </DialogFooter>
         </form>

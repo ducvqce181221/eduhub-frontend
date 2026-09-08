@@ -124,7 +124,7 @@ describe("QuizView Component", () => {
       />,
     );
 
-    const retryBtn = screen.getByRole("button", { name: /Retry Quiz/i });
+    const retryBtn = screen.getAllByRole("button", { name: /Retry Quiz/i })[0];
     await user.click(retryBtn);
 
     expect(handleRetry).toHaveBeenCalled();

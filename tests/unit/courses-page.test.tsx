@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import CoursesPageRedirect from "@/app/(public)/courses/page";
+import CoursesPageRedirect from "@/app/[locale]/(public)/courses/page";
 import { redirect } from "next/navigation";
 
 vi.mock("next/navigation", () => ({

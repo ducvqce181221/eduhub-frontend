@@ -5,15 +5,18 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { stripLocale } from "@/lib/auth/redirect-utils";
 
 export function HeaderSearch({ className }: { className?: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const { t, language } = useTranslation();
 
-  const isHomePage = pathname === "/";
-  const currentSearchParam = searchParams.get("search") || "";
+  const isHomePage = stripLocale(pathname || "/") === "/";
+  const currentSearchParam = searchParams?.get("search") || "";
 
   const [term, setTerm] = useState(currentSearchParam);
 
@@ -28,14 +31,14 @@ export function HeaderSearch({ className }: { className?: string }) {
 
     if (isHomePage) {
       startTransition(() => {
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(searchParams?.toString() || "");
         if (query) {
           params.set("search", query);
         } else {
           params.delete("search");
         }
         params.set("page", "1");
-        router.replace(`/?${params.toString()}#catalog`, { scroll: false });
+        router.replace(`/${language}/?${params.toString()}#catalog`, { scroll: false });
 
         // Scroll to catalog grid
         const catalogEl = document.getElementById("catalog");
@@ -46,8 +49,8 @@ export function HeaderSearch({ className }: { className?: string }) {
     } else {
       // Navigate to home with search param
       const target = query
-        ? `/?search=${encodeURIComponent(query)}#catalog`
-        : `/#catalog`;
+        ? `/${language}/?search=${encodeURIComponent(query)}#catalog`
+        : `/${language}/#catalog`;
       router.push(target);
     }
   };
@@ -56,25 +59,22 @@ export function HeaderSearch({ className }: { className?: string }) {
     setTerm("");
     if (isHomePage) {
       startTransition(() => {
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(searchParams?.toString() || "");
         params.delete("search");
         params.set("page", "1");
-        router.replace(`/?${params.toString()}#catalog`, { scroll: false });
+        router.replace(`/${language}/?${params.toString()}#catalog`, { scroll: false });
       });
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={cn("relative w-full max-w-md lg:max-w-lg", className)}
-      role="search"
-    >
-      <div className="relative flex items-center">
+    <form onSubmit={handleSubmit} className={cn("relative w-full", className)}>
+      <div className="relative flex items-center w-full">
         <button
           type="submit"
-          className="absolute left-3 p-0.5 text-ink-faint hover:text-ink transition-colors cursor-pointer"
-          aria-label="Submit course search"
+          disabled={isPending}
+          className="absolute left-3 text-ink-muted hover:text-ink transition-colors flex items-center justify-center cursor-pointer"
+          aria-label="Submit search"
         >
           {isPending ? (
             <Loader2 className="w-4 h-4 text-notion-blue animate-spin" />
@@ -87,7 +87,7 @@ export function HeaderSearch({ className }: { className?: string }) {
           type="search"
           value={term}
           onChange={(e) => setTerm(e.target.value)}
-          placeholder="Search courses, topics, instructors..."
+          placeholder={t.nav.searchPlaceholder}
           className="w-full h-9 pl-9 pr-8 bg-canvas-soft hover:bg-canvas-soft/80 focus:bg-surface border-hairline rounded-md text-xs sm:text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-notion-blue focus:ring-1 focus:ring-notion-blue [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
         />
 

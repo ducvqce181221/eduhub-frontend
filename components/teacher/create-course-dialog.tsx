@@ -118,7 +118,7 @@ export function CreateCourseDialog({
                     <FormControl>
                       <select
                         aria-label="Category"
-                        className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-xs text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
+                        className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-xs text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue [&>option]:bg-surface [&>option]:text-ink"
                         {...field}
                       >
                         {categories.map((cat) => (
@@ -142,7 +142,7 @@ export function CreateCourseDialog({
                     <FormControl>
                       <select
                         aria-label="Target Level"
-                        className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-xs text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue"
+                        className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-xs text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue [&>option]:bg-surface [&>option]:text-ink"
                         {...field}
                       >
                         <option value="BEGINNER">Beginner</option>
@@ -181,14 +181,14 @@ export function CreateCourseDialog({
                 variant="outline"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
+                className="rounded-full border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft px-4"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+                className="rounded-full bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-hover shadow-notion-soft px-4"
               >
                 {isSubmitting ? "Creating..." : "Create Course"}
               </Button>

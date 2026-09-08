@@ -80,15 +80,15 @@ export function CourseOversightTable({
     switch (status) {
       case "PUBLISHED":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-teal border border-sticker-teal/20">
-            <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-teal border border-sticker-teal/20 dark:text-teal-300 dark:border-teal-500/30 dark:bg-teal-500/15">
+            <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal dark:bg-teal-400" />
             PUBLISHED
           </span>
         );
       case "DRAFT":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-amber/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-amber-deep border border-sticker-amber/20">
-            <span className="h-1.5 w-1.5 rounded-full bg-sticker-amber-deep" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-amber/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-amber-deep border border-sticker-amber/20 dark:text-amber-300 dark:border-amber-500/30 dark:bg-amber-500/15">
+            <span className="h-1.5 w-1.5 rounded-full bg-sticker-amber-deep dark:bg-amber-400" />
             DRAFT
           </span>
         );
@@ -121,7 +121,7 @@ export function CourseOversightTable({
           <select
             value={selectedStatus}
             onChange={(e) => onStatusChange?.(e.target.value)}
-            className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
+            className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
             aria-label="Filter by course status"
           >
             <option value="ALL">All Statuses</option>
@@ -135,7 +135,7 @@ export function CourseOversightTable({
             <select
               value={selectedCategory}
               onChange={(e) => onCategoryChange(e.target.value)}
-              className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
+              className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
               aria-label="Filter by category"
             >
               <option value="ALL">All Categories</option>

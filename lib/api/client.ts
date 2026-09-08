@@ -171,6 +171,13 @@ async function request<T = unknown>(
 
   const reqHeaders = new Headers(headers);
 
+  if (!reqHeaders.has("Accept-Language") && typeof document !== "undefined") {
+    const match = document.cookie.match(/eduhub_lang=([^;]+)/);
+    if (match) {
+      reqHeaders.set("Accept-Language", match[1]);
+    }
+  }
+
   if (token && !skipAuth && !reqHeaders.has("Authorization")) {
     reqHeaders.set("Authorization", `Bearer ${token}`);
   }

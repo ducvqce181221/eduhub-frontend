@@ -66,7 +66,7 @@ describe("CourseCard Component", () => {
     render(<CourseCard course={mockCourse} />);
 
     const link = screen.getByRole("link", { name: /Building Production Microservices/i });
-    expect(link).toHaveAttribute("href", "/courses/course-uuid-1");
+    expect(link).toHaveAttribute("href", "/en/courses/course-uuid-1");
   });
 
   it("renders placeholder gracefully when thumbnailUrl is null", () => {

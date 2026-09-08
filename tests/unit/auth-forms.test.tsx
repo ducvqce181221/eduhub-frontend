@@ -1,10 +1,10 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import LoginPage from "@/app/(public)/login/page";
-import RegisterPage from "@/app/(public)/register/page";
-import ForgotPasswordPage from "@/app/(public)/forgot-password/page";
-import ResetPasswordPage from "@/app/(public)/reset-password/page";
+import LoginPage from "@/app/[locale]/(public)/login/page";
+import RegisterPage from "@/app/[locale]/(public)/register/page";
+import ForgotPasswordPage from "@/app/[locale]/(public)/forgot-password/page";
+import ResetPasswordPage from "@/app/[locale]/(public)/reset-password/page";
 import * as authContext from "@/lib/auth/auth-context";
 import { apiClient } from "@/lib/api/client";
 
@@ -77,7 +77,7 @@ describe("Slice 5: Frontend Auth Forms", () => {
           email: "student@eduhub.dev",
           password: "Password123!",
         });
-        expect(mockPush).toHaveBeenCalledWith("/");
+        expect(mockPush).toHaveBeenCalledWith("/en");
       });
     });
 
@@ -95,7 +95,7 @@ describe("Slice 5: Frontend Auth Forms", () => {
       fireEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith("/admin");
+        expect(mockPush).toHaveBeenCalledWith("/en/admin");
       });
     });
   });
@@ -171,11 +171,11 @@ describe("Slice 5: Frontend Auth Forms", () => {
       fireEvent.change(screen.getByLabelText(/^new password/i), {
         target: { value: "NewPassword123!" },
       });
-      fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      fireEvent.change(screen.getByLabelText(/confirm password/i), {
         target: { value: "NewPassword123!" },
       });
 
-      fireEvent.click(screen.getByRole("button", { name: /reset password/i }));
+      fireEvent.click(screen.getByRole("button", { name: /save new password/i }));
 
       await waitFor(() => {
         expect(apiClient.post).toHaveBeenCalledWith("/auth/reset-password", {

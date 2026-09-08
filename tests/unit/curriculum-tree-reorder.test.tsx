@@ -168,7 +168,7 @@ describe("CurriculumTree & Sortable Reordering (BR-CRS-05, BR-CRS-06)", () => {
     expect(lesson1Handle).toHaveAttribute("aria-label", "Drag to reorder lesson");
 
     // Chapter Card container contains both the header and its lessons as a single unit
-    const chapterCard = screen.getByTestId("chapter-card-ch-1");
+    const chapterCard = screen.getByTestId("chapter-item-ch-1");
     expect(chapterCard).toContainElement(chapter1Handle);
     expect(chapterCard).toContainElement(screen.getByText("1.1 Installation"));
     expect(chapterCard).toContainElement(screen.getByText("1.2 Project Setup"));

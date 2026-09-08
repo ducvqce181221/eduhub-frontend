@@ -1,21 +1,25 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useTransition } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import type { Locale } from "./config";
+import { defaultLocale, LOCALE_COOKIE_KEY, isValidLocale } from "./config";
+import type { Dictionary } from "./dictionaries/en";
 import { en } from "./dictionaries/en";
 import { vi } from "./dictionaries/vi";
 
-export type Language = "en" | "vi";
-
-type Dictionary = typeof en;
+export type Language = Locale;
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  toggleLanguage: () => void;
+  language: Locale;
   t: Dictionary;
+  setLanguage: (lang: Locale) => void;
+  toggleLanguage: () => void;
+  switchLanguage: (nextLocale: Locale) => void;
+  isPending: boolean;
 }
 
-const dictionaries: Record<Language, Dictionary> = {
+const dictionaries: Record<Locale, Dictionary> = {
   en,
   vi,
 };
@@ -24,40 +28,72 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({
   children,
-  defaultLanguage = "en",
+  locale = defaultLocale,
+  dictionary,
 }: {
   children: React.ReactNode;
-  defaultLanguage?: Language;
+  locale?: Locale;
+  dictionary?: Dictionary;
 }) {
-  const [language, setLanguageState] = useState<Language>(defaultLanguage);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("eduhub_lang") as Language | null;
-    if (stored && (stored === "en" || stored === "vi")) {
-      setLanguageState(stored);
+  const activeLocale = isValidLocale(locale) ? locale : defaultLocale;
+  const t = dictionary || dictionaries[activeLocale] || en;
+
+  const switchLanguage = (nextLocale: Locale) => {
+    if (nextLocale === activeLocale) return;
+
+    // Set persistence cookie
+    document.cookie = `${LOCALE_COOKIE_KEY}=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
+    try {
+      localStorage.setItem("eduhub_lang", nextLocale);
+    } catch {
+      // ignore
     }
-  }, []);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem("eduhub_lang", lang);
-    document.cookie = `eduhub_lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+    // Replace current locale prefix in pathname
+    if (!pathname) {
+      router.push(`/${nextLocale}`);
+      return;
+    }
+
+    const segments = pathname.split("/");
+    if (segments[1] && isValidLocale(segments[1])) {
+      segments[1] = nextLocale;
+    } else {
+      segments.splice(1, 0, nextLocale);
+    }
+
+    const newPath = segments.join("/") || "/";
+    const queryString = searchParams?.toString();
+    const targetUrl = queryString ? `${newPath}?${queryString}` : newPath;
+
+    startTransition(() => {
+      router.push(targetUrl);
+    });
   };
 
   const toggleLanguage = () => {
-    const next = language === "en" ? "vi" : "en";
-    setLanguage(next);
+    const next = activeLocale === "en" ? "vi" : "en";
+    switchLanguage(next);
   };
 
-  const t = dictionaries[language] || dictionaries.en;
+  const setLanguage = (lang: Locale) => {
+    switchLanguage(lang);
+  };
 
   return (
     <LanguageContext.Provider
       value={{
-        language,
+        language: activeLocale,
+        t,
         setLanguage,
         toggleLanguage,
-        t,
+        switchLanguage,
+        isPending,
       }}
     >
       {children}
@@ -69,16 +105,18 @@ export function useLanguage() {
   const context = useContext(LanguageContext);
   if (!context) {
     return {
-      language: "en" as Language,
+      language: defaultLocale,
+      t: en,
       setLanguage: () => {},
       toggleLanguage: () => {},
-      t: en,
+      switchLanguage: () => {},
+      isPending: false,
     };
   }
   return context;
 }
 
 export function useTranslation() {
-  const { t, language } = useLanguage();
-  return { t, language };
+  const { t, language, switchLanguage, setLanguage, toggleLanguage, isPending } = useLanguage();
+  return { t, language, switchLanguage, setLanguage, toggleLanguage, isPending };
 }

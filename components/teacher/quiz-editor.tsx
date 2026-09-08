@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type {
   QuizDetail,
   CreateQuizPayload,
@@ -35,6 +36,7 @@ export function QuizEditor({
   onUpdateQuestion,
   onDeleteQuestion,
 }: QuizEditorProps) {
+  const { t } = useTranslation();
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [newQuestionText, setNewQuestionText] = useState("");
   const [newQuestionPoints, setNewQuestionPoints] = useState(1);
@@ -90,18 +92,18 @@ export function QuizEditor({
 
   const handleSaveQuestion = async () => {
     if (!newQuestionText.trim()) {
-      setQuestionError("Question text is required.");
+      setQuestionError(t.teacher.errQuestionRequired);
       return;
     }
 
     if (newAnswers.some((a) => !a.content.trim())) {
-      setQuestionError("All answer choices must have content.");
+      setQuestionError(t.teacher.errAnswersRequired);
       return;
     }
 
     const correctCount = newAnswers.filter((a) => a.isCorrect).length;
     if (correctCount !== 1) {
-      setQuestionError("Exactly 1 answer must be selected as correct (BR-QZ-03).");
+      setQuestionError(t.teacher.errExactOneCorrect);
       return;
     }
 
@@ -126,7 +128,7 @@ export function QuizEditor({
       ]);
       setIsAddingQuestion(false);
     } catch (err: any) {
-      setQuestionError(err.message || "Failed to add question");
+      setQuestionError(err.message || t.common.error);
     } finally {
       setIsSubmitting(false);
     }
@@ -139,18 +141,18 @@ export function QuizEditor({
           <HelpCircle className="h-6 w-6 stroke-1" />
         </div>
         <h3 className="mt-3 text-sm font-bold text-ink">
-          No quiz attached to this lesson
+          {t.teacher.noQuizAttached}
         </h3>
         <p className="mt-1 text-xs text-ink-muted">
-          Add an assessment quiz to test student mastery after completing the video.
+          {t.teacher.noQuizAttachedDesc}
         </p>
         <Button
           type="button"
           onClick={() => onCreateQuiz({ title: "Lesson Quiz", passScore: 80 })}
-          className="mt-4 rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+          className="mt-4 rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
         >
           <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Create Quiz
+          {t.teacher.createQuizButton}
         </Button>
       </div>
     );
@@ -163,7 +165,7 @@ export function QuizEditor({
         <div className="flex flex-col gap-4 border-b border-hairline pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex-1">
             <label className="block text-xs font-semibold text-ink">
-              Quiz Title
+              {t.teacher.quizTitleLabel}
             </label>
             <Input
               defaultValue={quiz.title}
@@ -175,7 +177,7 @@ export function QuizEditor({
           <div className="flex items-center gap-3">
             <div>
               <label className="block text-xs font-semibold text-ink">
-                Pass Score (%)
+                {t.teacher.passScoreLabel}
               </label>
               <Input
                 type="number"
@@ -192,7 +194,7 @@ export function QuizEditor({
               variant="ghost"
               size="sm"
               onClick={() => setShowDeleteQuizDialog(true)}
-              className="mt-5 rounded-md text-xs text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
+              className="mt-5 rounded-md text-xs text-ink-muted hover:text-sticker-red hover:bg-canvas-soft cursor-pointer"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -203,7 +205,7 @@ export function QuizEditor({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-ink-muted font-mono tabular-nums">
-              Questions ({quiz.questions?.length || 0})
+              {t.teacher.questionsCountHeader.replace("{count}", String(quiz.questions?.length || 0))}
             </h4>
 
             {!isAddingQuestion && (
@@ -211,10 +213,10 @@ export function QuizEditor({
                 type="button"
                 size="sm"
                 onClick={() => setIsAddingQuestion(true)}
-                className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+                className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
-                Add Question
+                {t.teacher.addQuestion}
               </Button>
             )}
           </div>
@@ -237,7 +239,7 @@ export function QuizEditor({
                           {q.content}
                         </h5>
                         <span className="text-[11px] font-mono tabular-nums text-ink-muted">
-                          Weight: {q.points} pt{q.points > 1 ? "s" : ""}
+                          {t.teacher.questionWeightLabel.replace("{points}", String(q.points))}
                         </span>
                       </div>
                     </div>
@@ -247,7 +249,7 @@ export function QuizEditor({
                       variant="ghost"
                       size="icon"
                       onClick={() => setDeletingQuestionId(q.id)}
-                      className="h-6 w-6 text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
+                      className="h-6 w-6 text-ink-muted hover:text-sticker-red hover:bg-canvas-soft cursor-pointer"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -260,13 +262,13 @@ export function QuizEditor({
                         key={ans.id}
                         className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs ${
                           ans.isCorrect
-                            ? "bg-sticker-teal/15 text-sticker-teal font-medium"
+                            ? "bg-sticker-teal/15 dark:bg-teal-500/15 text-sticker-teal dark:text-teal-300 font-medium"
                             : "text-ink-secondary"
                         }`}
                       >
                         <CheckCircle2
                           className={`h-3.5 w-3.5 shrink-0 ${
-                            ans.isCorrect ? "text-sticker-teal" : "text-ink-faint"
+                            ans.isCorrect ? "text-sticker-teal dark:text-teal-400" : "text-ink-faint"
                           }`}
                         />
                         <span>{ans.content}</span>
@@ -279,7 +281,7 @@ export function QuizEditor({
           ) : (
             !isAddingQuestion && (
               <div className="rounded-md border border-dashed border-hairline py-6 text-center text-xs text-ink-muted">
-                No questions added yet. Click &quot;Add Question&quot; to begin.
+                {t.teacher.noQuestionsAddedYet}
               </div>
             )
           )}
@@ -287,7 +289,7 @@ export function QuizEditor({
           {/* Add Question Form */}
           {isAddingQuestion && (
             <div className="rounded-md border border-hairline bg-canvas-soft/70 p-4 space-y-3">
-              <h5 className="text-xs font-bold text-ink">New Single-Choice Question</h5>
+              <h5 className="text-xs font-bold text-ink">{t.teacher.newQuestionHeader}</h5>
 
               {questionError && (
                 <div className="flex items-center gap-2 rounded-md bg-sticker-red/15 p-2 text-xs text-sticker-red border border-transparent">
@@ -299,11 +301,11 @@ export function QuizEditor({
               <div className="space-y-3">
                 <div>
                   <label htmlFor="question-text" className="block text-xs font-medium text-ink">
-                    Question Text
+                    {t.teacher.questionTextLabel}
                   </label>
                   <Input
                     id="question-text"
-                    placeholder="e.g. What is RabbitMQ?"
+                    placeholder={t.teacher.questionTextPlaceholder}
                     value={newQuestionText}
                     onChange={(e) => setNewQuestionText(e.target.value)}
                     className="mt-1 text-xs bg-surface border-hairline"
@@ -312,7 +314,7 @@ export function QuizEditor({
 
                 <div>
                   <label className="block text-xs font-medium text-ink">
-                    Points
+                    {t.teacher.pointsLabel}
                   </label>
                   <Input
                     type="number"
@@ -325,7 +327,7 @@ export function QuizEditor({
 
                 <div>
                   <label className="block text-xs font-medium text-ink mb-1">
-                    Answer Options (Choose 1 correct answer)
+                    {t.teacher.answerOptionsPrompt}
                   </label>
                   <div className="space-y-2">
                     {newAnswers.map((ans, idx) => (
@@ -362,9 +364,9 @@ export function QuizEditor({
                     variant="ghost"
                     size="sm"
                     onClick={handleAddOption}
-                    className="mt-2 text-xs text-notion-blue hover:bg-notion-blue/5"
+                    className="mt-2 text-xs text-notion-blue hover:bg-notion-blue/5 cursor-pointer"
                   >
-                    <Plus className="mr-1 h-3 w-3" /> Add Choice
+                    <Plus className="mr-1 h-3 w-3" /> {t.teacher.addChoiceButton}
                   </Button>
                 </div>
 
@@ -374,18 +376,18 @@ export function QuizEditor({
                     variant="outline"
                     size="sm"
                     onClick={() => setIsAddingQuestion(false)}
-                    className="rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
+                    className="rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft cursor-pointer"
                   >
-                    Cancel
+                    {t.common.cancel}
                   </Button>
                   <Button
                     type="button"
                     size="sm"
                     disabled={isSubmitting}
                     onClick={handleSaveQuestion}
-                    className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+                    className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
                   >
-                    {isSubmitting ? "Saving..." : "Save Question"}
+                    {isSubmitting ? t.common.saving : t.teacher.saveQuestionButton}
                   </Button>
                 </div>
               </div>
@@ -399,13 +401,9 @@ export function QuizEditor({
         open={showDeleteQuizDialog}
         onOpenChange={setShowDeleteQuizDialog}
         variant="danger"
-        title="Delete Assessment Quiz?"
-        confirmLabel="Delete Quiz"
-        description={
-          <>
-            Are you sure you want to delete this quiz and all its questions? Student progress and attempts related to this quiz will be permanently removed.
-          </>
-        }
+        title={t.teacher.deleteQuizTitle}
+        confirmLabel={t.teacher.deleteQuizConfirm}
+        description={t.teacher.deleteQuizDesc}
         onConfirm={onDeleteQuiz}
       />
 
@@ -414,13 +412,9 @@ export function QuizEditor({
         open={!!deletingQuestionId}
         onOpenChange={(open) => !open && setDeletingQuestionId(null)}
         variant="danger"
-        title="Delete Question?"
-        confirmLabel="Delete Question"
-        description={
-          <>
-            Are you sure you want to remove this question?
-          </>
-        }
+        title={t.teacher.deleteQuestionTitle}
+        confirmLabel={t.teacher.deleteQuestionConfirm}
+        description={t.teacher.deleteQuestionDesc}
         onConfirm={async () => {
           if (deletingQuestionId) {
             const id = deletingQuestionId;

@@ -136,3 +136,45 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
 - Guard implementation chain (`JwtAuthGuard` → `RolesGuard` → Ownership Guard) — backend-only
   (`eduhub-backend/docs/03` §6). The frontend only needs the *outcome* of those checks
   (§3 above), not how they're implemented.
+
+## 7. Internationalization (i18n) Architecture
+
+EduHub delivers a fully localized bilingual experience across English (`en`) and Vietnamese (`vi`), architected natively on Next.js 16 (App Router) and React 19 without third-party runtime dependencies:
+
+### 7.1 Sub-Path Routing & Middleware Resolution
+- **URL Structure:** All application routes reside under `app/[locale]/` (`/en/...` and `/vi/...`).
+- **Default Locale:** English (`en`).
+- **Resolution Pipeline (`proxy.ts` — Next.js 16 convention):**
+  1. Detects route requests lacking a locale prefix (e.g. `/courses`, `/login`).
+  2. Resolves preferred locale using:
+     - `eduhub_lang` cookie (user's explicit preference).
+     - `Accept-Language` header (browser negotiation).
+     - Fallback to `defaultLocale` (`en`).
+  3. Issues a `307 Temporary Redirect` to `/${targetLocale}${pathname}${search}` while setting the `eduhub_lang` cookie.
+  4. Static assets (`/_next`, `/images`, `/api`, favicon) bypass proxy rewriting.
+
+### 7.2 SSR Dictionary Hydration & Zero-FOUC
+- **Server Loader (`lib/i18n/server.ts`):** `getDictionary(locale)` dynamically imports modular JSON/TypeScript dictionaries (`en.ts`, `vi.ts`) on the server.
+- **Root Layout Hydration (`app/[locale]/layout.tsx`):**
+  - Sets the HTML `<html lang={locale}>` tag at initial render to eliminate SEO language warnings and client-side Flash of Unstyled Content (FOUC).
+  - Injects alternate link metadata (`hreflang="en"`, `hreflang="vi"`, `hreflang="x-default"`).
+  - Supplies the server-rendered dictionary directly to `<LanguageProvider initialLocale={locale} initialDictionary={dictionary}>`.
+
+### 7.3 Client Context & Dynamic Language Switching (`lib/i18n/language-context.tsx`)
+- **`useTranslation()` Hook:** Exposes `{ language, t, switchLanguage }` across all Client Components with strict TypeScript autocompletion and key parity (`satisfies Dictionary`).
+- **Language Switching Mechanism:**
+  - Updates the `eduhub_lang` cookie (`Max-Age=31536000`, `Path=/`, `SameSite=Lax`).
+  - Swaps the active URL prefix dynamically (e.g. `/en/courses/web-dev` -> `/vi/courses/web-dev`) preserving URL query parameters and nested subpaths.
+  - Updates in-memory dictionary state instantly without triggering unnecessary full-page unmounts.
+
+### 7.4 Localized Navigation & Route Guards
+- **`<LocalizedLink>` (`components/common/localized-link.tsx`):** Drop-in wrapper over `next/link` that automatically prepends `/${language}` to internal paths if absent, guaranteeing client navigation retains the active locale.
+- **Route Guard Utilities (`lib/auth/redirect-utils.ts`):**
+  - `stripLocale(pathname)`: Extracts normalized internal path for RBAC evaluation.
+  - `ensureLocale(url, locale)`: Enforces correct locale prefixing for post-login return targets.
+
+### 7.5 Multi-Locale Formatting (`lib/i18n/formatters.ts`)
+- **Dates & Relative Timestamps:** Powered by `date-fns` using explicit locale bundles (`date-fns/locale/vi` and `enUS`).
+- **Domain Enum Translators:** Centralized mapping for Course Levels (`BEGINNER`, `INTERMEDIATE`, `ADVANCED`), Statuses (`DRAFT`, `PUBLISHED`, `ARCHIVED`), User Roles (`STUDENT`, `TEACHER`, `ADMIN`), and Notification Types.
+- **Backend API Synchronization (`lib/api/client.ts`):** Automatically injects the active locale into the `Accept-Language` HTTP request header for consistent backend validation and error responses.
+

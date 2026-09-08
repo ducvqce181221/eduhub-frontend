@@ -20,25 +20,25 @@
   --color-hairline: var(--hairline);
 
   /* Brand Accents */
-  --color-notion-blue: #0075de;
-  --color-notion-blue-active: #005bab;
+  --color-notion-blue: var(--notion-blue);
+  --color-notion-blue-active: var(--notion-blue-active);
   --color-notion-indigo: #213183;
 
   /* Notion Decorative Sticker Palette */
-  --color-sticker-sky: #62aef0;
-  --color-sticker-sky-deep: #0c5696;
-  --color-sticker-purple: #d6b6f6;
-  --color-sticker-purple-deep: #391c57;
+  --color-sticker-sky: var(--sticker-sky);
+  --color-sticker-sky-deep: var(--sticker-sky-deep);
+  --color-sticker-purple: var(--sticker-purple);
+  --color-sticker-purple-deep: var(--sticker-purple-deep);
   --color-sticker-pink: #ff64c8;
-  --color-sticker-orange: #dd5b00;
-  --color-sticker-orange-deep: #793400;
-  --color-sticker-amber: #f59e0b;
-  --color-sticker-amber-deep: #b45309;
-  --color-sticker-teal: #2a9d99;
-  --color-sticker-green: #1aae39;
+  --color-sticker-orange: var(--sticker-orange);
+  --color-sticker-orange-deep: var(--sticker-orange-deep);
+  --color-sticker-amber: var(--sticker-amber);
+  --color-sticker-amber-deep: var(--sticker-amber-deep);
+  --color-sticker-teal: var(--sticker-teal);
+  --color-sticker-green: var(--sticker-green);
   --color-sticker-brown: #523410;
-  --color-sticker-red: #e03e3e;
-  --color-sticker-red-deep: #961212;
+  --color-sticker-red: var(--sticker-red);
+  --color-sticker-red-deep: var(--sticker-red-deep);
 
   /* Shadcn UI Variable Bindings */
   --color-background: var(--background);
@@ -86,6 +86,24 @@
   --ink-faint: #a39e98;
   --hairline: #e6e6e6;
 
+  /* Brand Accents */
+  --notion-blue: #0075de;
+  --notion-blue-active: #005bab;
+
+  /* Notion Decorative Sticker Palette */
+  --sticker-sky: #62aef0;
+  --sticker-sky-deep: #0c5696;
+  --sticker-purple: #d6b6f6;
+  --sticker-purple-deep: #391c57;
+  --sticker-orange: #dd5b00;
+  --sticker-orange-deep: #793400;
+  --sticker-amber: #f59e0b;
+  --sticker-amber-deep: #b45309;
+  --sticker-teal: #2a9d99;
+  --sticker-green: #1aae39;
+  --sticker-red: #e03e3e;
+  --sticker-red-deep: #961212;
+
   --background: #f6f5f4;
   --foreground: #000000;
   
@@ -126,6 +144,24 @@
   --ink-muted: #9c9790;
   --ink-faint: #635f59;
   --hairline: #2e2e2e;
+
+  /* Brand Accents (Dark Mode) */
+  --notion-blue: #0075de;
+  --notion-blue-active: #60a5fa;
+
+  /* Notion Decorative Sticker Palette (High-contrast, vibrant for dark mode) */
+  --sticker-sky: #38bdf8;
+  --sticker-sky-deep: #bae6fd;
+  --sticker-purple: #c084fc;
+  --sticker-purple-deep: #e9d5ff;
+  --sticker-orange: #fb923c;
+  --sticker-orange-deep: #fed7aa;
+  --sticker-amber: #fbbf24;
+  --sticker-amber-deep: #fde68a;
+  --sticker-teal: #2dd4bf;
+  --sticker-green: #4ade80;
+  --sticker-red: #f87171;
+  --sticker-red-deep: #fecaca;
 
   --background: #191919;
   --foreground: #ffffff;

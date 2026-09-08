@@ -104,19 +104,19 @@ export function BannerCarousel() {
               <div className="max-w-2xl">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-notion-blue bg-surface border border-hairline shadow-2xs mb-3 sm:mb-4">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>{t.home.heroBadge}</span>
+                  <span>{t.catalog.heroBadge}</span>
                 </span>
                 <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-ink tracking-tight leading-tight mb-2 sm:mb-3">
                   Master Modern Software Engineering
                 </h1>
                 <p className="text-xs sm:text-sm md:text-base text-ink-muted line-clamp-2 sm:line-clamp-3 mb-4 sm:mb-6 max-w-xl">
-                  {t.home.curriculumSubtitle}
+                  {t.catalog.curriculumSubtitle}
                 </p>
                 <Link
                   href="#catalog"
                   className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-notion-blue hover:bg-notion-blue-active shadow-notion-soft transition-colors"
                 >
-                  {t.home.exploreCourses}
+                  {t.nav.explore}
                 </Link>
               </div>
             </div>

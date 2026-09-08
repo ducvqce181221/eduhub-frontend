@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Users,
@@ -15,25 +14,23 @@ import {
 import { useAuth } from "@/lib/auth/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-
-interface NavItem {
-  name: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const navItems: NavItem[] = [
-  { name: "Users", href: "/admin/users", icon: Users },
-  { name: "Categories", href: "/admin/categories", icon: FolderTree },
-  { name: "Course Oversight", href: "/admin/courses", icon: BookOpen },
-  { name: "Banners", href: "/admin/banners", icon: ImageIcon },
-  { name: "System Broadcast", href: "/admin/notifications", icon: Megaphone },
-];
-
+import { useTranslation } from "@/lib/i18n/language-context";
+import { LocalizedLink } from "@/components/common/localized-link";
+import { stripLocale } from "@/lib/auth/redirect-utils";
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { t } = useTranslation();
+  const cleanPath = stripLocale(pathname || "/");
+
+  const navItems = [
+    { name: t.admin.sidebarUsers, href: "/admin/users", icon: Users },
+    { name: t.admin.sidebarCategories, href: "/admin/categories", icon: FolderTree },
+    { name: t.admin.sidebarCourses, href: "/admin/courses", icon: BookOpen },
+    { name: t.admin.sidebarBanners, href: "/admin/banners", icon: ImageIcon },
+    { name: t.admin.sidebarNotifications, href: "/admin/notifications", icon: Megaphone },
+  ];
 
   const getInitials = (name?: string) => {
     if (!name) return "AD";
@@ -46,7 +43,7 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="flex min-h-dvh w-64 flex-col justify-between border-r border-hairline bg-canvas-soft p-4 select-none">
+    <aside className="sticky top-16 hidden md:flex h-[calc(100vh-4rem)] w-64 shrink-0 flex-col justify-between border-r border-hairline bg-canvas-soft p-4 select-none overflow-y-auto">
       <div className="space-y-6">
         {/* Brand Header */}
         <div className="flex items-center gap-3 px-2 py-1">
@@ -58,7 +55,7 @@ export function AdminSidebar() {
               EduHub Admin
             </span>
             <p className="text-[11px] text-ink-muted">
-              Platform Control Center
+              {t.nav.platformCenter}
             </p>
           </div>
         </div>
@@ -66,27 +63,29 @@ export function AdminSidebar() {
         {/* Navigation Items */}
         <nav className="space-y-1">
           <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-ink-faint">
-            Management
+            {t.nav.management}
           </p>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname?.startsWith(item.href);
+            const isActive = cleanPath.startsWith(item.href);
 
             return (
-              <Link
+              <LocalizedLink
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-md px-3 py-2 text-xs font-medium transition-colors ${isActive
+                className={`flex items-center gap-3 rounded-md px-3 py-2 text-xs font-medium transition-colors ${
+                  isActive
                     ? "bg-surface text-ink font-semibold border border-hairline shadow-2xs"
                     : "text-ink-secondary hover:bg-surface/70 hover:text-ink"
-                  }`}
+                }`}
               >
                 <Icon
-                  className={`h-4 w-4 ${isActive ? "text-notion-blue" : "text-ink-muted"
-                    }`}
+                  className={`h-4 w-4 ${
+                    isActive ? "text-notion-blue" : "text-ink-muted"
+                  }`}
                 />
                 <span>{item.name}</span>
-              </Link>
+              </LocalizedLink>
             );
           })}
         </nav>
@@ -94,13 +93,13 @@ export function AdminSidebar() {
 
       {/* Footer Section */}
       <div className="space-y-3 pt-4 border-t border-hairline">
-        <Link
+        <LocalizedLink
           href="/"
           className="flex items-center gap-2.5 rounded-md px-3 py-2 text-xs font-medium text-ink-secondary transition-colors hover:bg-surface/70 hover:text-ink"
         >
           <ArrowLeft className="h-3.5 w-3.5 text-ink-muted" />
-          <span>Back to App</span>
-        </Link>
+          <span>{t.common.backToApp}</span>
+        </LocalizedLink>
 
         {/* Current Admin Card */}
         {user && (
@@ -123,7 +122,7 @@ export function AdminSidebar() {
                   variant="admin"
                   className="text-[10px] px-1.5 py-0 h-4 font-medium shrink-0"
                 >
-                  {user.role}
+                  {t.admin.adminBadge}
                 </Badge>
               </div>
               <p className="truncate text-[10px] text-ink-muted">

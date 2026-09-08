@@ -24,6 +24,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable, isSortable } from "@dnd-kit/react/sortable";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type {
   Chapter,
   Lesson,
@@ -86,6 +87,7 @@ function ChapterRow({
   onSelectLesson: (lesson: Lesson) => void;
   onLocalLessonReorder: (chapterId: string, reorderedLessons: Lesson[]) => void;
 }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editTitle, setEditTitle] = useState(chapter.title);
@@ -143,27 +145,28 @@ function ChapterRow({
     }
   };
 
+  // BR-CRS-08 / BR-CRS-09: Floor protection
   const isDeleteChapterBlocked = isPublished && isSoleChapter;
 
   return (
     <>
-      {/* Root Card Container receives sortable ref so entire card moves together */}
       <div
         ref={ref}
-        data-testid={`chapter-card-${chapter.id}`}
-        className="rounded-lg border border-hairline bg-surface shadow-notion-soft transition-all overflow-hidden"
+        data-testid={`chapter-item-${chapter.id}`}
+        className="rounded-lg border border-hairline bg-surface shadow-notion-soft overflow-hidden"
       >
         {/* Chapter Header Bar */}
-        <div className="flex items-center justify-between border-b border-hairline bg-canvas-soft/70 px-4 py-3 select-none hover:bg-canvas-soft transition-colors">
+        <div className="flex items-center justify-between p-3.5 bg-canvas-soft/70 border-b border-hairline gap-3">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
             {/* Grip handle button exclusively controls drag */}
             <button
               ref={handleRef}
               type="button"
-              className="cursor-grab active:cursor-grabbing text-ink-muted hover:text-ink p-1 -ml-1 rounded transition-colors"
+              className="cursor-grab active:cursor-grabbing text-ink-faint hover:text-ink p-1 -ml-1 rounded transition-colors"
               title="Drag to reorder chapter"
               aria-label="Drag to reorder chapter"
               data-testid={`drag-chapter-${chapter.id}`}
+              onClick={(e) => e.stopPropagation()}
             >
               <GripVertical className="h-4 w-4" />
             </button>
@@ -171,8 +174,8 @@ function ChapterRow({
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-ink-muted hover:text-ink cursor-pointer p-0.5 rounded transition-colors"
-              aria-label={isExpanded ? "Collapse chapter" : "Expand chapter"}
+              className="text-ink-muted hover:text-ink p-0.5 rounded transition-colors"
+              aria-expanded={isExpanded}
             >
               {isExpanded ? (
                 <ChevronDown className="h-4 w-4" />
@@ -182,20 +185,24 @@ function ChapterRow({
             </button>
 
             {isEditingTitle ? (
-              <div className="flex items-center gap-2 flex-1 max-w-sm">
-                <Input
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  onBlur={handleSaveTitle}
-                  onKeyDown={(e) => e.key === "Enter" && handleSaveTitle()}
-                  autoFocus
-                  className="h-7 text-xs font-semibold bg-surface border-hairline"
-                />
-              </div>
+              <Input
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                onBlur={handleSaveTitle}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSaveTitle();
+                  if (e.key === "Escape") {
+                    setEditTitle(chapter.title);
+                    setIsEditingTitle(false);
+                  }
+                }}
+                className="h-7 text-xs font-semibold max-w-sm bg-surface border-hairline"
+                autoFocus
+              />
             ) : (
               <span
                 onClick={() => setIsEditingTitle(true)}
-                className="cursor-pointer truncate text-sm font-semibold text-ink hover:text-notion-blue transition-colors"
+                className="text-xs sm:text-sm font-semibold text-ink hover:text-notion-blue cursor-pointer truncate transition-colors"
                 title="Click to rename chapter"
               >
                 {chapter.title}
@@ -203,7 +210,7 @@ function ChapterRow({
             )}
 
             <span className="text-[11px] font-mono tabular-nums text-ink-muted">
-              ({chapter.lessons?.length || 0} lessons)
+              ({t.teacher.lessonsInChapter.replace("{count}", String(chapter.lessons?.length || 0))})
             </span>
           </div>
 
@@ -212,11 +219,18 @@ function ChapterRow({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => onAddLesson(chapter.id, { title: `Lesson ${(chapter.lessons?.length || 0) + 1}` })}
-              className="h-7 rounded-md px-2.5 text-xs font-medium text-notion-blue hover:bg-notion-blue/5 border border-notion-blue/20 hover:border-notion-blue/40 transition-colors"
+              onClick={() =>
+                onAddLesson(chapter.id, {
+                  title: t.teacher.defaultLessonTitle.replace(
+                    "{number}",
+                    String((chapter.lessons?.length || 0) + 1),
+                  ),
+                })
+              }
+              className="h-7 rounded-md px-2.5 text-xs font-medium text-notion-blue hover:bg-notion-blue/5 border border-notion-blue/20 hover:border-notion-blue/40 transition-colors cursor-pointer"
             >
               <Plus className="mr-1 h-3 w-3" />
-              Add Lesson
+              {t.teacher.addLesson}
             </Button>
 
             <Button
@@ -224,7 +238,7 @@ function ChapterRow({
               variant="ghost"
               size="icon"
               onClick={() => setIsEditingTitle(true)}
-              className="h-7 w-7 text-ink-muted hover:text-ink"
+              className="h-7 w-7 text-ink-muted hover:text-ink cursor-pointer"
             >
               <Edit3 className="h-3.5 w-3.5" />
             </Button>
@@ -234,13 +248,13 @@ function ChapterRow({
               variant="ghost"
               size="icon"
               disabled={isDeleteChapterBlocked}
-              title={isDeleteChapterBlocked ? FLOOR_PROTECTION_TOOLTIP : "Delete chapter"}
+              title={isDeleteChapterBlocked ? t.teacher.floorProtectionTooltip : t.teacher.deleteChapter}
               data-testid={`delete-chapter-${chapter.id}`}
               onClick={() => setShowDeleteModal(true)}
               className={`h-7 w-7 ${
                 isDeleteChapterBlocked
                   ? "cursor-not-allowed text-ink-faint opacity-40"
-                  : "text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
+                  : "text-ink-muted hover:text-sticker-red hover:bg-canvas-soft cursor-pointer"
               }`}
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -254,7 +268,7 @@ function ChapterRow({
             <div className="divide-y divide-hairline bg-surface">
               {(!chapter.lessons || chapter.lessons.length === 0) ? (
                 <div className="p-4 text-center text-xs text-ink-muted">
-                  No lessons in this chapter. Click &quot;Add Lesson&quot; to create one.
+                  {t.teacher.noLessonsInChapter}
                 </div>
               ) : (
                 chapter.lessons.map((lesson, lessonIndex) => {
@@ -284,12 +298,12 @@ function ChapterRow({
         open={showDeleteModal}
         onOpenChange={setShowDeleteModal}
         variant="danger"
-        title="Delete Chapter?"
-        confirmLabel="Delete Chapter"
+        title={t.teacher.deleteChapterTitle}
+        confirmLabel={t.teacher.deleteChapter}
         description={
-          <>
-            Are you sure you want to delete <strong>&quot;{chapter.title}&quot;</strong>? All {chapter.lessons?.length || 0} lessons inside this chapter will be permanently removed.
-          </>
+          t.teacher.deleteChapterDesc
+            .replace("{title}", chapter.title)
+            .replace("{count}", String(chapter.lessons?.length || 0))
         }
         onConfirm={async () => {
           await onDeleteChapter(chapter.id);
@@ -315,6 +329,7 @@ function LessonRow({
   onDeleteLesson: (lessonId: string) => Promise<void>;
   onSelectLesson: (lesson: Lesson) => void;
 }) {
+  const { t } = useTranslation();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // useSortable: ref is attached to row, handleRef is attached to Grip handle button
@@ -359,18 +374,18 @@ function LessonRow({
             {lesson.video ? (
               <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono tabular-nums bg-sticker-sky/15 text-sticker-sky-deep">
                 <Video className="h-3 w-3" />
-                {durationStr || "Video"}
+                {durationStr || t.teacher.videoIndicator}
               </span>
             ) : (
               <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-sticker-orange/15 text-sticker-orange-deep">
-                No Video
+                {t.teacher.noVideoIndicator}
               </span>
             )}
 
             {lesson.quiz && (
               <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium bg-sticker-purple/20 text-sticker-purple-deep">
                 <HelpCircle className="h-3 w-3" />
-                Quiz
+                {t.course.quiz}
               </span>
             )}
 
@@ -389,9 +404,9 @@ function LessonRow({
             variant="ghost"
             size="sm"
             onClick={() => onSelectLesson(lesson)}
-            className="h-6 rounded-md px-2 text-[11px] font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft transition-colors"
+            className="h-6 rounded-md px-2 text-[11px] font-medium text-ink-secondary hover:text-ink hover:bg-canvas-soft transition-colors cursor-pointer"
           >
-            Edit Content
+            {t.teacher.editContent}
           </Button>
 
           <Button
@@ -399,13 +414,13 @@ function LessonRow({
             variant="ghost"
             size="icon"
             disabled={isDeleteBlocked}
-            title={isDeleteBlocked ? FLOOR_PROTECTION_TOOLTIP : "Delete lesson"}
+            title={isDeleteBlocked ? t.teacher.floorProtectionTooltip : t.teacher.deleteLesson}
             data-testid={`delete-lesson-${lesson.id}`}
             onClick={() => setShowDeleteModal(true)}
             className={`h-6 w-6 ${
               isDeleteBlocked
                 ? "cursor-not-allowed text-ink-faint opacity-40"
-                : "text-ink-muted hover:text-sticker-red hover:bg-canvas-soft"
+                : "text-ink-muted hover:text-sticker-red hover:bg-canvas-soft cursor-pointer"
             }`}
           >
             <Trash2 className="h-3 w-3" />
@@ -418,12 +433,10 @@ function LessonRow({
         open={showDeleteModal}
         onOpenChange={setShowDeleteModal}
         variant="danger"
-        title="Delete Lesson?"
-        confirmLabel="Delete Lesson"
+        title={t.teacher.deleteLessonTitle}
+        confirmLabel={t.teacher.deleteLesson}
         description={
-          <>
-            Are you sure you want to delete <strong>&quot;{lesson.title}&quot;</strong>? Any attached video, resources, and quiz data will be permanently deleted.
-          </>
+          t.teacher.deleteLessonDesc.replace("{title}", lesson.title)
         }
         onConfirm={async () => {
           await onDeleteLesson(lesson.id);
@@ -447,6 +460,7 @@ export function CurriculumTree({
   onSelectLesson,
   onSaveAllReorder,
 }: CurriculumTreeProps) {
+  const { t } = useTranslation();
   const [localChapters, setLocalChapters] = useState<Chapter[]>(chapters);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSavingReorder, setIsSavingReorder] = useState(false);
@@ -542,9 +556,9 @@ export function CurriculumTree({
         }
       }
       setHasUnsavedChanges(false);
-      toast.success("Curriculum order saved successfully");
+      toast.success(t.teacher.orderSavedSuccess);
     } catch (err: any) {
-      toast.error(err?.message || "Failed to save curriculum order. Please try again.");
+      toast.error(err?.message || t.teacher.orderSaveFailed);
     } finally {
       setIsSavingReorder(false);
     }
@@ -553,7 +567,7 @@ export function CurriculumTree({
   const handleDiscard = () => {
     setLocalChapters(chapters);
     setHasUnsavedChanges(false);
-    toast.info("Curriculum changes discarded");
+    toast.info(t.teacher.orderChangesDiscarded);
   };
 
   return (
@@ -561,20 +575,20 @@ export function CurriculumTree({
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-bold text-ink">
-            Curriculum Structure
+            {t.teacher.curriculumTree}
           </h2>
           <p className="text-xs text-ink-muted">
-            Organize chapters and lessons. Drag the grip handles to reorder sections.
+            {t.teacher.curriculumSubtitle}
           </p>
         </div>
 
         <Button
           type="button"
           onClick={() => setIsAddingChapter(true)}
-          className="rounded-md bg-notion-blue text-xs font-medium text-white hover:bg-notion-blue-active shadow-2xs"
+          className="rounded-md bg-notion-blue text-xs font-medium text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
         >
           <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Add Chapter
+          {t.teacher.addChapter}
         </Button>
       </div>
 
@@ -584,18 +598,18 @@ export function CurriculumTree({
           {localChapters.length === 0 ? (
             <div className="rounded-lg border border-dashed border-hairline bg-surface p-12 text-center shadow-notion-soft">
               <h3 className="text-sm font-semibold text-ink">
-                No chapters added yet
+                {t.teacher.noChaptersYet}
               </h3>
               <p className="mt-1 text-xs text-ink-muted">
-                Create your first chapter to begin building your course curriculum.
+                {t.teacher.noChaptersYetDesc}
               </p>
               <Button
                 type="button"
                 onClick={() => setIsAddingChapter(true)}
-                className="mt-4 rounded-md bg-notion-blue text-xs font-medium text-white hover:bg-notion-blue-active shadow-2xs"
+                className="mt-4 rounded-md bg-notion-blue text-xs font-medium text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
-                Add Chapter
+                {t.teacher.addChapter}
               </Button>
             </div>
           ) : (
@@ -628,7 +642,7 @@ export function CurriculumTree({
             <div className="flex items-center gap-2.5">
               <span className="flex h-2 w-2 rounded-full bg-sticker-orange animate-pulse" />
               <p className="text-xs font-semibold text-ink">
-                You have unsaved curriculum changes
+                {t.teacher.unsavedChangesNotice}
               </p>
             </div>
 
@@ -640,9 +654,9 @@ export function CurriculumTree({
                 disabled={isSavingReorder}
                 onClick={handleDiscard}
                 data-testid="discard-reorder-btn"
-                className="h-8 rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
+                className="h-8 rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft cursor-pointer"
               >
-                Discard
+                {t.teacher.discardChanges}
               </Button>
               <Button
                 type="button"
@@ -650,15 +664,15 @@ export function CurriculumTree({
                 disabled={isSavingReorder}
                 onClick={handleSaveChanges}
                 data-testid="save-reorder-btn"
-                className="h-8 rounded-md bg-notion-blue px-4 text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+                className="h-8 rounded-md bg-notion-blue px-4 text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
               >
                 {isSavingReorder ? (
                   <>
                     <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    Saving...
+                    {t.common.saving}
                   </>
                 ) : (
-                  "Save Changes"
+                  t.teacher.saveOrder
                 )}
               </Button>
             </div>
@@ -671,17 +685,17 @@ export function CurriculumTree({
         <DialogContent className="sm:max-w-md rounded-lg border border-hairline bg-surface p-6 shadow-notion-elevated">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-ink tracking-tight">
-              New Chapter
+              {t.teacher.newChapterDialogTitle}
             </DialogTitle>
           </DialogHeader>
           <div className="py-2">
             <label className="block text-xs font-semibold text-ink">
-              Chapter Title
+              {t.teacher.chapterTitleLabel}
             </label>
             <Input
               value={newChapterTitle}
               onChange={(e) => setNewChapterTitle(e.target.value)}
-              placeholder={`Chapter ${localChapters.length + 1}: Introduction`}
+              placeholder={t.teacher.chapterTitlePlaceholder.replace("{number}", String(localChapters.length + 1))}
               onKeyDown={(e) => e.key === "Enter" && handleCreateChapter()}
               className="mt-1.5 text-xs bg-surface border-hairline"
               autoFocus
@@ -692,17 +706,17 @@ export function CurriculumTree({
               type="button"
               variant="outline"
               onClick={() => setIsAddingChapter(false)}
-              className="rounded-md border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft"
+              className="rounded-full border-hairline text-xs font-medium text-ink hover:bg-canvas-soft px-4 cursor-pointer"
             >
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button
               type="button"
               onClick={handleCreateChapter}
               disabled={!newChapterTitle.trim()}
-              className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+              className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium px-4 shadow-notion-soft cursor-pointer"
             >
-              Create Chapter
+              {t.teacher.createChapterButton}
             </Button>
           </DialogFooter>
         </DialogContent>

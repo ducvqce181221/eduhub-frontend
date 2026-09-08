@@ -16,6 +16,8 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Pagination } from "@/components/common/pagination";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { formatDate, translateRole } from "@/lib/i18n/formatters";
 import type { User, PaginationMeta, Role } from "@/types/api";
 
 interface UsersTableProps {
@@ -49,6 +51,8 @@ export function UsersTable({
   onToggleStatus,
   isLoading = false,
 }: UsersTableProps) {
+  const { t, language } = useTranslation();
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -63,19 +67,19 @@ export function UsersTable({
       case "ADMIN":
         return (
           <Badge variant="admin" className="text-[11px] font-semibold px-2.5 py-0.5">
-            ADMIN
+            {translateRole("ADMIN", t)}
           </Badge>
         );
       case "TEACHER":
         return (
           <Badge variant="teacher" className="text-[11px] font-semibold px-2.5 py-0.5">
-            TEACHER
+            {translateRole("TEACHER", t)}
           </Badge>
         );
       default:
         return (
           <Badge variant="student" className="text-[11px] font-medium px-2.5 py-0.5">
-            STUDENT
+            {translateRole("STUDENT", t)}
           </Badge>
         );
     }
@@ -89,7 +93,7 @@ export function UsersTable({
           <SearchInput
             value={searchQuery}
             onSearch={onSearchChange}
-            placeholder="Search by name or email..."
+            placeholder={t.admin.searchUsersPlaceholder}
             size="sm"
           />
         </div>
@@ -99,13 +103,13 @@ export function UsersTable({
           <select
             value={selectedRole}
             onChange={(e) => onRoleFilterChange(e.target.value as Role | "ALL")}
-            className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
+            className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
             aria-label="Filter by role"
           >
-            <option value="ALL">All Roles</option>
-            <option value="STUDENT">Student</option>
-            <option value="TEACHER">Teacher</option>
-            <option value="ADMIN">Admin</option>
+            <option value="ALL">{t.admin.allRoles}</option>
+            <option value="STUDENT">{t.enums.role.STUDENT}</option>
+            <option value="TEACHER">{t.enums.role.TEACHER}</option>
+            <option value="ADMIN">{t.enums.role.ADMIN}</option>
           </select>
 
           {/* Status Filter */}
@@ -116,12 +120,12 @@ export function UsersTable({
                 e.target.value as "ALL" | "ACTIVE" | "INACTIVE",
               )
             }
-            className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none"
+            className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
             aria-label="Filter by status"
           >
-            <option value="ALL">All Statuses</option>
-            <option value="ACTIVE">Active</option>
-            <option value="INACTIVE">Inactive</option>
+            <option value="ALL">{t.admin.allStatuses}</option>
+            <option value="ACTIVE">{t.common.active}</option>
+            <option value="INACTIVE">{t.common.inactive}</option>
           </select>
         </div>
       </div>
@@ -131,11 +135,11 @@ export function UsersTable({
         <Table className="border-0 rounded-none">
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t.admin.columnUser}</TableHead>
+              <TableHead>{t.admin.columnRole}</TableHead>
+              <TableHead>{t.admin.columnStatus}</TableHead>
+              <TableHead>{t.admin.columnJoinedDate}</TableHead>
+              <TableHead className="text-right">{t.admin.columnActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -145,7 +149,7 @@ export function UsersTable({
                   colSpan={5}
                   className="py-12 text-center text-xs text-ink-muted"
                 >
-                  Loading accounts...
+                  {t.admin.loadingUsers}
                 </TableCell>
               </TableRow>
             ) : users.length === 0 ? (
@@ -154,7 +158,7 @@ export function UsersTable({
                   colSpan={5}
                   className="py-12 text-center text-xs text-ink-muted"
                 >
-                  No user accounts match your criteria.
+                  {t.admin.noUsersFound}
                 </TableCell>
               </TableRow>
             ) : (
@@ -198,14 +202,14 @@ export function UsersTable({
                     {/* Status Indicator */}
                     <TableCell>
                       {user.isActive ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-teal border border-sticker-teal/20">
-                          <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal" />
-                          Active
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-teal border border-sticker-teal/20 dark:text-teal-300 dark:border-teal-500/30 dark:bg-teal-500/15">
+                          <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal dark:bg-teal-400" />
+                          {t.common.active}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-amber/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-amber-deep border border-sticker-amber/20">
-                          <span className="h-1.5 w-1.5 rounded-full bg-sticker-amber-deep" />
-                          Inactive
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-amber/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-amber-deep border border-sticker-amber/20 dark:text-amber-300 dark:border-amber-500/30 dark:bg-amber-500/15">
+                          <span className="h-1.5 w-1.5 rounded-full bg-sticker-amber-deep dark:bg-amber-400" />
+                          {t.common.inactive}
                         </span>
                       )}
                     </TableCell>
@@ -213,14 +217,7 @@ export function UsersTable({
                     {/* Joined Date */}
                     <TableCell className="text-ink-muted font-mono tabular-nums text-xs">
                       {user.createdAt
-                        ? new Date(user.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            },
-                          )
+                        ? formatDate(user.createdAt, "PPP", language)
                         : "N/A"}
                     </TableCell>
 
@@ -234,7 +231,7 @@ export function UsersTable({
                           className="h-7 rounded-md px-2 text-[11px] font-medium text-ink border-hairline hover:bg-canvas-soft"
                         >
                           <UserCog className="mr-1 h-3 w-3 text-ink-muted" />
-                          Role
+                          {t.admin.changeRoleBtn}
                         </Button>
 
                         <Button
@@ -243,10 +240,10 @@ export function UsersTable({
                           disabled={isCurrentAdmin}
                           title={
                             isCurrentAdmin
-                              ? "You cannot deactivate your own account"
+                              ? t.admin.cannotDeactivateSelf
                               : user.isActive
-                                ? "Deactivate Account"
-                                : "Activate Account"
+                                ? t.admin.deactivateAccountTitle
+                                : t.admin.activateAccountTitle
                           }
                           data-testid={`toggle-status-${user.id}`}
                           onClick={() => onToggleStatus(user)}
@@ -259,7 +256,7 @@ export function UsersTable({
                           }`}
                         >
                           <Power className="mr-1 h-3 w-3" />
-                          {user.isActive ? "Deactivate" : "Activate"}
+                          {user.isActive ? t.admin.deactivateBtn : t.admin.activateBtn}
                         </Button>
                       </div>
                     </TableCell>

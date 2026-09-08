@@ -89,8 +89,8 @@ export function CourseSmartCTA({
 
         <Button
           size="default"
-          variant="default"
-          className="w-full text-xs font-semibold h-10 rounded-md bg-ink text-white hover:bg-ink/90 cursor-pointer"
+          variant="pill"
+          className="w-full text-xs font-semibold h-10 cursor-pointer shadow-notion-soft"
           asChild
         >
           <Link

@@ -43,7 +43,7 @@ describe("Category Management Components (Admin)", () => {
       expect(screen.getByText("web-development")).toBeInTheDocument();
       expect(screen.getByText("Mobile Development")).toBeInTheDocument();
       expect(screen.getByText("Active")).toBeInTheDocument();
-      expect(screen.getByText("Hidden")).toBeInTheDocument();
+      expect(screen.getByText("Inactive")).toBeInTheDocument();
     });
 
     it("triggers edit and delete callbacks when action buttons are clicked", async () => {

@@ -18,14 +18,16 @@ import {
 } from "lucide-react";
 import { getLevelBadgeVariant } from "./course-card";
 import { formatDuration } from "./curriculum-outline";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { formatDate, translateCourseLevel } from "@/lib/i18n/formatters";
 import type { Course } from "@/types/api";
-import { format } from "date-fns";
 
 interface CourseHeroProps {
   course: Course;
 }
 
 export function CourseHero({ course }: CourseHeroProps) {
+  const { t, language } = useTranslation();
   const levelInfo = getLevelBadgeVariant(course.level);
   const initials = course.teacher?.fullName
     ? course.teacher.fullName
@@ -51,7 +53,7 @@ export function CourseHero({ course }: CourseHeroProps) {
   const enrollmentCount = course._count?.enrollments ?? 0;
 
   const formattedDate = course.updatedAt || course.createdAt
-    ? format(new Date(course.updatedAt || course.createdAt!), "MMMM d, yyyy")
+    ? formatDate(course.updatedAt || course.createdAt!, "MMMM d, yyyy", language)
     : "Recently";
 
   const searchParams = useSearchParams();
@@ -114,7 +116,7 @@ export function CourseHero({ course }: CourseHeroProps) {
               </Badge>
             )}
             <Badge variant={levelInfo.variant} className="text-xs px-2.5 py-0.5 font-medium">
-              {levelInfo.label}
+              {translateCourseLevel(course.level, t)}
             </Badge>
             {course.status === "DRAFT" && (
               <Badge variant="outline" className="text-xs px-2.5 py-0.5 border-sticker-orange text-sticker-orange-deep bg-sticker-orange/10 font-semibold">

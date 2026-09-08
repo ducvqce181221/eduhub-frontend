@@ -49,7 +49,7 @@ export function ArchiveCourseDialog({
       <DialogContent className="sm:max-w-md rounded-lg bg-surface border border-hairline p-6 shadow-notion-dropdown">
         <DialogHeader className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-sticker-amber/20 bg-sticker-amber/15 text-sticker-amber-deep">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-sticker-amber/20 bg-sticker-amber/15 text-sticker-amber-deep dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
               <Archive className="h-4 w-4" />
             </div>
             <div>
@@ -73,9 +73,9 @@ export function ArchiveCourseDialog({
           </div>
         )}
 
-        <div className="rounded-md border border-sticker-amber/20 bg-sticker-amber/10 p-3.5 text-xs text-sticker-amber-deep space-y-1">
+        <div className="rounded-md border border-sticker-amber/20 bg-sticker-amber/10 p-3.5 text-xs text-sticker-amber-deep dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 space-y-1">
           <div className="flex items-center gap-2 font-semibold">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-sticker-amber-deep" />
+            <AlertTriangle className="h-4 w-4 shrink-0 text-sticker-amber-deep dark:text-amber-300" />
             <span>Terminal State Policy (BR-CRS-04)</span>
           </div>
           <p className="text-[11px] leading-relaxed opacity-90">
@@ -88,7 +88,7 @@ export function ArchiveCourseDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
+            className="rounded-full text-xs font-medium border-hairline text-ink hover:bg-canvas-soft px-4"
           >
             Cancel
           </Button>
@@ -96,7 +96,7 @@ export function ArchiveCourseDialog({
             type="button"
             disabled={isSubmitting}
             onClick={handleArchive}
-            className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium"
+            className="rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium px-4 shadow-notion-soft"
           >
             {isSubmitting ? "Archiving..." : "Confirm Archive"}
           </Button>

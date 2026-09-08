@@ -16,20 +16,24 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { stripLocale } from "@/lib/auth/redirect-utils";
 
 export function ExploreMenu() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { t, language } = useTranslation();
   const { data: categories = [], isLoading } = useCategoriesQuery();
+  const cleanPath = stripLocale(pathname || "/");
 
   const handleSelectCategory = (categoryId: string) => {
     setOpen(false);
-    const targetUrl = `/?categoryId=${encodeURIComponent(categoryId)}#catalog`;
+    const targetUrl = `/${language}/?categoryId=${encodeURIComponent(categoryId)}#catalog`;
     router.push(targetUrl);
 
     // If already on home page, scroll directly into the catalog area
-    if (pathname === "/") {
+    if (cleanPath === "/") {
       const catalogEl = document.getElementById("catalog");
       if (catalogEl) {
         catalogEl.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -39,8 +43,8 @@ export function ExploreMenu() {
 
   const handleViewAll = () => {
     setOpen(false);
-    router.push("/#catalog");
-    if (pathname === "/") {
+    router.push(`/${language}/#catalog`);
+    if (cleanPath === "/") {
       const catalogEl = document.getElementById("catalog");
       if (catalogEl) {
         catalogEl.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -61,7 +65,7 @@ export function ExploreMenu() {
           aria-label="Explore course categories"
         >
           <LayoutGrid className="w-4 h-4 text-notion-blue" />
-          <span>Explore</span>
+          <span>{t.nav.explore}</span>
           <ChevronDown
             className={cn(
               "w-3.5 h-3.5 text-ink-muted transition-transform duration-200",
@@ -80,10 +84,10 @@ export function ExploreMenu() {
         <div className="flex items-center justify-between pb-3 border-b border-hairline mb-3">
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-ink">
-              Course Categories
+              {t.nav.categories}
             </h4>
             <p className="text-[11px] text-ink-muted">
-              Browse tracks by engineering domain
+              {t.catalog.curriculumSubtitle}
             </p>
           </div>
 
@@ -93,7 +97,7 @@ export function ExploreMenu() {
             onClick={handleViewAll}
             className="text-xs h-7 text-notion-blue hover:text-notion-blue-active hover:bg-notion-blue/5 font-medium px-2 rounded-md"
           >
-            All Courses
+            {t.catalog.allCourses}
             <ArrowRight className="w-3 h-3 ml-1" />
           </Button>
         </div>
@@ -110,7 +114,7 @@ export function ExploreMenu() {
           </div>
         ) : categories.length === 0 ? (
           <div className="py-6 text-center text-xs text-ink-muted">
-            No active categories found.
+            {t.common.emptyState}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">

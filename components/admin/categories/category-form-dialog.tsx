@@ -150,7 +150,7 @@ export function CategoryFormDialog({
               className="text-xs border-hairline bg-surface text-ink focus-visible:ring-notion-blue placeholder:text-ink-muted"
             />
             {errors.name && (
-              <p className="text-[11px] font-medium text-rose-600">
+              <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
                 {errors.name.message}
               </p>
             )}
@@ -201,14 +201,14 @@ export function CategoryFormDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="text-xs font-medium border-hairline text-ink hover:bg-canvas-soft"
+              className="rounded-full text-xs font-medium border-hairline text-ink hover:bg-canvas-soft px-4"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium"
+              className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium px-4 shadow-notion-soft"
             >
               {isSubmitting ? "Saving..." : "Save Category"}
             </Button>
