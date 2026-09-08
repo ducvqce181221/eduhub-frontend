@@ -7,7 +7,9 @@ import {
   getCourseById,
   getCourses,
   getMyEnrollments,
+  getCoursePreviewVideo,
 } from "@/lib/api/courses";
+
 import type { QueryCoursesParams } from "@/types/api";
 import { toast } from "sonner";
 
@@ -15,9 +17,20 @@ export const COURSE_QUERY_KEYS = {
   all: ["courses"] as const,
   list: (params: QueryCoursesParams) => ["courses", "list", params] as const,
   detail: (id: string) => ["courses", "detail", id] as const,
+  previewVideo: (id: string) => ["courses", "preview-video", id] as const,
   categories: ["categories"] as const,
   myEnrollments: ["enrollments", "me"] as const,
 };
+
+export function useCoursePreviewVideoQuery(id: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: COURSE_QUERY_KEYS.previewVideo(id),
+    queryFn: () => getCoursePreviewVideo(id),
+    enabled: Boolean(id) && enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 
 export function useCoursesQuery(params: QueryCoursesParams) {
   return useQuery({

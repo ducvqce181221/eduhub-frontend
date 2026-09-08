@@ -10,12 +10,16 @@ import { ExploreMenu } from "@/components/layout/explore-menu";
 import { HeaderSearch } from "@/components/layout/header-search";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/common/theme-toggle";
+import { LanguageToggle } from "@/components/common/language-toggle";
+import { useTranslation } from "@/lib/i18n/language-context";
 
 import type { User } from "@/types/api";
 
 export function Header({ initialUser = null }: { initialUser?: User | null }) {
   const pathname = usePathname();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const currentUser = user || initialUser;
   const isAuthed = isAuthenticated || Boolean(currentUser);
 
@@ -25,7 +29,7 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
         {/* Left: Brand + Explore Menu */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <Link href="/" className="flex items-center gap-2.5 font-bold text-base text-ink">
-            <span className="w-7 h-7 rounded-md bg-notion-blue text-white flex items-center justify-center text-xs font-bold">
+            <span className="w-7 h-7 rounded-md bg-notion-blue text-white flex items-center justify-center text-xs font-bold shadow-2xs">
               E
             </span>
             <span className="tracking-tight text-base font-bold hidden xs:inline">EduHub</span>
@@ -41,7 +45,7 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
           </React.Suspense>
         </div>
 
-        {/* Desktop Navigation Links & User Actions */}
+        {/* Desktop Navigation Links & Role Dashboards */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
           <nav className="hidden lg:flex items-center gap-1 text-sm font-medium text-ink-secondary">
             {isAuthed && currentUser?.role === "STUDENT" && (
@@ -53,7 +57,7 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
                     : "hover:bg-canvas-soft hover:text-ink text-ink-secondary"
                 }`}
               >
-                My Enrollments
+                {t.nav.myLearning}
               </Link>
             )}
 
@@ -66,7 +70,7 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
                     : "hover:bg-canvas-soft hover:text-ink text-ink-secondary"
                 }`}
               >
-                Teacher Dashboard
+                {t.nav.teacherDashboard}
               </Link>
             )}
 
@@ -74,19 +78,29 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
               <Link
                 href="/admin"
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  pathname?.startsWith("/admin")
+                  pathname === "/admin" ||
+                  pathname?.startsWith("/admin/users") ||
+                  pathname?.startsWith("/admin/courses") ||
+                  pathname?.startsWith("/admin/categories") ||
+                  pathname?.startsWith("/admin/banners") ||
+                  pathname?.startsWith("/admin/notifications")
                     ? "bg-canvas-soft text-ink font-semibold border border-hairline"
                     : "hover:bg-canvas-soft hover:text-ink text-ink-secondary"
                 }`}
               >
-                Admin Panel
+                {t.nav.adminPanel}
               </Link>
             )}
           </nav>
         </div>
 
-        {/* Right: Auth State / Actions */}
+        {/* Right: Theme + Language + Auth State / Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 border-r border-hairline pr-2 sm:pr-3">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
+
           {isAuthed && currentUser ? (
             <div className="flex items-center gap-2">
               <NotificationBell />
@@ -96,7 +110,7 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
             <div className="hidden sm:flex items-center gap-2">
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/login" className="text-ink-secondary hover:text-ink">
-                  Sign In
+                  {t.nav.login}
                 </Link>
               </Button>
               <Button
@@ -104,7 +118,7 @@ export function Header({ initialUser = null }: { initialUser?: User | null }) {
                 variant="pill"
                 asChild
               >
-                <Link href="/register">Get Started</Link>
+                <Link href="/register">{t.nav.register}</Link>
               </Button>
             </div>
           )}

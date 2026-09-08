@@ -10,14 +10,14 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Notion Design System Core Colors */
-  --color-canvas: #ffffff;
-  --color-canvas-soft: #f6f5f4;
-  --color-surface: #ffffff;
-  --color-ink: #000000;
-  --color-ink-secondary: #31302e;
-  --color-ink-muted: #615d59;
-  --color-ink-faint: #a39e98;
-  --color-hairline: #e6e6e6;
+  --color-canvas: var(--canvas);
+  --color-canvas-soft: var(--canvas-soft);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-hairline: var(--hairline);
 
   /* Brand Accents */
   --color-notion-blue: #0075de;
@@ -77,6 +77,15 @@
 
 :root {
   /* Notion Light Warm Paper Theme */
+  --canvas: #ffffff;
+  --canvas-soft: #f6f5f4;
+  --surface: #ffffff;
+  --ink: #000000;
+  --ink-secondary: #31302e;
+  --ink-muted: #615d59;
+  --ink-faint: #a39e98;
+  --hairline: #e6e6e6;
+
   --background: #f6f5f4;
   --foreground: #000000;
   
@@ -109,6 +118,15 @@
 }
 
 .dark {
+  --canvas: #141414;
+  --canvas-soft: #191919;
+  --surface: #202020;
+  --ink: #f7f7f7;
+  --ink-secondary: #d0ceca;
+  --ink-muted: #9c9790;
+  --ink-faint: #635f59;
+  --hairline: #2e2e2e;
+
   --background: #191919;
   --foreground: #ffffff;
   
@@ -133,8 +151,8 @@
   --destructive: #dd5b00;
   --destructive-foreground: #ffffff;
   
-  --border: #333333;
-  --input: #333333;
+  --border: #2e2e2e;
+  --input: #2e2e2e;
   --ring: #0075de;
 }
 

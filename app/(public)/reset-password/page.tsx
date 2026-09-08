@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RoleGuard } from "@/components/auth/role-guard";
+import { TurnstileWidget } from "@/components/common/turnstile-widget";
 import { AlertCircle, CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -49,6 +50,8 @@ function ResetPasswordContent() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const [resetKey, setResetKey] = useState(0);
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
@@ -67,15 +70,20 @@ function ResetPasswordContent() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
+      const body: Record<string, any> = {
+        token,
+        newPassword: values.newPassword,
+      };
+      if (turnstileToken) {
+        body.turnstileToken = turnstileToken;
+      }
       await apiClient.post("/auth/reset-password", {
-        body: {
-          token,
-          newPassword: values.newPassword,
-        },
+        body,
         skipAuth: true,
       });
       setIsSuccess(true);
     } catch (err: any) {
+      setResetKey((k) => k + 1);
       if (err?.statusCode === 400) {
         setErrorMessage("Invalid or expired reset token. Please request a new link.");
       } else {
@@ -180,11 +188,14 @@ function ResetPasswordContent() {
                       )}
                     />
 
+                    <TurnstileWidget action="reset_password" resetSignal={resetKey} onVerify={setTurnstileToken} />
+
                     <Button
                       type="submit"
                       className="w-full h-10 font-semibold cursor-pointer"
                       disabled={isLoading}
                     >
+
                       {isLoading ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />

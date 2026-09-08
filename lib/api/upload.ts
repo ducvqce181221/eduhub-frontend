@@ -35,6 +35,18 @@ export async function checkDuplicateAsset(
   return response.data;
 }
 
+export async function getPreviewUrl(url: string): Promise<string> {
+  try {
+    const response = await apiClient.post<{ previewUrl: string }>(
+      "/upload/preview-url",
+      { url }
+    );
+    return response.data?.previewUrl || url;
+  } catch {
+    return url;
+  }
+}
+
 export async function uploadDirectToR2(
   uploadUrl: string,
   file: File,

@@ -88,22 +88,32 @@ vi.mock("@/hooks/use-course-catalog", () => ({
   }),
 }));
 
-describe("HomePage (Unified Catalog)", () => {
+vi.mock("@/hooks/use-banners", () => ({
+  useActiveBannersQuery: () => ({
+    data: [
+      {
+        id: "banner-1",
+        title: "Master Modern Software Engineering",
+        imageUrl: "https://example.com/banner1.jpg",
+        linkUrl: "#catalog",
+        order: 1,
+        isActive: true,
+      },
+    ],
+    isLoading: false,
+  }),
+}));
+
+describe("HomePage (Unified Catalog with Banner Carousel & FAQ)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders Hero section with value proposition in English", () => {
+  it("renders Promo Banner Carousel section", () => {
     render(<HomePage />);
 
     expect(
-      screen.getByText(/Master Modern Software Engineering/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/EduHub Learning Platform/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /Explore Courses/i }),
+      screen.getByLabelText(/Promotional Banners/i),
     ).toBeInTheDocument();
   });
 
@@ -125,40 +135,18 @@ describe("HomePage (Unified Catalog)", () => {
     expect(screen.getByText(/Showing/i)).toBeInTheDocument();
   });
 
-  it("renders Instructor / Teach on EduHub call to action banner", () => {
+  it("renders Practical Knowledge FAQ section", () => {
     render(<HomePage />);
 
     expect(
-      screen.getByText(/Share your expertise\. Teach on EduHub\./i),
+      screen.getByText(/Frequently Asked Questions/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /Start Teaching Today/i }),
+      screen.getByText(/Everything you need to know about learning and teaching on EduHub\./i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/How does self-paced learning work on EduHub\?/i),
     ).toBeInTheDocument();
   });
-
-  it("renders role-aware secondary CTA button in Hero for Admin, Teacher, and Student", () => {
-    // 1. Unauthenticated -> Get Started Free
-    mockAuthUser = null;
-    const { unmount: u1 } = render(<HomePage />);
-    expect(screen.getByRole("link", { name: /Get Started Free/i })).toHaveAttribute("href", "/register");
-    u1();
-
-    // 2. Admin -> Admin Panel (/admin)
-    mockAuthUser = { id: "a1", role: "ADMIN", fullName: "Admin User" };
-    const { unmount: u2 } = render(<HomePage />);
-    expect(screen.getByRole("link", { name: /Admin Panel/i })).toHaveAttribute("href", "/admin");
-    u2();
-
-    // 3. Teacher -> Teacher Dashboard (/teacher)
-    mockAuthUser = { id: "t1", role: "TEACHER", fullName: "Teacher User" };
-    const { unmount: u3 } = render(<HomePage />);
-    expect(screen.getByRole("link", { name: /^Teacher Dashboard$/i })).toHaveAttribute("href", "/teacher");
-    u3();
-
-    // 4. Student -> My Learning Dashboard (/me/enrollments)
-    mockAuthUser = { id: "s1", role: "STUDENT", fullName: "Student User" };
-    const { unmount: u4 } = render(<HomePage />);
-    expect(screen.getByRole("link", { name: /My Learning Dashboard/i })).toHaveAttribute("href", "/me/enrollments");
-    u4();
-  });
 });
+

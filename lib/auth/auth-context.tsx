@@ -21,13 +21,16 @@ import type { User, AuthResponse } from "@/types/api";
 interface LoginCredentials {
   email: string;
   password: string;
+  turnstileToken?: string;
 }
 
 interface RegisterCredentials {
   email: string;
   password: string;
   fullName: string;
+  turnstileToken?: string;
 }
+
 
 export interface GoogleAuthPayload {
   googleId?: string;

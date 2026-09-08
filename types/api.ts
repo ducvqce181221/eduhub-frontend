@@ -67,17 +67,22 @@ export interface LessonVideo {
   createdAt?: string;
   assetId?: string | null;
   isExternal?: boolean;
+  isPreview?: boolean;
+  playbackUrl?: string;
 }
+
 
 export interface LessonResource {
   id: string;
   name: string;
   fileUrl: string;
+  lessonId?: string;
   fileType?: string | null;
   fileSize?: number | null;
   assetId?: string | null;
   isExternal?: boolean;
 }
+
 
 export interface LessonQuiz {
   id: string;
@@ -310,7 +315,9 @@ export interface CreateResourcePayload {
   fileSize?: number;
   contentHash?: string;
   assetId?: string;
+  isExternal?: boolean;
 }
+
 
 export type MediaType = "VIDEO" | "DOCUMENT";
 export type AssetSource = "R2_UPLOAD" | "EXTERNAL_URL";
@@ -339,9 +346,10 @@ export interface CheckDuplicatePayload {
 
 export interface CheckDuplicateResponse {
   isDuplicate: boolean;
-  asset: MediaAsset | null;
+  asset?: MediaAsset | null;
   existingAsset?: MediaAsset | null;
 }
+
 
 export interface QueryMediaAssetsParams {
   page?: number;
@@ -420,8 +428,10 @@ export interface PresignedUrlResponse {
 
 export interface UploadImageResponse {
   url: string;
+  secureUrl?: string;
   publicId?: string;
 }
+
 
 // Analytics & Reports
 export interface EnrolledStudentProgressItem {

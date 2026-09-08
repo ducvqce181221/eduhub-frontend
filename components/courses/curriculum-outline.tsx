@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronDown, ChevronRight, PlayCircle, FileText, HelpCircle, Clock, BookOpen, Layers } from "lucide-react";
+import { ChevronDown, ChevronRight, PlayCircle, Play, FileText, HelpCircle, Clock, BookOpen, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { Chapter } from "@/types/api";
 import { cn } from "@/lib/utils";
+
 
 interface CurriculumOutlineProps {
   chapters: Chapter[];
   defaultExpanded?: boolean;
   showSummary?: boolean;
   className?: string;
+  previewLessonId?: string;
+  onPreviewLesson?: (lessonId: string) => void;
 }
 
 export function formatDuration(seconds: number): string {
@@ -30,7 +34,10 @@ export function CurriculumOutline({
   defaultExpanded = false,
   showSummary = false,
   className,
+  previewLessonId,
+  onPreviewLesson,
 }: CurriculumOutlineProps) {
+
   // Sort chapters by order ascending
   const sortedChapters = [...chapters].sort((a, b) => a.order - b.order);
 
@@ -63,7 +70,9 @@ export function CurriculumOutline({
     setExpandedChapterIds(new Set());
   };
 
-  // Calculate summary metrics
+  const { t } = useTranslation();
+
+  // Summary metrics
   const totalChapters = sortedChapters.length;
   const totalLessons = sortedChapters.reduce(
     (acc, chap) => acc + (chap.lessons?.length || 0),
@@ -76,6 +85,7 @@ export function CurriculumOutline({
     );
     return acc + chapSeconds;
   }, 0);
+
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
@@ -181,6 +191,10 @@ export function CurriculumOutline({
                         lesson._count?.resources ?? lesson.resources?.length ?? 0;
                       const hasQuiz = Boolean(lesson.quiz);
                       const duration = lesson.video?.durationSeconds;
+                      const isPreviewable = Boolean(
+                        (lesson.video?.isPreview || (previewLessonId && lesson.id === previewLessonId)) &&
+                        onPreviewLesson,
+                      );
 
                       return (
                         <div
@@ -202,6 +216,21 @@ export function CurriculumOutline({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
+                            {isPreviewable && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onPreviewLesson?.(lesson.id);
+
+                                }}
+                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-notion-blue bg-notion-blue/10 hover:bg-notion-blue/20 border border-notion-blue/30 transition-all cursor-pointer shadow-2xs"
+                              >
+                                <Play className="w-2.5 h-2.5 fill-current" />
+                                <span>{t.course.previewBadge}</span>
+                              </button>
+                            )}
+
                             {hasQuiz && (
                               <Badge variant="teal" className="text-[11px] px-2 py-0.5 font-medium flex items-center gap-1">
                                 <HelpCircle className="w-3 h-3" />
@@ -225,6 +254,7 @@ export function CurriculumOutline({
                           </div>
                         </div>
                       );
+
                     })
                   )}
                 </div>

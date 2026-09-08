@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RoleGuard } from "@/components/auth/role-guard";
+import { TurnstileWidget } from "@/components/common/turnstile-widget";
 import { AlertCircle, CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 
 const forgotPasswordSchema = z.object({
@@ -30,6 +31,8 @@ export default function ForgotPasswordPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const [resetKey, setResetKey] = useState(0);
 
   const form = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -42,12 +45,17 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
+      const body: Record<string, any> = { email: values.email };
+      if (turnstileToken) {
+        body.turnstileToken = turnstileToken;
+      }
       await apiClient.post("/auth/forgot-password", {
-        body: values,
+        body,
         skipAuth: true,
       });
       setIsSubmitted(true);
     } catch (err: any) {
+      setResetKey((k) => k + 1);
       if (err?.statusCode === 429) {
         setErrorMessage("Too many requests. Please try again in a few minutes.");
       } else {
@@ -124,11 +132,14 @@ export default function ForgotPasswordPage() {
                       )}
                     />
 
+                    <TurnstileWidget action="forgot_password" resetSignal={resetKey} onVerify={setTurnstileToken} />
+
                     <Button
                       type="submit"
                       className="w-full h-10 font-semibold cursor-pointer"
                       disabled={isLoading}
                     >
+
                       {isLoading ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />

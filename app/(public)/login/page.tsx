@@ -21,6 +21,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RoleGuard } from "@/components/auth/role-guard";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { getPostLoginRedirect } from "@/lib/auth/redirect-utils";
+import { TurnstileWidget } from "@/components/common/turnstile-widget";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
@@ -40,6 +41,8 @@ function LoginFormContent() {
   const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     const errorParam = searchParams.get("error");
@@ -60,10 +63,14 @@ function LoginFormContent() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      const authData = await login(values);
+      const authData = await login({
+        ...values,
+        turnstileToken: turnstileToken || undefined,
+      });
       const destination = getPostLoginRedirect(authData.user.role, returnUrl);
       router.push(destination);
     } catch (err: any) {
+      setResetKey((k) => k + 1);
       if (err?.statusCode === 429) {
         setErrorMessage("Too many login attempts. Please try again in a minute.");
       } else if (err?.statusCode === 401) {
@@ -146,11 +153,14 @@ function LoginFormContent() {
                   )}
                 />
 
+                <TurnstileWidget action="login" resetSignal={resetKey} onVerify={setTurnstileToken} />
+
                 <Button
                   type="submit"
                   className="w-full h-10 font-semibold cursor-pointer"
                   disabled={isLoading}
                 >
+
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />

@@ -122,7 +122,7 @@ export function ResourcesManager({
           name: pendingFile?.name || duplicateAsset.name,
           fileUrl: duplicateAsset.fileUrl,
           fileType: duplicateAsset.fileType,
-          fileSize: duplicateAsset.fileSize,
+          fileSize: duplicateAsset.fileSize ?? undefined,
           isExternal: duplicateAsset.source === "EXTERNAL_URL",
           assetId: duplicateAsset.id,
         });
@@ -153,7 +153,7 @@ export function ResourcesManager({
         name: customTitle || asset.name,
         fileUrl: asset.fileUrl,
         fileType: asset.fileType,
-        fileSize: asset.fileSize,
+        fileSize: asset.fileSize ?? undefined,
         isExternal: asset.source === "EXTERNAL_URL",
       });
     }
@@ -167,11 +167,12 @@ export function ResourcesManager({
         name: asset.name,
         fileUrl: asset.fileUrl,
         fileType: asset.fileType,
-        fileSize: asset.fileSize,
+        fileSize: asset.fileSize ?? undefined,
         isExternal: true,
       });
     }
   };
+
 
   return (
     <>

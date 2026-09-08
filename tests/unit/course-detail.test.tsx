@@ -73,9 +73,11 @@ const mockUseEnrollCourseMutation = vi.fn();
 
 vi.mock("@/hooks/use-course-catalog", () => ({
   useCourseDetailQuery: (id: string) => mockUseCourseDetailQuery(id),
+  useCoursePreviewVideoQuery: () => ({ data: null, isLoading: false }),
   useMyEnrollmentsQuery: (enabled: boolean) => mockUseMyEnrollmentsQuery(enabled),
   useEnrollCourseMutation: () => mockUseEnrollCourseMutation(),
 }));
+
 
 describe("CourseDetailPage", () => {
   beforeEach(() => {

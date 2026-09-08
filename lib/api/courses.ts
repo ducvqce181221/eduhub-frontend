@@ -84,3 +84,30 @@ export async function enrollCourse(courseId: string): Promise<Enrollment> {
   const response = await apiClient.post<Enrollment>(`/courses/${courseId}/enroll`);
   return response.data;
 }
+
+export interface CoursePreviewVideo {
+  courseId: string;
+  courseTitle?: string;
+  courseSlug?: string;
+  lessonId: string;
+  lessonTitle: string;
+  durationSeconds?: number;
+  previewUrl: string;
+  videoUrl?: string;
+  isPreview?: boolean;
+}
+
+export async function getCoursePreviewVideo(courseId: string): Promise<CoursePreviewVideo | null> {
+  const response = await apiClient.get<any>(`/courses/${courseId}/preview-video`, {
+    skipAuth: true,
+  });
+  if (!response.data) return null;
+  const data = response.data;
+  const url = data.previewUrl || data.videoUrl || "";
+  return {
+    ...data,
+    previewUrl: url,
+    videoUrl: url,
+  };
+}
+

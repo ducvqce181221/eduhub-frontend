@@ -8,8 +8,13 @@ import type {
 
 export interface MediaAssetsListResponse {
   items: MediaAsset[];
-  meta: PaginationMeta;
+  meta?: PaginationMeta;
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
 }
+
 
 export async function getMediaAssets(
   params?: QueryMediaAssetsParams

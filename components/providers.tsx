@@ -8,6 +8,8 @@ import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { Category, User } from "@/types/api";
 import { COURSE_QUERY_KEYS } from "@/hooks/use-course-catalog";
+import { ThemeProvider } from "@/lib/theme/theme-context";
+import { LanguageProvider } from "@/lib/i18n/language-context";
 
 export function Providers({
   children,
@@ -37,13 +39,17 @@ export function Providers({
   });
 
   return (
-    <NuqsAdapter>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider initialUser={initialUser}>
-          {children}
-          <Toaster position="top-right" richColors closeButton />
-        </AuthProvider>
-      </QueryClientProvider>
-    </NuqsAdapter>
+    <ThemeProvider defaultTheme="light">
+      <LanguageProvider defaultLanguage="en">
+        <NuqsAdapter>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider initialUser={initialUser}>
+              {children}
+              <Toaster position="top-right" richColors closeButton />
+            </AuthProvider>
+          </QueryClientProvider>
+        </NuqsAdapter>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }

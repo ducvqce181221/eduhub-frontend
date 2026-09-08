@@ -20,6 +20,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RoleGuard } from "@/components/auth/role-guard";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import { TurnstileWidget } from "@/components/common/turnstile-widget";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 // Password regex matching backend: min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
@@ -50,6 +51,8 @@ export default function RegisterPage() {
   const { register: registerUser, login } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const [resetKey, setResetKey] = useState(0);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -69,6 +72,7 @@ export default function RegisterPage() {
         fullName: values.fullName,
         email: values.email,
         password: values.password,
+        turnstileToken: turnstileToken || undefined,
       });
 
       // Auto login after registration
@@ -79,6 +83,7 @@ export default function RegisterPage() {
 
       router.push("/");
     } catch (err: any) {
+      setResetKey((k) => k + 1);
       if (err?.statusCode === 409) {
         setErrorMessage("An account with this email already exists. Please sign in instead.");
       } else if (err?.statusCode === 429) {
@@ -192,11 +197,14 @@ export default function RegisterPage() {
                   )}
                 />
 
+                <TurnstileWidget action="signup" resetSignal={resetKey} onVerify={setTurnstileToken} />
+
                 <Button
                   type="submit"
                   className="w-full h-10 font-semibold cursor-pointer"
                   disabled={isLoading}
                 >
+
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />

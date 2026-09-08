@@ -10,6 +10,7 @@ import {
   Megaphone,
   ArrowLeft,
   ShieldCheck,
+  ImageIcon,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,8 +26,10 @@ const navItems: NavItem[] = [
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Categories", href: "/admin/categories", icon: FolderTree },
   { name: "Course Oversight", href: "/admin/courses", icon: BookOpen },
+  { name: "Banners", href: "/admin/banners", icon: ImageIcon },
   { name: "System Broadcast", href: "/admin/notifications", icon: Megaphone },
 ];
+
 
 export function AdminSidebar() {
   const pathname = usePathname();

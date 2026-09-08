@@ -13,6 +13,8 @@ import {
   FolderOpen,
   ExternalLink,
   Globe,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +23,14 @@ import { Progress } from "@/components/ui/progress";
 import { AssetLibraryDialog } from "./asset-library-dialog";
 import { ExternalUrlDialog } from "./external-url-dialog";
 import { DuplicateAssetDialog } from "./duplicate-asset-dialog";
-import { getPresignedUrl, uploadDirectToR2, checkDuplicateAsset } from "@/lib/api/upload";
+import {
+  getPresignedUrl,
+  uploadDirectToR2,
+  checkDuplicateAsset,
+  getPreviewUrl,
+} from "@/lib/api/upload";
 import { computeFileHash } from "@/lib/utils/hash";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { LessonVideo, UpsertVideoPayload, MediaAsset } from "@/types/api";
 
 interface VideoUploaderProps {
@@ -63,6 +71,11 @@ export function VideoUploader({
   const [fileHash, setFileHash] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { t } = useTranslation();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewPlaybackUrl, setPreviewPlaybackUrl] = useState<string | null>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+
   // Synchronize internal state when currentVideo prop updates
   React.useEffect(() => {
     setUploadedUrl(currentVideo?.videoUrl || null);
@@ -70,7 +83,30 @@ export function VideoUploader({
     setVideoTitle(currentVideo?.title || "");
     setSelectedAssetId(currentVideo?.assetId || null);
     setIsExternal(!!currentVideo?.isExternal);
+    setIsPreviewOpen(false);
+    setPreviewPlaybackUrl(null);
   }, [currentVideo]);
+
+  const handleTogglePreview = async () => {
+    if (isPreviewOpen) {
+      setIsPreviewOpen(false);
+      return;
+    }
+
+    if (!uploadedUrl) return;
+
+    try {
+      setIsLoadingPreview(true);
+      const resolved = await getPreviewUrl(uploadedUrl);
+      setPreviewPlaybackUrl(resolved);
+      setIsPreviewOpen(true);
+    } catch {
+      setPreviewPlaybackUrl(uploadedUrl);
+      setIsPreviewOpen(true);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  };
 
   const formatSeconds = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
@@ -400,13 +436,31 @@ export function VideoUploader({
                 <div className="flex items-center gap-1.5 shrink-0">
                   <Button
                     type="button"
+                    variant={isPreviewOpen ? "default" : "outline"}
+                    size="sm"
+                    onClick={handleTogglePreview}
+                    disabled={isLoadingPreview}
+                    data-testid="preview-video-button"
+                    className="rounded-md border-hairline text-xs font-semibold hover:bg-canvas-soft"
+                  >
+                    {isLoadingPreview ? (
+                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    ) : isPreviewOpen ? (
+                      <EyeOff className="mr-1.5 h-3.5 w-3.5" />
+                    ) : (
+                      <Eye className="mr-1.5 h-3.5 w-3.5 text-notion-blue" />
+                    )}
+                    {isPreviewOpen ? t.uploader.hidePreview : t.uploader.previewVideo}
+                  </Button>
+                  <Button
+                    type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
                     className="rounded-md border-hairline text-xs text-ink hover:bg-canvas-soft"
                   >
                     <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-                    Replace Video
+                    {t.uploader.replaceVideo}
                   </Button>
                   <Button
                     type="button"
@@ -438,6 +492,34 @@ export function VideoUploader({
                 className="hidden"
               />
             </div>
+
+            {/* Video Playback Preview Card */}
+            {isPreviewOpen && previewPlaybackUrl && (
+              <div
+                data-testid="video-playback-preview"
+                className="rounded-lg border border-hairline bg-black overflow-hidden shadow-notion-soft"
+              >
+                <div className="p-2 bg-surface border-b border-hairline flex items-center justify-between px-3">
+                  <span className="text-xs font-semibold text-ink flex items-center gap-1.5 truncate pr-2">
+                    <Play className="w-3.5 h-3.5 text-notion-blue shrink-0" />
+                    <span className="truncate">{t.uploader.previewVideo}: {videoTitle || "Lesson Video"}</span>
+                  </span>
+                  <span className="text-xs text-ink-muted font-mono tabular-nums shrink-0">
+                    {formatSeconds(durationSeconds || 0)}
+                  </span>
+                </div>
+                <div className="relative aspect-video w-full bg-black flex items-center justify-center">
+                  <video
+                    data-testid="preview-video-element"
+                    src={previewPlaybackUrl}
+                    controls
+                    controlsList="nodownload"
+                    playsInline
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Duration Config, Title, and Save */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
