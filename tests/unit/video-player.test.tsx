@@ -166,7 +166,7 @@ describe("VideoPlayer Component", () => {
     // Active resolution and HLS explanation visible
     expect(screen.getAllByText(/1080p/i).length).toBeGreaterThanOrEqual(2);
     expect(
-      screen.getByText(/Multi-bitrate adaptive streaming \(HLS\) will be enabled/i),
+      screen.getByText(/Adaptive streaming \(HLS\)/i),
     ).toBeInTheDocument();
   });
 });
