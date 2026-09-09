@@ -11,6 +11,8 @@ import { getCategories } from "@/lib/api/courses";
 import { locales, defaultLocale, isValidLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/server";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -89,6 +91,7 @@ export default async function LocaleRootLayout({
           <Footer />
         </Providers>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
