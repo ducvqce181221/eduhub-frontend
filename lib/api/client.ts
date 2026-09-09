@@ -70,7 +70,15 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   _retry?: boolean;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+  }
+  if (typeof window !== "undefined") {
+    return "";
+  }
+  return (process.env.BACKEND_INTERNAL_URL || "http://localhost:5000").replace(/\/+$/, "");
+}
 
 let refreshPromise: Promise<string | null> | null = null;
 
@@ -81,7 +89,8 @@ export async function performTokenRefresh(): Promise<string | null> {
 
   refreshPromise = (async () => {
     try {
-      const refreshUrl = `${BASE_URL.replace(/\/+$/, "")}/api/v1/auth/refresh`;
+      const baseUrl = getBaseUrl();
+      const refreshUrl = baseUrl ? `${baseUrl}/api/v1/auth/refresh` : `/api/v1/auth/refresh`;
       const res = await fetch(refreshUrl, {
         method: "POST",
         headers: {
@@ -160,7 +169,11 @@ async function request<T = unknown>(
     }
   }
 
-  const url = new URL(`${BASE_URL.replace(/\/+$/, "")}${urlPath}`);
+  const baseUrl = getBaseUrl();
+  const fullPath = baseUrl ? `${baseUrl}${urlPath}` : urlPath;
+  const url = typeof window !== "undefined"
+    ? new URL(fullPath, window.location.origin)
+    : new URL(fullPath, "http://localhost:5000");
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
