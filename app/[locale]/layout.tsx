@@ -10,6 +10,7 @@ import type { User, Category } from "@/types/api";
 import { getCategories } from "@/lib/api/courses";
 import { locales, defaultLocale, isValidLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/server";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -87,6 +88,7 @@ export default async function LocaleRootLayout({
           <main className="flex-1 flex flex-col">{children}</main>
           <Footer />
         </Providers>
+        <SpeedInsights />
       </body>
     </html>
   );
