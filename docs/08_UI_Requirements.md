@@ -13,15 +13,15 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 ## 1. Public Pages (no auth required)
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
-| **Course catalog / discovery** | FR-CO07, FR-C01 | Search, category/level filter, pagination. Calls `GET /courses` (Redis-cached on the backend, no FE-side caching needed). |
-| **Course detail (published)** | FR-CO02 | Shows curriculum outline; "Enroll" CTA swaps to "Continue learning" if the visitor is an enrolled Student. |
-| **Login / Register** | FR-A01, FR-A02 | Register is Student-only — no role selector in the form (see BR-USR-01 in `09_UX_Notes_on_Business_Rules.md`). |
-| **Forgot / Reset password** | FR-A05, FR-A06 | Two-step flow: request email → set new password via token link. |
+| **Home & Course Discovery (`/`)** | FR-CO07, FR-C01, FR-B01 | Promotional banner carousel (strict 3:1 aspect ratio, 1200x400 px, autoplay, pause-on-hover), specialized tracks with course counts, full course catalog with category/level filter and pagination, practical LMS FAQ section. Calls `GET /banners`, `GET /courses` (Redis-cached), and `GET /categories`. |
+| **Course detail (published)** | FR-CO02, FR-CO15 | Shows curriculum outline; "Enroll" CTA swaps to "Continue learning" if the visitor is an enrolled Student. For unauthenticated guests, offers free introductory video preview via thumbnail play overlay and curriculum "Free Preview" badge. |
+| **Login / Register** | FR-A01, FR-A02, FR-A11 | Register is Student-only — no role selector in the form. Protected with Cloudflare Turnstile anti-bot challenge. |
+| **Forgot / Reset password** | FR-A05, FR-A06, FR-A11 | Two-step flow: request email → set new password via token link. Protected with Cloudflare Turnstile anti-bot challenge. |
 
 ## 2. Authenticated — Any Role
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
-| **Profile** | FR-A08, FR-A09, FR-A10 | View/edit full name, avatar URL; no email change here per backend rules unless Admin does it via User Management. |
+| **Profile** | FR-A08, FR-A09, FR-A10, FR-M01 | View/edit full name, upload/change avatar image (Cloudinary); no email change here per backend rules unless Admin does it via User Management. |
 | **Change password** | FR-A07 | Requires current password. |
 | **Notifications dropdown/page** | FR-N03, FR-N04, FR-N05 | Same component for all roles; unread badge count. |
 
@@ -29,7 +29,7 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
 | **My enrollments** | FR-E02 | List of enrolled courses with progress bars. |
-| **Learning player** | FR-E04, FR-E05, FR-E06 | Video player with periodic heartbeat sync (`PUT /lessons/:id/progress`); shows quiz section if the lesson has one. |
+| **Learning player** | FR-E04, FR-E05, FR-E06 | Video player streaming Cloudflare R2 / external media with periodic heartbeat sync (`PUT /lessons/:id/progress`); shows quiz section if the lesson has one. |
 | **Quiz take screen** | FR-Q04 | Single-choice questions, submit-all pattern (not per-question); no indication of correct answers before submit. |
 | **Quiz result screen** | FR-Q06, FR-Q08 | Shows score/pass-fail and, per BR-QZ-06, only reveals `isCorrect` for *this* submitted attempt — historical attempts in the list view stay score-only. |
 | **Course progress view** | FR-E06 | Percentage + completed/total lesson counts. |
@@ -38,7 +38,7 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 | Screen | Covers | Notes |
 | :--- | :--- | :--- |
 | **Teacher dashboard (`/me/courses`)** | FR-CO14 | All owned courses across Draft/Published/Archived, with status badges. |
-| **Course builder** | FR-CO01, FR-CO03, FR-CO08–FR-CO13 | Create/edit metadata, chapter/lesson tree with drag-and-drop reorder, video URL + duration form, resource list, quiz editor. |
+| **Course builder** | FR-CO01, FR-CO03, FR-CO08–FR-CO13, FR-M01–FR-M04 | Create/edit metadata with Cloudinary thumbnail dropzone, chapter/lesson tree with drag-and-drop reorder, direct lesson video upload (Cloudflare R2 presigned PUT with progress bar) + duration, instant video preview player (`POST /upload/preview-url`), resource file uploader, quiz editor. |
 | **Publish flow** | FR-CO05 | On `422`, render the backend's detailed checklist errors as a literal checklist UI (see `09_UX_Notes_on_Business_Rules.md`) rather than a generic error toast. |
 | **Archive / Unpublish** | FR-CO04, FR-CO06 | Confirm dialogs; explain that Archive is terminal (can't come back from it — BR-CRS-04). |
 | **Enrolled students & progress** | FR-E03 | Table of learners with per-learner completion %. |
@@ -49,10 +49,13 @@ referenced by FR-ID) by screen/page instead, for planning the actual UI build.
 | :--- | :--- | :--- |
 | **User management** | FR-U01–FR-U07 | List/search/filter, create operational user (e.g. provision a Teacher), change role/status. |
 | **Category management** | FR-C02–FR-C05 | Create/edit/disable/delete; delete button should still be clickable even if it might 409 — surface the "has active courses" message from the API rather than trying to predict it client-side. |
+| **Banner management (`/admin/banners`)** | FR-B01–FR-B04 | Upload and manage promo banners with 3:1 aspect ratio validation (1200x400 px), live interactive 3:1 preview, replacement upload, active/inactive toggle, and reordering. |
 | **Platform course oversight** | FR-CO02, FR-CO04 | Read/archive any course regardless of owner. |
 | **System notification broadcast** | FR-N06 | Simple form: title + message → `POST /notifications/system`. |
 
 ## 6. Cross-cutting
+- **Localization (i18n):** Full bilingual support with English as default (`en`) and Vietnamese (`vi`) using native Next.js 16 sub-path routing (`/[locale]/...`), cookie & header negotiation via middleware, and SSR dictionary hydration.
+- **Dark Mode:** Adaptive theme switching with CSS variables supporting system preference, persistent light/dark selection, and Notion-inspired warm/dark aesthetic.
 - Every list screen above with pagination reads `meta.page/limit/total/totalPages` from
   the envelope (`06_Frontend_Architecture.md` §4) — build one reusable pagination
   component rather than per-screen logic.

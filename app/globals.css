@@ -5,126 +5,290 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Notion Design System Core Colors */
+  --color-canvas: var(--canvas);
+  --color-canvas-soft: var(--canvas-soft);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-hairline: var(--hairline);
+
+  /* Brand Accents */
+  --color-notion-blue: var(--notion-blue);
+  --color-notion-blue-active: var(--notion-blue-active);
+  --color-notion-indigo: #213183;
+
+  /* Notion Decorative Sticker Palette */
+  --color-sticker-sky: var(--sticker-sky);
+  --color-sticker-sky-deep: var(--sticker-sky-deep);
+  --color-sticker-purple: var(--sticker-purple);
+  --color-sticker-purple-deep: var(--sticker-purple-deep);
+  --color-sticker-pink: #ff64c8;
+  --color-sticker-orange: var(--sticker-orange);
+  --color-sticker-orange-deep: var(--sticker-orange-deep);
+  --color-sticker-amber: var(--sticker-amber);
+  --color-sticker-amber-deep: var(--sticker-amber-deep);
+  --color-sticker-teal: var(--sticker-teal);
+  --color-sticker-green: var(--sticker-green);
+  --color-sticker-brown: #523410;
+  --color-sticker-red: var(--sticker-red);
+  --color-sticker-red-deep: var(--sticker-red-deep);
+
+  /* Shadcn UI Variable Bindings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Radius Tokens */
+  --radius-xs: 4px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-notion-soft: rgba(0, 0, 0, 0.01) 0 1px 2px, rgba(0, 0, 0, 0.02) 0 2px 4px, rgba(0, 0, 0, 0.03) 0 4px 12px;
+  --shadow-notion-elevated: rgba(0, 0, 0, 0.05) 0 12px 32px, rgba(0, 0, 0, 0.02) 0 4px 8px;
+  --shadow-notion-dropdown: rgba(0, 0, 0, 0.06) 0 8px 24px, rgba(0, 0, 0, 0.02) 0 2px 6px;
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Notion Light Warm Paper Theme */
+  --canvas: #ffffff;
+  --canvas-soft: #f6f5f4;
+  --surface: #ffffff;
+  --ink: #000000;
+  --ink-secondary: #31302e;
+  --ink-muted: #615d59;
+  --ink-faint: #a39e98;
+  --hairline: #e6e6e6;
+
+  /* Brand Accents */
+  --notion-blue: #0075de;
+  --notion-blue-active: #005bab;
+
+  /* Notion Decorative Sticker Palette */
+  --sticker-sky: #62aef0;
+  --sticker-sky-deep: #0c5696;
+  --sticker-purple: #d6b6f6;
+  --sticker-purple-deep: #391c57;
+  --sticker-orange: #dd5b00;
+  --sticker-orange-deep: #793400;
+  --sticker-amber: #f59e0b;
+  --sticker-amber-deep: #b45309;
+  --sticker-teal: #2a9d99;
+  --sticker-green: #1aae39;
+  --sticker-red: #e03e3e;
+  --sticker-red-deep: #961212;
+
+  --background: #f6f5f4;
+  --foreground: #000000;
+  
+  --card: #ffffff;
+  --card-foreground: #000000;
+  
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  
+  --primary: #0075de;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #ffffff;
+  --secondary-foreground: #31302e;
+  
+  --muted: #f6f5f4;
+  --muted-foreground: #615d59;
+  
+  --accent: #f0eeeb;
+  --accent-foreground: #000000;
+  
+  --destructive: #dd5b00;
+  --destructive-foreground: #ffffff;
+  
+  --border: #e6e6e6;
+  --input: #e6e6e6;
+  --ring: #0075de;
+  
+  --radius: 8px;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --canvas: #141414;
+  --canvas-soft: #191919;
+  --surface: #202020;
+  --ink: #f7f7f7;
+  --ink-secondary: #d0ceca;
+  --ink-muted: #9c9790;
+  --ink-faint: #635f59;
+  --hairline: #2e2e2e;
+
+  /* Brand Accents (Dark Mode) */
+  --notion-blue: #0075de;
+  --notion-blue-active: #60a5fa;
+
+  /* Notion Decorative Sticker Palette (High-contrast, vibrant for dark mode) */
+  --sticker-sky: #38bdf8;
+  --sticker-sky-deep: #bae6fd;
+  --sticker-purple: #c084fc;
+  --sticker-purple-deep: #e9d5ff;
+  --sticker-orange: #fb923c;
+  --sticker-orange-deep: #fed7aa;
+  --sticker-amber: #fbbf24;
+  --sticker-amber-deep: #fde68a;
+  --sticker-teal: #2dd4bf;
+  --sticker-green: #4ade80;
+  --sticker-red: #f87171;
+  --sticker-red-deep: #fecaca;
+
+  --background: #191919;
+  --foreground: #ffffff;
+  
+  --card: #202020;
+  --card-foreground: #ffffff;
+  
+  --popover: #202020;
+  --popover-foreground: #ffffff;
+  
+  --primary: #0075de;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #2c2c2c;
+  --secondary-foreground: #ffffff;
+  
+  --muted: #252525;
+  --muted-foreground: #a39e98;
+  
+  --accent: #2c2c2c;
+  --accent-foreground: #ffffff;
+  
+  --destructive: #dd5b00;
+  --destructive-foreground: #ffffff;
+  
+  --border: #2e2e2e;
+  --input: #2e2e2e;
+  --ring: #0075de;
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
+/* Notion Typography Scale Classes */
+.display-1 {
+  font-family: var(--font-sans);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -2.125px;
+}
+
+.display-2 {
+  font-family: var(--font-sans);
+  font-size: 54px;
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -1.875px;
+}
+
+.heading-1 {
+  font-family: var(--font-sans);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.heading-2 {
+  font-family: var(--font-sans);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.23;
+  letter-spacing: -0.625px;
+}
+
+.heading-3 {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.27;
+  letter-spacing: -0.25px;
+}
+
+.title-notion {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.125px;
+}
+
+.body-md {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.body-sm {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.33;
+  letter-spacing: 0;
+}
+
+.caption-notion {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.33;
+  letter-spacing: 0.125px;
+}
+
+/* Notion Barely-there Elevation */
+.shadow-notion-soft {
+  box-shadow: 
+    rgba(0, 0, 0, 0.01) 0 1px 2px,
+    rgba(0, 0, 0, 0.02) 0 2px 4px,
+    rgba(0, 0, 0, 0.03) 0 4px 12px;
+}
+
+.shadow-notion-elevated {
+  box-shadow: 
+    rgba(0, 0, 0, 0.05) 0 12px 32px,
+    rgba(0, 0, 0, 0.02) 0 4px 8px;
+}
+
+.shadow-notion-dropdown {
+  box-shadow: 
+    rgba(0, 0, 0, 0.06) 0 8px 24px,
+    rgba(0, 0, 0, 0.02) 0 2px 6px;
 }

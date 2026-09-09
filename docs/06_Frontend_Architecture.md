@@ -64,11 +64,15 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
 
 ## 5. Client State, Forms, and Component Ecosystem
 
+### 5.0 UI Component Architecture (`shadcn/ui` CLI)
+- All UI components are scaffolded and managed via the official CLI: `pnpm dlx shadcn@latest add <component>` based on `components.json` (`radix-nova` style with unified `radix-ui` runtime).
+- Do not manually install or import discrete `@radix-ui/react-*` primitive packages. All UI source files live in `components/ui/` and adhere to `docs/DESIGN.md`.
+
 ### 5.1 Server State & Caching (`@tanstack/react-query`)
 - Used for all Client Component data fetching, cache invalidation, and mutations.
 - **Optimistic Updates:** Applied during drag-and-drop chapter/lesson reordering, status toggles, or quiz submissions so the UI responds instantaneously before backend confirmation.
 - **Cache Invalidation:** After mutations (creating/editing/deleting lessons, updating profile), invoke `queryClient.invalidateQueries()` to re-synchronize the freshest data from the backend.
-- Centralized management of Loading states (Skeleton loaders per `DESIGN-cal-optimize.md` §7) and Error states.
+- Centralized management of Loading states (Skeleton loaders per `docs/DESIGN.md`) and Error states.
 
 ### 5.2 URL State Management (`nuqs`)
 - Manages search, filter, and pagination states on the URL query string (`searchParams`) via a type-safe hook (similar to `useState`).
@@ -93,13 +97,13 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
 ### 5.5 Course Builder Drag-and-Drop (`@dnd-kit/react`)
 - Employs `@dnd-kit/react` (latest) for the Chapter & Lesson tree in the Teacher Dashboard.
 - Handles multi-level reordering: rearranging Chapter order, reordering Lessons within a Chapter, or transferring Lessons across Chapters.
-- Integrates the `GripVertical` icon (`dnd-drag-handle`) and horizontal drop line `dnd-drop-indicator` per `DESIGN-cal-optimize.md` §8.
+- Integrates the `GripVertical` icon (`dnd-drag-handle`) and horizontal drop line `dnd-drop-indicator` styled with Notion hairline dividers and blue drop indicator.
 
 ### 5.6 Headless Data Tables (`@tanstack/react-table`)
 - Decouples table logic (pagination, column sorting, filtering, row selection) for administration views:
   - Admin: User Management, Category Management.
   - Teacher: Enrolled learners & progress tracking, Quiz aggregated analytics.
-  - Bound to the Cal-design styling (`data-table-container`, 48px row height, subtle 40px gray header) defined in `DESIGN-cal-optimize.md` §7.
+  - Bound to the Notion-inspired styling (warm `canvas-soft` header `#f6f5f4`, hairline borders `#e6e6e6`, eyebrow typography) defined in `docs/DESIGN.md`.
 
 ### 5.7 API Type Generation Contract (`openapi-typescript`)
 - Hand-crafting DTO interfaces is avoided to eliminate drift against the backend.
@@ -110,7 +114,18 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
   ```
 - All endpoint parameters, request bodies, and response envelopes are derived directly from this generated contract.
 
-### 5.8 Testing Suite (`vitest` + `@testing-library/react`)
+### 5.8 Client-side Media & Direct Upload Strategy (Cloudinary + Cloudflare R2)
+- **Image Uploads (Avatars & Course Thumbnails):**
+  - Uses `react-dropzone` / file input for image selection.
+  - Sends multipart payload to `POST /upload/image` (NestJS proxy) or directly with Cloudinary signature for automatic WebP optimization and facial/center cropping.
+- **Video & File Uploads (Lesson Videos & Downloadable Resources):**
+  - High-volume uploads bypass the NestJS API server completely:
+    1. Client calls `POST /upload/presigned-url` with `{ fileName, fileType, folder: 'videos' | 'resources' }`.
+    2. Backend returns an S3 Presigned PUT URL targeting Cloudflare R2.
+    3. Client uploads the raw binary file directly to Cloudflare R2 using `fetch(uploadUrl, { method: 'PUT', body: file })` or Axios with `onUploadProgress` to render dynamic upload progress bars (0–100%).
+    4. Upon successful upload, client submits the resulting `fileUrl` to the respective domain endpoint (`PUT /lessons/:id/video` or `POST /lessons/:id/resources`).
+
+### 5.9 Testing Suite (`vitest` + `@testing-library/react`)
 - Executes the **Learn - Build - Test** discipline established in `07_Development_Roadmap.md`:
   - Unit tests for helpers, date formatting, and token lifecycle logic.
   - Component tests for Route Guards, Auth forms, Publish Checklist rendering (against mocked 422 payloads), and Quiz option selection.
@@ -121,3 +136,45 @@ Every API response follows the envelope in `05_API_Design.md` §1.1:
 - Guard implementation chain (`JwtAuthGuard` → `RolesGuard` → Ownership Guard) — backend-only
   (`eduhub-backend/docs/03` §6). The frontend only needs the *outcome* of those checks
   (§3 above), not how they're implemented.
+
+## 7. Internationalization (i18n) Architecture
+
+EduHub delivers a fully localized bilingual experience across English (`en`) and Vietnamese (`vi`), architected natively on Next.js 16 (App Router) and React 19 without third-party runtime dependencies:
+
+### 7.1 Sub-Path Routing & Middleware Resolution
+- **URL Structure:** All application routes reside under `app/[locale]/` (`/en/...` and `/vi/...`).
+- **Default Locale:** English (`en`).
+- **Resolution Pipeline (`proxy.ts` — Next.js 16 convention):**
+  1. Detects route requests lacking a locale prefix (e.g. `/courses`, `/login`).
+  2. Resolves preferred locale using:
+     - `eduhub_lang` cookie (user's explicit preference).
+     - `Accept-Language` header (browser negotiation).
+     - Fallback to `defaultLocale` (`en`).
+  3. Issues a `307 Temporary Redirect` to `/${targetLocale}${pathname}${search}` while setting the `eduhub_lang` cookie.
+  4. Static assets (`/_next`, `/images`, `/api`, favicon) bypass proxy rewriting.
+
+### 7.2 SSR Dictionary Hydration & Zero-FOUC
+- **Server Loader (`lib/i18n/server.ts`):** `getDictionary(locale)` dynamically imports modular JSON/TypeScript dictionaries (`en.ts`, `vi.ts`) on the server.
+- **Root Layout Hydration (`app/[locale]/layout.tsx`):**
+  - Sets the HTML `<html lang={locale}>` tag at initial render to eliminate SEO language warnings and client-side Flash of Unstyled Content (FOUC).
+  - Injects alternate link metadata (`hreflang="en"`, `hreflang="vi"`, `hreflang="x-default"`).
+  - Supplies the server-rendered dictionary directly to `<LanguageProvider initialLocale={locale} initialDictionary={dictionary}>`.
+
+### 7.3 Client Context & Dynamic Language Switching (`lib/i18n/language-context.tsx`)
+- **`useTranslation()` Hook:** Exposes `{ language, t, switchLanguage }` across all Client Components with strict TypeScript autocompletion and key parity (`satisfies Dictionary`).
+- **Language Switching Mechanism:**
+  - Updates the `eduhub_lang` cookie (`Max-Age=31536000`, `Path=/`, `SameSite=Lax`).
+  - Swaps the active URL prefix dynamically (e.g. `/en/courses/web-dev` -> `/vi/courses/web-dev`) preserving URL query parameters and nested subpaths.
+  - Updates in-memory dictionary state instantly without triggering unnecessary full-page unmounts.
+
+### 7.4 Localized Navigation & Route Guards
+- **`<LocalizedLink>` (`components/common/localized-link.tsx`):** Drop-in wrapper over `next/link` that automatically prepends `/${language}` to internal paths if absent, guaranteeing client navigation retains the active locale.
+- **Route Guard Utilities (`lib/auth/redirect-utils.ts`):**
+  - `stripLocale(pathname)`: Extracts normalized internal path for RBAC evaluation.
+  - `ensureLocale(url, locale)`: Enforces correct locale prefixing for post-login return targets.
+
+### 7.5 Multi-Locale Formatting (`lib/i18n/formatters.ts`)
+- **Dates & Relative Timestamps:** Powered by `date-fns` using explicit locale bundles (`date-fns/locale/vi` and `enUS`).
+- **Domain Enum Translators:** Centralized mapping for Course Levels (`BEGINNER`, `INTERMEDIATE`, `ADVANCED`), Statuses (`DRAFT`, `PUBLISHED`, `ARCHIVED`), User Roles (`STUDENT`, `TEACHER`, `ADMIN`), and Notification Types.
+- **Backend API Synchronization (`lib/api/client.ts`):** Automatically injects the active locale into the `Accept-Language` HTTP request header for consistent backend validation and error responses.
+

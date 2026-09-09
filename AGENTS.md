@@ -16,7 +16,7 @@ EduHub — LMS portfolio/learning project platform. This repo is the Next.js cli
 
 - **Core & Framework:** Next.js (App Router) + TypeScript + React
 - **Package Manager:** pnpm
-- **Styling & Design System:** Tailwind CSS, shadcn/ui (Radix UI primitives), Lucide React, Cal Sans font (`@calcom/cal-sans` / local font) + Inter UI (see `docs/DESIGN-cal-optimize.md`)
+- **Styling & Design System:** Tailwind CSS, shadcn/ui CLI (`components.json` / `radix-nova` style), Lucide React, Inter font + Notion-inspired design system (see `docs/DESIGN.md`)
 - **Data Fetching & Server Cache:** `@tanstack/react-query` (mutations, cache invalidation, optimistic updates)
 - **URL State Management:** `nuqs` (type-safe searchParams synchronization for catalog discovery & table filters)
 - **Forms & Validation:** `react-hook-form` + `zod` + `@hookform/resolvers` (mirrored from NestJS DTO schemas)
@@ -40,7 +40,7 @@ EduHub — LMS portfolio/learning project platform. This repo is the Next.js cli
 - `docs/07_Development_Roadmap.md` — frontend-specific roadmap (Phase 11a–11e, and FE slice of Phase 12–14). Phases 1–10 belong to `eduhub-backend`.
 - `docs/08_UI_Requirements.md` — requirements organized **by screen**, cross-referencing original backend FR-IDs.
 - `docs/09_UX_Notes_on_Business_Rules.md` — backend business rules affecting UI behavior (publish checklist, unlimited quiz attempts, hidden `isCorrect`, 90% threshold...). This is **not** where validation is re-implemented — the backend is always the final authority.
-- `docs/DESIGN-cal-optimize.md` — Complete Design System (tokens, Cal.com aesthetic, component mappings).
+- `docs/DESIGN.md` — Complete Design System (Notion-inspired warm paper canvas, Notion blue actions, Inter type, pill buttons, hairline borders, sticker accents).
 
 ## Mandatory Rules
 
@@ -49,32 +49,33 @@ EduHub — LMS portfolio/learning project platform. This repo is the Next.js cli
 3. Keep the access token in memory/state, never in `localStorage`; refresh token flow follows `06_Frontend_Architecture.md` §2. Never manually decode the JWT to deduce roles — always fetch from `GET /auth/me`.
 4. When an action may be rejected by the backend per rules in `09_UX_Notes_on_Business_Rules.md` (e.g. deleting the last chapter of a published course), the UI may disable/warn in advance for better UX, but must still handle real error responses from the backend — never assume the UI has caught everything.
 5. When the API changes (new endpoints/modified payloads), update `docs/05_API_Design.md` from `eduhub-backend` before modifying API call code, or run `pnpm run typegen:api`.
+6. Always manage and add UI components via `pnpm dlx shadcn@latest add <component>` (or `npx shadcn@latest add <component>`) per `components.json` — never install individual `@radix-ui/react-*` primitive packages manually.
 
 ## Common Commands
 
 ```bash
 pnpm install
-pnpm run dev            # run Next.js dev server
-pnpm run typegen:api    # generate TypeScript types from backend Swagger (/api/docs-json)
-pnpm test               # unit/component tests with Vitest
-pnpm run test:e2e       # Playwright/Cypress E2E (requires eduhub-backend running)
+pnpm run dev                          # run Next.js dev server
+pnpm dlx shadcn@latest add <component> # add UI components (e.g. form, dialog, dropdown-menu, etc.)
+pnpm run typegen:api                  # generate TypeScript types from backend Swagger (/api/docs-json)
+pnpm test                             # unit/component tests with Vitest
+pnpm run test:e2e                     # Playwright/Cypress E2E (requires eduhub-backend running)
 pnpm run build
 ```
 
 ## Expected Directory Structure (Next.js App Router)
 
 ```
-src/
-  app/
-    (public)/            # catalog, course detail, auth pages
-    (student)/           # enrollments, learning player, quiz
-    (teacher)/           # dashboard, course builder, analytics
-    (admin)/             # user/category management, broadcasts
-  components/            # shared UI components
-  lib/
-    api/                 # API client wrapper (envelope parsing, auth header)
-    auth/                # token state, refresh logic, route guard helpers
-  types/                 # types generated/derived from docs/05_API_Design.md
+app/
+  (public)/            # catalog, course detail, auth pages
+  (student)/           # enrollments, learning player, quiz
+  (teacher)/           # dashboard, course builder, analytics
+  (admin)/             # user/category management, broadcasts
+components/            # shared UI components (components/ui via shadcn)
+lib/
+  api/                 # API client wrapper (envelope parsing, auth header)
+  auth/                # token state, refresh logic, route guard helpers
+types/                 # types generated/derived from docs/05_API_Design.md
 ```
 
 Do not write quiz grading logic, lesson completion threshold calculations, or publish-checklist validations on the frontend — these are always returned from the API, and the frontend only displays them.
