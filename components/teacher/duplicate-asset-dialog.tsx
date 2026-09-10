@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CopyCheck, FileText, Video, ExternalLink, Calendar, HardDrive } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { formatShortDate } from "@/lib/i18n/formatters";
 import type { MediaAsset } from "@/types/api";
 
 interface DuplicateAssetDialogProps {
@@ -31,6 +33,8 @@ export function DuplicateAssetDialog({
   onUseExisting,
   onUploadAnyway,
 }: DuplicateAssetDialogProps) {
+  const { language } = useTranslation();
+
   if (!existingAsset) return null;
 
   const formatFileSize = (bytes?: number | null) => {
@@ -93,7 +97,7 @@ export function DuplicateAssetDialog({
             {existingAsset.createdAt && (
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5 text-ink-muted shrink-0" />
-                <span>{new Date(existingAsset.createdAt).toLocaleDateString()}</span>
+                <span>{formatShortDate(existingAsset.createdAt, language)}</span>
               </div>
             )}
           </div>

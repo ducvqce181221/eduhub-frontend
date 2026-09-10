@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "@/components/common/pagination";
 import { useTranslation } from "@/lib/i18n/language-context";
-import { formatDate, translateRole } from "@/lib/i18n/formatters";
+import { formatJoinedDate, translateRole } from "@/lib/i18n/formatters";
 import type { User, PaginationMeta, Role } from "@/types/api";
 
 interface UsersTableProps {
@@ -216,9 +216,7 @@ export function UsersTable({
 
                     {/* Joined Date */}
                     <TableCell className="text-ink-muted font-mono tabular-nums text-xs">
-                      {user.createdAt
-                        ? formatDate(user.createdAt, "PPP", language)
-                        : "N/A"}
+                      {formatJoinedDate(user.createdAt, language)}
                     </TableCell>
 
                     {/* Actions */}

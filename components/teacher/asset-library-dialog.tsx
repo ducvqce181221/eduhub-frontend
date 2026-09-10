@@ -25,6 +25,8 @@ import {
   X,
 } from "lucide-react";
 import { getMediaAssets } from "@/lib/api/media-assets";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { formatShortDate } from "@/lib/i18n/formatters";
 import type { MediaAsset, MediaType, AssetSource } from "@/types/api";
 
 interface AssetLibraryDialogProps {
@@ -40,6 +42,7 @@ export function AssetLibraryDialog({
   mediaType,
   onSelectAsset,
 }: AssetLibraryDialogProps) {
+  const { language } = useTranslation();
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -273,7 +276,7 @@ export function AssetLibraryDialog({
                             {formatFileSize(asset.fileSize)}
                           </span>
                           <span>•</span>
-                          <span>{new Date(asset.createdAt).toLocaleDateString()}</span>
+                          <span>{formatShortDate(asset.createdAt, language)}</span>
                         </div>
                       </div>
                     </div>
