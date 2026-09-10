@@ -4,16 +4,16 @@ import React from "react";
 import { ErrorStatusView } from "@/components/common/error-status-view";
 import { useTranslation } from "@/lib/i18n/language-context";
 
-export function NotAuthorized() {
+export default function NotFound() {
   const { t } = useTranslation();
 
   return (
     <ErrorStatusView
-      code="403"
-      title={t.common.accessDeniedTitle}
-      description={t.common.accessDeniedDesc}
-      backButtonLabel={t.notFound?.goBack || "Go Back"}
-      primaryActionLabel={t.common.backToHome}
+      code="404"
+      title={t.notFound.title}
+      description={t.notFound.description}
+      backButtonLabel={t.notFound.goBack}
+      primaryActionLabel={t.notFound.backToHome}
       primaryActionHref="/"
     />
   );

@@ -13,6 +13,17 @@ import { LanguageProvider } from "@/lib/i18n/language-context";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries/en";
 
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development" && window.performance?.measure) {
+  const originalMeasure = window.performance.measure.bind(window.performance);
+  window.performance.measure = function (...args: Parameters<typeof originalMeasure>) {
+    try {
+      return originalMeasure(...args);
+    } catch {
+      return {} as PerformanceMeasure;
+    }
+  };
+}
+
 export function Providers({
   children,
   initialUser = null,
