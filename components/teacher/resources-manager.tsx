@@ -19,7 +19,7 @@ import { AssetLibraryDialog } from "./asset-library-dialog";
 import { ExternalUrlDialog } from "./external-url-dialog";
 import { DuplicateAssetDialog } from "./duplicate-asset-dialog";
 import { getPresignedUrl, uploadDirectToR2, checkDuplicateAsset } from "@/lib/api/upload";
-import { computeFileHash } from "@/lib/utils/hash";
+import { computeFileHash } from "@/lib/utils";
 import type { LessonResource, CreateResourcePayload, MediaAsset } from "@/types/api";
 
 interface ResourcesManagerProps {

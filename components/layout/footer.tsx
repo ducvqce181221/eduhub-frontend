@@ -24,11 +24,8 @@ export function Footer() {
           <LocalizedLink href="/courses" className="hover:text-ink transition-colors">
             {t.catalog.allCourses}
           </LocalizedLink>
-          <LocalizedLink href="/terms" className="hover:text-ink transition-colors">
-            {t.nav.terms}
-          </LocalizedLink>
-          <LocalizedLink href="/privacy" className="hover:text-ink transition-colors">
-            {t.nav.privacy}
+          <LocalizedLink href="/about" className="hover:text-ink transition-colors">
+            {t.nav.about}
           </LocalizedLink>
         </div>
       </div>

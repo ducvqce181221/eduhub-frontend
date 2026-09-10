@@ -33,10 +33,7 @@ export async function unpublishCourse(id: string): Promise<Course> {
   return response.data;
 }
 
-export async function archiveCourse(id: string): Promise<Course> {
-  const response = await apiClient.patch<Course>(`/courses/${id}/archive`);
-  return response.data;
-}
+export { archiveCourse } from "./courses";
 
 export async function getCourseStudents(courseId: string): Promise<EnrolledStudentProgressItem[]> {
   const response = await apiClient.get<EnrolledStudentProgressItem[]>(`/courses/${courseId}/students`);

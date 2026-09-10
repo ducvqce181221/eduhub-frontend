@@ -47,6 +47,7 @@ describe("Media Assets Frontend Dialogs & Components", () => {
       expect(screen.getByText("Duplicate File Detected")).toBeInTheDocument();
       expect(screen.getByText(/Architectural Diagram\.pdf/i)).toBeInTheDocument();
       expect(screen.getByText(/Incoming: New_Upload\.pdf/i)).toBeInTheDocument();
+      expect(screen.getByText("09/01/2026")).toBeInTheDocument();
 
       const useExistingBtn = screen.getByRole("button", { name: /use existing asset/i });
       const uploadAnywayBtn = screen.getByRole("button", { name: /upload anyway/i });
@@ -139,6 +140,7 @@ describe("Media Assets Frontend Dialogs & Components", () => {
 
       await waitFor(() => {
         expect(screen.getByText("Architectural Diagram.pdf")).toBeInTheDocument();
+        expect(screen.getByText("09/01/2026")).toBeInTheDocument();
       });
 
       // Click the asset card to select

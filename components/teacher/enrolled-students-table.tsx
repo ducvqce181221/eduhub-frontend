@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useTranslation } from "@/lib/i18n/language-context";
-import { formatDate } from "@/lib/i18n/formatters";
+import { formatShortDate } from "@/lib/i18n/formatters";
 import type {
   EnrolledStudentProgressItem,
   CourseAggregateProgress,
@@ -150,7 +150,7 @@ export function EnrolledStudentsTable({
                   </TableCell>
 
                   <TableCell className="text-ink-muted font-mono tabular-nums">
-                    {formatDate(student.enrolledAt, "PPP", language)}
+                    {formatShortDate(student.enrolledAt, language)}
                   </TableCell>
 
                   <TableCell className="text-ink font-medium font-mono tabular-nums">

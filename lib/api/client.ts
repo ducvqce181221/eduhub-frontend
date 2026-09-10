@@ -1,4 +1,4 @@
-import type { ApiResponse, ApiErrorResponse } from "@/types/api";
+import type { ApiResponse, ApiErrorResponse, PaginationMeta } from "@/types/api";
 
 export class ApiError extends Error {
   statusCode: number;
@@ -291,5 +291,84 @@ export const apiClient = {
   delete: <T = unknown>(endpoint: string, options?: RequestOptions) =>
     request<T>(endpoint, { ...options, method: "DELETE" }),
 };
+
+export interface PaginatedResult<T> {
+  items: T[];
+  meta: PaginationMeta;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function toPositiveNumber(val: unknown, fallback: number): number {
+  const num = Number(val);
+  return !Number.isNaN(num) && num > 0 ? num : fallback;
+}
+
+function toNonNegativeNumber(val: unknown, fallback: number): number {
+  const num = Number(val);
+  return !Number.isNaN(num) && num >= 0 ? num : fallback;
+}
+
+/**
+ * Type-safe normalizer for paginated API responses.
+ * Avoids 'any' while safely handling diverse backend response conventions
+ * (e.g. data.items, direct array, custom or standard envelope meta).
+ */
+export function normalizePaginatedResponse<T>(
+  response: ApiResponse<unknown>,
+  fallbackParams?: { page?: number | string; limit?: number | string },
+): PaginatedResult<T> {
+  const defaultPage = Math.max(1, Number(fallbackParams?.page) || 1);
+  const defaultLimit = Math.max(1, Number(fallbackParams?.limit) || 10);
+  const fallbackMeta = response.meta;
+
+  const data = response.data;
+
+  // Case 1: data has { items: T[], meta?: PaginationMeta }
+  if (isRecord(data) && "items" in data && Array.isArray(data.items)) {
+    const items = data.items as T[];
+    const metaObj = isRecord(data.meta) ? (data.meta as Partial<PaginationMeta>) : undefined;
+
+    const page = toPositiveNumber(metaObj?.page ?? fallbackMeta?.page, defaultPage);
+    const limit = toPositiveNumber(metaObj?.limit ?? fallbackMeta?.limit, defaultLimit);
+    const total = toNonNegativeNumber(metaObj?.total ?? fallbackMeta?.total, items.length);
+    const totalPages = toPositiveNumber(
+      metaObj?.totalPages ?? fallbackMeta?.totalPages,
+      Math.ceil(total / limit) || 1,
+    );
+
+    return {
+      items,
+      meta: { page, limit, total, totalPages },
+    };
+  }
+
+  // Case 2: data is directly T[]
+  if (Array.isArray(data)) {
+    const items = data as T[];
+    const page = toPositiveNumber(fallbackMeta?.page, defaultPage);
+    const limit = toPositiveNumber(fallbackMeta?.limit, defaultLimit);
+    const total = toNonNegativeNumber(fallbackMeta?.total, items.length);
+    const totalPages = toPositiveNumber(fallbackMeta?.totalPages, Math.ceil(total / limit) || 1);
+
+    return {
+      items,
+      meta: { page, limit, total, totalPages },
+    };
+  }
+
+  // Case 3: Empty / unexpected shape
+  return {
+    items: [],
+    meta: {
+      page: defaultPage,
+      limit: defaultLimit,
+      total: 0,
+      totalPages: 0,
+    },
+  };
+}
 
 

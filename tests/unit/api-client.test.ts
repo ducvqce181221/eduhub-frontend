@@ -6,6 +6,7 @@ import {
   setOnUnauthorizedCallback,
   performTokenRefresh,
   ApiError,
+  normalizePaginatedResponse,
 } from "@/lib/api/client";
 
 describe("Slice 2: Frontend API Client & Envelope Unwrapper & Silent Refresh", () => {
@@ -248,5 +249,56 @@ describe("Slice 2: Frontend API Client & Envelope Unwrapper & Silent Refresh", (
     expect(authHeaderSent).toBe("Bearer preflight-token-123");
     expect(refreshCompleted).toBe(true);
     expect((notifResult.data as any)[0].id).toBe("n1");
+  });
+
+  describe("Type-safe normalizePaginatedResponse helper", () => {
+    it("should normalize response when data wraps items and meta", () => {
+      const apiResponse = {
+        success: true,
+        data: {
+          items: [{ id: "1", title: "Course 1" }, { id: "2", title: "Course 2" }],
+          meta: { page: 1, limit: 10, total: 2, totalPages: 1 },
+        },
+      };
+
+      const result = normalizePaginatedResponse<{ id: string; title: string }>(apiResponse);
+      expect(result.items).toHaveLength(2);
+      expect(result.items[0].title).toBe("Course 1");
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 2, totalPages: 1 });
+    });
+
+    it("should normalize response when data is a direct array and uses outer meta", () => {
+      const apiResponse = {
+        success: true,
+        data: [{ id: "u1", name: "User 1" }],
+        meta: { page: 2, limit: 5, total: 11, totalPages: 3 },
+      };
+
+      const result = normalizePaginatedResponse<{ id: string; name: string }>(apiResponse);
+      expect(result.items).toHaveLength(1);
+      expect(result.meta).toEqual({ page: 2, limit: 5, total: 11, totalPages: 3 });
+    });
+
+    it("should compute sensible meta fallback when meta is missing", () => {
+      const apiResponse = {
+        success: true,
+        data: [{ id: "1" }, { id: "2" }, { id: "3" }],
+      };
+
+      const result = normalizePaginatedResponse<{ id: string }>(apiResponse, { page: 1, limit: 2 });
+      expect(result.items).toHaveLength(3);
+      expect(result.meta).toEqual({ page: 1, limit: 2, total: 3, totalPages: 2 });
+    });
+
+    it("should safely handle null/unexpected data payload without throwing", () => {
+      const apiResponse = {
+        success: true,
+        data: null,
+      };
+
+      const result = normalizePaginatedResponse(apiResponse, { page: 3, limit: 10 });
+      expect(result.items).toEqual([]);
+      expect(result.meta).toEqual({ page: 3, limit: 10, total: 0, totalPages: 0 });
+    });
   });
 });

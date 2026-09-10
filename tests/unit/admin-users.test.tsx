@@ -6,6 +6,9 @@ import { UsersTable } from "@/components/admin/users/users-table";
 import { CreateUserDialog } from "@/components/admin/users/create-user-dialog";
 import { RoleChangeDialog } from "@/components/admin/users/role-change-dialog";
 import { StatusToggleDialog } from "@/components/admin/users/status-toggle-dialog";
+import { formatJoinedDate } from "@/lib/i18n/formatters";
+import * as LanguageContext from "@/lib/i18n/language-context";
+import { vi as viDict } from "@/lib/i18n/dictionaries/vi";
 import type { User, PaginationMeta } from "@/types/api";
 
 const mockUsers: User[] = [
@@ -44,7 +47,7 @@ const mockMeta: PaginationMeta = {
 
 describe("User Management Components (Admin)", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe("UsersTable", () => {
@@ -75,6 +78,56 @@ describe("User Management Components (Admin)", () => {
       expect(screen.getAllByText("Student").length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText("Active")).toHaveLength(3); // 1 in filter dropdown, 2 in table rows
       expect(screen.getAllByText("Inactive")).toHaveLength(2); // 1 in filter dropdown, 1 in table rows
+    });
+
+    it("formats joined date as MM/dd/yyyy for English and dd/MM/yyyy for Vietnamese", () => {
+      // Direct formatter assertion
+      expect(formatJoinedDate("2026-08-01T10:00:00.000Z", "en")).toBe("08/01/2026");
+      expect(formatJoinedDate("2026-08-01T10:00:00.000Z", "vi")).toBe("01/08/2026");
+      expect(formatJoinedDate(null, "vi")).toBe("N/A");
+      expect(formatJoinedDate(undefined, "en")).toBe("N/A");
+      expect(formatJoinedDate("invalid-date", "vi")).toBe("N/A");
+
+      // Render in English (default)
+      const { unmount } = render(
+        <UsersTable
+          users={[mockUsers[0]]}
+          meta={mockMeta}
+          onSearchChange={vi.fn()}
+          onRoleFilterChange={vi.fn()}
+          onStatusFilterChange={vi.fn()}
+          onPageChange={vi.fn()}
+          onChangeRole={vi.fn()}
+          onToggleStatus={vi.fn()}
+        />,
+      );
+      expect(screen.getByText("08/01/2026")).toBeInTheDocument();
+      unmount();
+
+      // Render in Vietnamese via useTranslation spy
+      const spy = vi.spyOn(LanguageContext, "useTranslation").mockReturnValue({
+        language: "vi",
+        t: viDict,
+        switchLanguage: vi.fn(),
+        setLanguage: vi.fn(),
+        toggleLanguage: vi.fn(),
+        isPending: false,
+      });
+
+      render(
+        <UsersTable
+          users={[mockUsers[0]]}
+          meta={mockMeta}
+          onSearchChange={vi.fn()}
+          onRoleFilterChange={vi.fn()}
+          onStatusFilterChange={vi.fn()}
+          onPageChange={vi.fn()}
+          onChangeRole={vi.fn()}
+          onToggleStatus={vi.fn()}
+        />,
+      );
+      expect(screen.getByText("01/08/2026")).toBeInTheDocument();
+      spy.mockRestore();
     });
 
     it("disables deactivate action on current administrator account (BR-USR-03)", () => {
