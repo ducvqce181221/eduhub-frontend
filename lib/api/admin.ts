@@ -1,4 +1,5 @@
-import { apiClient } from "./client";
+import { apiClient, normalizePaginatedResponse } from "./client";
+import { archiveCourse } from "./courses";
 import type {
   User,
   Category,
@@ -41,15 +42,8 @@ export async function getUsers(
     params: queryParams,
   });
 
-  const users = Array.isArray(response.data) ? response.data : [];
-  const meta = response.meta || {
-    page: Number(params.page) || 1,
-    limit: Number(params.limit) || 10,
-    total: users.length,
-    totalPages: Math.ceil(users.length / (Number(params.limit) || 10)) || 1,
-  };
-
-  return { users, meta };
+  const normalized = normalizePaginatedResponse<User>(response, params);
+  return { users: normalized.items, meta: normalized.meta };
 }
 
 export async function getUserById(id: string): Promise<User> {
@@ -125,37 +119,7 @@ export async function getAllCourses(
     params: queryParams,
   });
 
-  const data = response.data as any;
-  if (data && Array.isArray(data.items)) {
-    return {
-      items: data.items,
-      meta:
-        data.meta ||
-        response.meta || {
-          page: Number(params.page) || 1,
-          limit: Number(params.limit) || 10,
-          total: data.items.length,
-          totalPages: Math.ceil(data.items.length / (Number(params.limit) || 10)) || 1,
-        },
-    };
-  }
-
-  if (Array.isArray(data)) {
-    return {
-      items: data,
-      meta: response.meta || {
-        page: Number(params.page) || 1,
-        limit: Number(params.limit) || 10,
-        total: data.length,
-        totalPages: Math.ceil(data.length / (Number(params.limit) || 10)) || 1,
-      },
-    };
-  }
-
-  return {
-    items: [],
-    meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
-  };
+  return normalizePaginatedResponse<Course>(response, params);
 }
 
 export async function getCourseStats(): Promise<CourseStats> {
@@ -163,10 +127,7 @@ export async function getCourseStats(): Promise<CourseStats> {
   return response.data;
 }
 
-export async function archiveCourse(id: string): Promise<Course> {
-  const response = await apiClient.patch<Course>(`/courses/${id}/archive`);
-  return response.data;
-}
+export { archiveCourse };
 
 // -------------------------------------------------------------
 // 4. System Notification Broadcast APIs

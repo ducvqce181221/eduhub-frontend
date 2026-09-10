@@ -29,7 +29,7 @@ import {
   checkDuplicateAsset,
   getPreviewUrl,
 } from "@/lib/api/upload";
-import { computeFileHash } from "@/lib/utils/hash";
+import { computeFileHash } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/language-context";
 import type { LessonVideo, UpsertVideoPayload, MediaAsset } from "@/types/api";
 

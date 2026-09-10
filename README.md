@@ -27,7 +27,7 @@ EduHub rejects generic "AI-slop" design tropes (no noisy glassmorphism or floati
 | :--- | :--- | :--- |
 | **Framework** | Next.js 16 (App Router) + React 19 | Server Components, streaming SSR, URL-based sub-path routing, and proxy rewrites |
 | **Styling** | Tailwind CSS v4 + Radix UI Primitives | Clean tokenized layout, hairline borders, and accessible primitives via `shadcn` |
-| **Icons & Typography** | Lucide React + Inter & Cal Sans | Crisp semantic iconography and clean tabular typography |
+| **Icons & Typography** | Lucide React + Inter | Crisp semantic iconography and clean tabular typography |
 | **Server State & Cache** | `@tanstack/react-query` v5 | Intelligent caching, background revalidation, and optimistic UI mutations |
 | **URL State Synchronization** | `nuqs` | Type-safe URL query-parameter syncing for course search, category filters, and pagination |
 | **Forms & Schema Validation** | `react-hook-form` + `zod` | Declarative validation schemas mirrored from backend DTO contracts |
@@ -36,7 +36,7 @@ EduHub rejects generic "AI-slop" design tropes (no noisy glassmorphism or floati
 | **Toast Notifications** | `sonner` | Sleek async promise toasts with action triggers |
 | **Bot Protection** | Cloudflare Turnstile | Embedded invisible/managed CAPTCHA widget on login, register, and password recovery |
 | **Analytics & Telemetry** | `@vercel/analytics` + `@vercel/speed-insights` | Real-time Web Vitals, performance profiling, and visitor analytics |
-| **Testing** | Vitest 4 + Testing Library | 42 unit and integration test suites (207 passed tests) |
+| **Testing** | Vitest 4 + Testing Library | 42 unit and integration test suites (211 passed tests) |
 
 ---
 
@@ -155,14 +155,14 @@ To test different role perspectives on the live demo or locally:
 | Role | Email | Password | What to Explore |
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin@eduhub.dev` | `Password123!` | Access `/en/admin` to manage users, categories, banners, and broadcast notifications |
-| **Teacher** | `teacher1@eduhub.dev` | `Password123!` | Access `/en/me/courses` to create courses, upload videos, and build quizzes |
-| **Student** | `student1@eduhub.dev` | `Password123!` | Access `/en/enrollments` and `/en/learn/:id` to stream lessons and take quizzes |
+| **Teacher** | `teacher1@eduhub.dev` | `Password123!` | Access `/en/teacher/courses` (canonical, alias `/en/me/courses`) to create courses, upload videos, and build quizzes |
+| **Student** | `student1@eduhub.dev` | `Password123!` | Access `/en/me/enrollments` (canonical, alias `/en/enrollments`) and `/en/learn/:id` to stream lessons and take quizzes |
 
 ---
 
 ## 🧪 Testing
 
-The frontend includes **42 test suites with 207 automated tests** testing components, route guards, API clients, and user flows:
+The frontend includes **42 test suites with 211 automated tests** testing components, route guards, API clients, and user flows:
 
 ```bash
 # Run the full Vitest test suite
