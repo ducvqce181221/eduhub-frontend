@@ -22,10 +22,12 @@ import {
   archiveCourse,
 } from "@/lib/api/teacher";
 import { getCategories } from "@/lib/api/courses";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { Course, Category, CreateCoursePayload } from "@/types/api";
 
 export default function TeacherCoursesPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,17 +135,22 @@ export default function TeacherCoursesPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-hairline pb-4">
           {/* Status Tabs */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-            {(["ALL", "DRAFT", "PUBLISHED", "ARCHIVED"] as const).map((status) => (
+            {([
+              { key: "ALL", label: t.teacher.filterAll },
+              { key: "DRAFT", label: t.teacher.filterDraft },
+              { key: "PUBLISHED", label: t.teacher.filterPublished },
+              { key: "ARCHIVED", label: t.teacher.filterArchived },
+            ] as const).map(({ key, label }) => (
               <button
-                key={status}
+                key={key}
                 type="button"
-                onClick={() => setStatusFilter(status)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${statusFilter === status
+                onClick={() => setStatusFilter(key)}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${statusFilter === key
                     ? "bg-notion-blue text-white shadow-2xs"
                     : "bg-surface text-ink-secondary hover:bg-canvas-soft border border-hairline"
                   }`}
               >
-                {status}
+                {label}
               </button>
             ))}
           </div>
@@ -153,7 +160,7 @@ export default function TeacherCoursesPage() {
             <SearchInput
               value={searchQuery}
               onSearch={setSearchQuery}
-              placeholder="Search your courses..."
+              placeholder={t.teacher.searchCoursesPlaceholder}
               size="sm"
             />
           </div>
@@ -176,12 +183,12 @@ export default function TeacherCoursesPage() {
               <BookOpen className="h-6 w-6 stroke-1" />
             </div>
             <h3 className="mt-3 text-base font-semibold text-ink">
-              No courses found
+              {t.teacher.noCoursesFound}
             </h3>
             <p className="mt-1 text-xs text-ink-muted">
               {searchQuery || statusFilter !== "ALL"
-                ? "Try adjusting your search query or status filter."
-                : "You have not created any courses yet. Get started by clicking 'New Course'."}
+                ? t.teacher.noCoursesFilterHint
+                : t.teacher.noCoursesEmptyHint}
             </p>
             {!searchQuery && statusFilter === "ALL" && (
               <Button
@@ -191,7 +198,7 @@ export default function TeacherCoursesPage() {
                 className="mt-5 px-5 shadow-xs"
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
-                Create First Course
+                {t.teacher.createFirstCourse}
               </Button>
             )}
           </div>

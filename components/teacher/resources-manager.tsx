@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useTranslation } from "@/lib/i18n/language-context";
 import { AssetLibraryDialog } from "./asset-library-dialog";
 import { ExternalUrlDialog } from "./external-url-dialog";
 import { DuplicateAssetDialog } from "./duplicate-asset-dialog";
@@ -35,6 +36,7 @@ export function ResourcesManager({
   onDeleteResource,
   onAttachFromLibrary,
 }: ResourcesManagerProps) {
+  const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [deletingResource, setDeletingResource] = useState<LessonResource | null>(null);
@@ -60,6 +62,7 @@ export function ResourcesManager({
       const presigned = await getPresignedUrl({
         fileName: file.name,
         fileType: file.type || "application/octet-stream",
+        fileSize: file.size,
         folder: "resources",
       });
 
@@ -180,10 +183,10 @@ export function ResourcesManager({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h3 className="text-sm font-bold text-ink">
-              Downloadable Resources ({resources.length})
+              {t.uploader.downloadableResourcesTitle.replace("{count}", String(resources.length))}
             </h3>
             <p className="text-xs text-ink-muted">
-              Attach source code, cheat sheets, PDF guides, or external documentation links.
+              {t.uploader.downloadableResourcesSubtitle}
             </p>
           </div>
 
@@ -198,12 +201,12 @@ export function ResourcesManager({
               {isUploading ? (
                 <>
                   <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                  Uploading...
+                  {t.common.loading}
                 </>
               ) : (
                 <>
                   <Upload className="mr-1.5 h-3.5 w-3.5" />
-                  Upload File
+                  {t.uploader.uploadFile}
                 </>
               )}
             </Button>
@@ -217,7 +220,7 @@ export function ResourcesManager({
               className="rounded-md border-hairline text-xs font-semibold text-ink hover:bg-canvas-soft"
             >
               <FolderOpen className="mr-1.5 h-3.5 w-3.5 text-notion-blue" />
-              From Library
+              {t.uploader.fromLibrary}
             </Button>
 
             <Button
@@ -229,7 +232,7 @@ export function ResourcesManager({
               className="rounded-md border-hairline text-xs font-semibold text-ink hover:bg-canvas-soft"
             >
               <ExternalLink className="mr-1.5 h-3.5 w-3.5 text-ink-muted" />
-              Add Link
+              {t.uploader.addLink}
             </Button>
 
             <input
@@ -254,9 +257,9 @@ export function ResourcesManager({
             <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-canvas-soft text-ink-muted mb-2">
               <FileText className="h-4 w-4" />
             </div>
-            <p className="font-medium text-ink">No resources attached to this lesson yet.</p>
+            <p className="font-medium text-ink">{t.teacher.noResources}</p>
             <p className="text-[11px] text-ink-muted mt-0.5">
-              Upload a file, choose from your media library, or attach an external URL above.
+              {t.uploader.noResourcesHint}
             </p>
           </div>
         ) : (
@@ -279,12 +282,12 @@ export function ResourcesManager({
                       </p>
                       {res.isExternal && (
                         <Badge variant="secondary" className="text-[10px] font-normal py-0 px-1.5 h-4">
-                          External Link
+                          {t.uploader.externalLink}
                         </Badge>
                       )}
                     </div>
                     <p className="text-[11px] font-mono tabular-nums text-ink-muted">
-                      {res.isExternal ? "External resource" : formatFileSize(res.fileSize)}
+                      {res.isExternal ? t.uploader.externalResource : formatFileSize(res.fileSize)}
                     </p>
                   </div>
                 </div>
@@ -295,7 +298,7 @@ export function ResourcesManager({
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-ink-muted hover:text-ink hover:bg-canvas-soft"
-                    title={res.isExternal ? "Open external link" : "Download resource"}
+                    title={res.isExternal ? t.uploader.openExternalLink : t.uploader.downloadResource}
                   >
                     <a
                       href={res.fileUrl}
@@ -359,11 +362,11 @@ export function ResourcesManager({
         open={!!deletingResource}
         onOpenChange={(open) => !open && setDeletingResource(null)}
         variant="danger"
-        title="Delete Resource File?"
-        confirmLabel="Delete File"
+        title={t.uploader.deleteResourceTitle}
+        confirmLabel={t.uploader.deleteResourceConfirm}
         description={
           <>
-            Are you sure you want to remove <strong>&quot;{deletingResource?.name}&quot;</strong> from this lesson?
+            {t.uploader.deleteResourceDesc.replace("{name}", deletingResource?.name || "")}
           </>
         }
         onConfirm={async () => {

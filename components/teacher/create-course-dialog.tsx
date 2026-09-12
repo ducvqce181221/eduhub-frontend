@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { Category, CourseLevel, CreateCoursePayload } from "@/types/api";
 
 const createCourseSchema = z.object({
@@ -45,6 +46,7 @@ export function CreateCourseDialog({
   onSubmit,
   categories,
 }: CreateCourseDialogProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -80,10 +82,10 @@ export function CreateCourseDialog({
       <DialogContent className="sm:max-w-lg rounded-lg border border-hairline bg-surface p-6 shadow-notion-elevated">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-ink tracking-tight">
-            Create New Course
+            {t.teacher.createCourseDialogTitle}
           </DialogTitle>
           <DialogDescription className="text-xs text-ink-muted leading-relaxed">
-            Give your course a title and choose its initial level and category. You can add chapters and lessons in the Course Builder.
+            {t.teacher.createCourseDialogDesc}
           </DialogDescription>
         </DialogHeader>
 
@@ -94,11 +96,11 @@ export function CreateCourseDialog({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="course-title-input" className="text-xs font-semibold text-ink">Course Title</FormLabel>
+                  <FormLabel htmlFor="course-title-input" className="text-xs font-semibold text-ink">{t.teacher.courseTitleLabel}</FormLabel>
                   <FormControl>
                     <Input
                       id="course-title-input"
-                      placeholder="e.g. Master NestJS and Microservices"
+                      placeholder={t.teacher.courseTitlePlaceholder}
                       className="text-xs bg-surface border-hairline"
                       {...field}
                     />
@@ -114,7 +116,7 @@ export function CreateCourseDialog({
                 name="categoryId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-semibold text-ink">Category</FormLabel>
+                    <FormLabel className="text-xs font-semibold text-ink">{t.teacher.categoryLabel}</FormLabel>
                     <FormControl>
                       <select
                         aria-label="Category"
@@ -138,16 +140,16 @@ export function CreateCourseDialog({
                 name="level"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-semibold text-ink">Target Level</FormLabel>
+                    <FormLabel className="text-xs font-semibold text-ink">{t.teacher.targetLevelLabel}</FormLabel>
                     <FormControl>
                       <select
                         aria-label="Target Level"
                         className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-xs text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue [&>option]:bg-surface [&>option]:text-ink"
                         {...field}
                       >
-                        <option value="BEGINNER">Beginner</option>
-                        <option value="INTERMEDIATE">Intermediate</option>
-                        <option value="ADVANCED">Advanced</option>
+                        <option value="BEGINNER">{t.enums.level.BEGINNER}</option>
+                        <option value="INTERMEDIATE">{t.enums.level.INTERMEDIATE}</option>
+                        <option value="ADVANCED">{t.enums.level.ADVANCED}</option>
                       </select>
                     </FormControl>
                     <FormMessage />
@@ -161,10 +163,10 @@ export function CreateCourseDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-semibold text-ink">Brief Description (Optional)</FormLabel>
+                  <FormLabel className="text-xs font-semibold text-ink">{t.teacher.briefDescriptionLabel}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Summarize what learners will achieve..."
+                      placeholder={t.teacher.briefDescriptionPlaceholder}
                       className="resize-none text-xs bg-surface border-hairline"
                       rows={3}
                       {...field}
@@ -183,14 +185,14 @@ export function CreateCourseDialog({
                 disabled={isSubmitting}
                 className="rounded-full border-hairline text-xs font-medium text-ink-secondary hover:bg-canvas-soft px-4"
               >
-                Cancel
+                {t.common.cancel}
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
                 className="rounded-full bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-hover shadow-notion-soft px-4"
               >
-                {isSubmitting ? "Creating..." : "Create Course"}
+                {isSubmitting ? t.teacher.creatingCourse : t.teacher.createCourseSubmitBtn}
               </Button>
             </DialogFooter>
           </form>

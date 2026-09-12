@@ -255,10 +255,11 @@ describe("Teacher API Client", () => {
       };
       vi.spyOn(apiClient, "post").mockResolvedValue({ success: true, data: mockPresigned });
 
-      const result = await getPresignedUrl({ fileName: "video.mp4", fileType: "video/mp4", folder: "videos" });
+      const result = await getPresignedUrl({ fileName: "video.mp4", fileType: "video/mp4", fileSize: 1048576, folder: "videos" });
       expect(apiClient.post).toHaveBeenCalledWith("/upload/presigned-url", {
         fileName: "video.mp4",
         fileType: "video/mp4",
+        fileSize: 1048576,
         folder: "videos",
       });
       expect(result.uploadUrl).toBe(mockPresigned.uploadUrl);

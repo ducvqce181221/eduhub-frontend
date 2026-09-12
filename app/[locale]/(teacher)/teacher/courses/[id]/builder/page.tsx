@@ -18,6 +18,7 @@ import {
   type PublishChecklistState,
 } from "@/components/teacher/publish-checklist-modal";
 import { getCourseById, getCategories } from "@/lib/api/courses";
+import { useTranslation } from "@/lib/i18n/language-context";
 import {
   updateCourse,
   publishCourse,
@@ -55,6 +56,7 @@ export default function CourseBuilderPage({ params }: PageProps) {
   const courseId = resolvedParams.id;
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
 
   const [course, setCourse] = useState<Course | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -322,7 +324,7 @@ export default function CourseBuilderPage({ params }: PageProps) {
             }`}
           >
             <Layers className="h-4 w-4" />
-            Curriculum
+            {t.teacher.tabCurriculum}
           </button>
 
           <button
@@ -335,7 +337,7 @@ export default function CourseBuilderPage({ params }: PageProps) {
             }`}
           >
             <Settings className="h-4 w-4" />
-            Settings & Metadata
+            {t.teacher.tabSettingsMetadata}
           </button>
         </div>
 

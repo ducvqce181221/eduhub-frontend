@@ -124,6 +124,7 @@ export function VideoUploader({
       const presigned = await getPresignedUrl({
         fileName: file.name,
         fileType: file.type || "video/mp4",
+        fileSize: file.size,
         folder: "videos",
       });
 
@@ -363,10 +364,10 @@ export function VideoUploader({
                 <Upload className="h-6 w-6" />
               </div>
               <h4 className="mt-3 text-sm font-semibold text-ink">
-                Upload Lesson Video
+                {t.uploader.uploadButton}
               </h4>
               <p className="mt-1 text-xs text-ink-muted">
-                Drag and drop MP4 or WebM video file, or click to browse
+                {t.uploader.dragDropText}
               </p>
               <input
                 ref={fileInputRef}
@@ -386,7 +387,7 @@ export function VideoUploader({
             <div className="flex items-center justify-between text-xs font-semibold text-ink">
               <span className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin text-notion-blue" />
-                Uploading directly to Cloudflare R2...
+                {t.uploader.uploadingR2}
               </span>
               <span className="tabular-nums font-mono">{uploadProgress}%</span>
             </div>
@@ -416,7 +417,7 @@ export function VideoUploader({
                         <Clock className="h-3 w-3" />
                         {durationSeconds > 0
                           ? formatSeconds(durationSeconds)
-                          : "Duration required"}
+                          : t.uploader.durationRequired}
                       </span>
                       <span>•</span>
                       <Badge
@@ -424,10 +425,10 @@ export function VideoUploader({
                         className="text-[10px] font-normal py-0 px-1.5 h-4"
                       >
                         {isExternal
-                          ? "External URL"
+                          ? t.uploader.externalUrl
                           : selectedAssetId
-                          ? "From Library"
-                          : "Ready on R2"}
+                          ? t.uploader.fromLibrary
+                          : t.uploader.readyOnR2}
                       </Badge>
                     </div>
                   </div>
@@ -529,7 +530,7 @@ export function VideoUploader({
                     htmlFor="duration-input"
                     className="text-xs font-semibold text-ink"
                   >
-                    Duration (seconds):
+                    {t.uploader.durationSeconds}
                   </label>
                   <Input
                     id="duration-input"
@@ -554,7 +555,7 @@ export function VideoUploader({
                 disabled={isSaving || durationSeconds <= 0}
                 className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
               >
-                {isSaving ? "Saving..." : "Save Video"}
+                {isSaving ? t.common.saving : t.uploader.saveVideo}
               </Button>
             </div>
           </div>

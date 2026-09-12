@@ -416,6 +416,7 @@ export interface UpdateQuestionPayload {
 export interface GetPresignedUrlPayload {
   fileName: string;
   fileType: string;
+  fileSize: number;
   folder: "videos" | "resources";
 }
 

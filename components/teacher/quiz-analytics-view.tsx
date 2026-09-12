@@ -22,6 +22,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { Course, CourseQuizStudentResult, CourseQuizResultItem } from "@/types/api";
 
 interface QuizAnalyticsViewProps {
@@ -34,6 +35,7 @@ export function QuizAnalyticsView({
   quizResults,
   course,
 }: QuizAnalyticsViewProps) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Map quizId to Lesson information from course structure
@@ -152,10 +154,10 @@ export function QuizAnalyticsView({
           <HelpCircle className="h-5 w-5 stroke-1" />
         </div>
         <h3 className="mt-3 text-sm font-semibold text-ink">
-          No quiz results available
+          {t.teacher.noQuizResults}
         </h3>
         <p className="mt-1 text-xs text-ink-muted max-w-md mx-auto">
-          When enrolled students attempt the assessment quizzes attached to your lessons, their submissions, highest scores, and pass rates will appear here.
+          {t.teacher.noQuizResultsDesc}
         </p>
       </div>
     );
@@ -171,7 +173,7 @@ export function QuizAnalyticsView({
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-medium text-ink-muted">Total Quiz Attempts</p>
+              <p className="text-xs font-medium text-ink-muted">{t.teacher.totalQuizAttempts}</p>
               <h4 className="text-2xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                 {overallStats.totalAttempts}
               </h4>
@@ -185,7 +187,7 @@ export function QuizAnalyticsView({
               <TrendingUp className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-medium text-ink-muted">Average Pass Rate</p>
+              <p className="text-xs font-medium text-ink-muted">{t.teacher.averagePassRate}</p>
               <h4 className="text-2xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                 {overallStats.avgPassRate}%
               </h4>
@@ -199,7 +201,7 @@ export function QuizAnalyticsView({
               <Award className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-medium text-ink-muted">Average Score</p>
+              <p className="text-xs font-medium text-ink-muted">{t.teacher.averageScore}</p>
               <h4 className="text-2xl font-semibold tracking-tight text-ink font-mono tabular-nums">
                 {overallStats.avgScore}%
               </h4>
@@ -212,21 +214,21 @@ export function QuizAnalyticsView({
       <div className="rounded-lg border border-hairline bg-surface shadow-notion-soft overflow-hidden">
         <div className="border-b border-hairline bg-canvas-soft/60 p-4">
           <h3 className="text-sm font-semibold text-ink">
-            Quiz Performance Breakdown ({aggregatedQuizzes.length})
+            {t.teacher.quizPerformanceBreakdown.replace("{count}", String(aggregatedQuizzes.length))}
           </h3>
           <p className="text-xs text-ink-muted">
-            Aggregated pass rates, attempts, and average scores per lesson assessment.
+            {t.teacher.quizPerformanceDesc}
           </p>
         </div>
 
         <Table className="border-0 rounded-none">
           <TableHeader>
             <TableRow>
-              <TableHead>Quiz / Lesson</TableHead>
-              <TableHead>Pass Threshold</TableHead>
-              <TableHead>Total Attempts</TableHead>
-              <TableHead className="w-44">Pass Rate</TableHead>
-              <TableHead className="text-right">Average Score</TableHead>
+              <TableHead>{t.teacher.tableQuizLesson}</TableHead>
+              <TableHead>{t.teacher.tablePassThreshold}</TableHead>
+              <TableHead>{t.teacher.tableTotalAttempts}</TableHead>
+              <TableHead className="w-44">{t.teacher.tablePassRate}</TableHead>
+              <TableHead className="text-right">{t.teacher.tableAverageScore}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -238,7 +240,7 @@ export function QuizAnalyticsView({
                       {item.quizTitle}
                     </p>
                     <p className="text-[11px] text-ink-muted">
-                      Lesson: {item.lessonTitle}
+                      {t.teacher.lessonPrefix.replace("{title}", item.lessonTitle)}
                     </p>
                   </div>
                 </TableCell>
@@ -248,7 +250,9 @@ export function QuizAnalyticsView({
                 </TableCell>
 
                 <TableCell className="text-ink font-mono tabular-nums">
-                  {item.totalAttempts} {item.totalAttempts === 1 ? "attempt" : "attempts"}
+                  {item.totalAttempts === 1
+                    ? t.teacher.attemptSingle.replace("{count}", String(item.totalAttempts))
+                    : t.teacher.attemptPlural.replace("{count}", String(item.totalAttempts))}
                 </TableCell>
 
                 <TableCell>
@@ -278,16 +282,16 @@ export function QuizAnalyticsView({
           <div className="flex flex-col gap-3 border-b border-hairline bg-canvas-soft/60 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-sm font-semibold text-ink">
-                Student Assessment Attempts ({filteredStudentAttempts.length})
+                {t.teacher.studentAttemptsHeader.replace("{count}", String(filteredStudentAttempts.length))}
               </h3>
               <p className="text-xs text-ink-muted">
-                Individual student test scores, attempt count, and pass status.
+                {t.teacher.studentAttemptsDesc}
               </p>
             </div>
 
             <div className="w-full sm:w-64">
               <SearchInput
-                placeholder="Search student or quiz..."
+                placeholder={t.teacher.searchStudentOrQuiz}
                 value={searchTerm}
                 onSearch={setSearchTerm}
                 size="sm"
@@ -298,11 +302,11 @@ export function QuizAnalyticsView({
           <Table className="border-0 rounded-none">
             <TableHeader>
               <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead>Quiz</TableHead>
-                <TableHead className="text-center">Attempts</TableHead>
-                <TableHead className="text-center">Highest Score</TableHead>
-                <TableHead className="text-right">Result</TableHead>
+                <TableHead>{t.teacher.tableStudent}</TableHead>
+                <TableHead>{t.course.quiz}</TableHead>
+                <TableHead className="text-center">{t.teacher.tableHeaderAttempts}</TableHead>
+                <TableHead className="text-center">{t.teacher.tableHeaderHighestScore}</TableHead>
+                <TableHead className="text-right">{t.teacher.tableHeaderResult}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -313,7 +317,7 @@ export function QuizAnalyticsView({
                     <TableCell>
                       <div>
                         <p className="font-medium text-ink">
-                          {attempt.fullName || "Student"}
+                          {attempt.fullName || t.teacher.tableStudent}
                         </p>
                         <p className="text-[11px] text-ink-muted">
                           {attempt.email || ""}
@@ -340,7 +344,7 @@ export function QuizAnalyticsView({
                           className="bg-sticker-teal/15 text-sticker-teal border-transparent font-medium gap-1 text-[11px]"
                         >
                           <CheckCircle2 className="h-3 w-3" />
-                          Passed
+                          {t.teacher.resultPassed}
                         </Badge>
                       ) : (
                         <Badge
@@ -348,7 +352,7 @@ export function QuizAnalyticsView({
                           className="bg-rose-500/10 text-rose-600 dark:text-rose-400 border-transparent font-medium gap-1 text-[11px]"
                         >
                           <XCircle className="h-3 w-3" />
-                          Failed
+                          {t.teacher.resultFailed}
                         </Badge>
                       )}
                     </TableCell>

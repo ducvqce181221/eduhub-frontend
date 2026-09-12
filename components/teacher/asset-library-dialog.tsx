@@ -42,7 +42,7 @@ export function AssetLibraryDialog({
   mediaType,
   onSelectAsset,
 }: AssetLibraryDialogProps) {
-  const { language } = useTranslation();
+  const { language, t } = useTranslation();
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -91,16 +91,16 @@ export function AssetLibraryDialog({
   };
 
   const formatFileSize = (bytes?: number | null) => {
-    if (!bytes) return "External Link";
+    if (!bytes) return t.uploader.externalLink;
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   const formatDuration = (totalSeconds?: number | null) => {
-    if (!totalSeconds) return null;
+    if (!totalSeconds) return "";
     const mins = Math.floor(totalSeconds / 60);
-    const secs = totalSeconds % 60;
+    const secs = Math.floor(totalSeconds % 60);
     return `${mins}m ${secs.toString().padStart(2, "0")}s`;
   };
 
@@ -111,7 +111,7 @@ export function AssetLibraryDialog({
       await onSelectAsset(selectedAsset, customTitle.trim() || undefined);
       onClose();
     } catch (err: any) {
-      setErrorMessage(err.message || "Failed to attach asset from library");
+      setErrorMessage(err.message || "Failed to attach asset to lesson");
     } finally {
       setIsSubmitting(false);
     }
@@ -124,10 +124,10 @@ export function AssetLibraryDialog({
         <div className="p-6 pb-4 border-b border-hairline shrink-0">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-ink">
-              Select from Asset Library
+              {t.uploader.assetLibraryTitle}
             </DialogTitle>
             <DialogDescription className="text-xs text-ink-muted">
-              Choose a previously uploaded or linked {mediaType.toLowerCase()} to attach to this lesson.
+              {t.uploader.assetLibraryDesc}
             </DialogDescription>
           </DialogHeader>
 
@@ -138,7 +138,7 @@ export function AssetLibraryDialog({
               <Input
                 value={searchQuery}
                 onChange={handleSearchChange}
-                placeholder={`Search ${mediaType === "VIDEO" ? "videos" : "documents"} by name...`}
+                placeholder={t.uploader.searchAssetsPlaceholder}
                 className="pl-8 pr-8 text-xs bg-surface border-hairline h-8"
               />
               {searchQuery && (
@@ -165,7 +165,7 @@ export function AssetLibraryDialog({
                     : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
                 }`}
               >
-                All Sources
+                {t.uploader.allSources}
               </button>
               <button
                 type="button"
@@ -176,7 +176,7 @@ export function AssetLibraryDialog({
                     : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
                 }`}
               >
-                R2 Storage
+                {t.uploader.r2Storage}
               </button>
               <button
                 type="button"
@@ -187,7 +187,7 @@ export function AssetLibraryDialog({
                     : "bg-canvas-soft text-ink-secondary hover:bg-canvas-soft/80 border border-hairline"
                 }`}
               >
-                External URLs
+                {t.uploader.externalUrls}
               </button>
             </div>
           </div>
@@ -198,7 +198,7 @@ export function AssetLibraryDialog({
           {errorMessage ? (
             <div className="py-8 text-center rounded-lg border border-dashed border-destructive/30 bg-destructive/5 p-6">
               <AlertCircle className="mx-auto h-7 w-7 text-destructive mb-2" />
-              <h4 className="text-xs font-semibold text-destructive">Failed to load assets</h4>
+              <h4 className="text-xs font-semibold text-destructive">{t.common.error}</h4>
               <p className="text-[11px] text-ink-muted mt-1 max-w-sm mx-auto">{errorMessage}</p>
               <Button
                 type="button"
@@ -207,7 +207,7 @@ export function AssetLibraryDialog({
                 onClick={() => fetchAssets()}
                 className="mt-3 text-xs border-hairline"
               >
-                Try Again
+                {t.common.retry}
               </Button>
             </div>
           ) : isLoading ? (
@@ -221,9 +221,9 @@ export function AssetLibraryDialog({
               <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-canvas-soft text-ink-muted mb-2">
                 <FolderOpen className="h-5 w-5" />
               </div>
-              <h4 className="text-xs font-semibold text-ink">No assets found</h4>
+              <h4 className="text-xs font-semibold text-ink">{t.uploader.noAssetsFound}</h4>
               <p className="text-[11px] text-ink-muted mt-0.5 max-w-sm mx-auto">
-                No matching {mediaType.toLowerCase()} assets exist in your library yet. Upload a file or add an external URL to get started.
+                {t.uploader.noAssetsFoundDesc.replace("{mediaType}", mediaType === "VIDEO" ? t.uploader.videoType : t.uploader.docType)}
               </p>
             </div>
           ) : (
@@ -284,7 +284,7 @@ export function AssetLibraryDialog({
                     <div className="flex items-center gap-2 shrink-0">
                       {asset.usageCount !== undefined && asset.usageCount > 0 && (
                         <span className="text-[10px] text-ink-muted font-mono">
-                          Used in {asset.usageCount} {asset.usageCount === 1 ? "lesson" : "lessons"}
+                          {asset.usageCount === 1 ? t.uploader.usedInOneLesson : t.uploader.usedInLessons.replace("{count}", String(asset.usageCount))}
                         </span>
                       )}
 
@@ -309,12 +309,12 @@ export function AssetLibraryDialog({
         {selectedAsset && (
           <div className="p-4 bg-canvas-soft/40 border-t border-hairline flex flex-col gap-2 shrink-0">
             <label className="block text-[11px] font-semibold text-ink">
-              Display Title in Lesson (optional)
+              {t.uploader.displayTitleOptional}
             </label>
             <Input
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
-              placeholder="Defaults to asset name..."
+              placeholder={t.uploader.displayTitlePlaceholder}
               className="h-8 text-xs bg-surface border-hairline"
             />
           </div>
@@ -329,7 +329,7 @@ export function AssetLibraryDialog({
             onClick={onClose}
             className="text-xs text-ink-muted hover:text-ink"
           >
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button
             type="button"
@@ -341,10 +341,10 @@ export function AssetLibraryDialog({
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                Attaching...
+                {t.uploader.attaching}
               </>
             ) : (
-              "Attach to Lesson"
+              t.uploader.attachToLesson
             )}
           </Button>
         </div>

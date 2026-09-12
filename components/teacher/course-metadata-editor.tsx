@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { uploadImage } from "@/lib/api/upload";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { Category, Course, CourseLevel, UpdateCoursePayload } from "@/types/api";
 
 const metadataSchema = z.object({
@@ -44,10 +45,22 @@ export function CourseMetadataEditor({
   categories,
   onSave,
 }: CourseMetadataEditorProps) {
+  const { t } = useTranslation();
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(course.thumbnailUrl || null);
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(metadataSchema),
@@ -59,37 +72,58 @@ export function CourseMetadataEditor({
     },
   });
 
-  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    try {
-      setIsUploadingImage(true);
-      const res = await uploadImage(file);
-      const imageUrl = res.secureUrl || res.url;
-      setThumbnailUrl(imageUrl);
-      await onSave({ thumbnailUrl: imageUrl });
-    } catch (err) {
-      // Error handled
-    } finally {
-      setIsUploadingImage(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
     }
+
+    const localUrl = URL.createObjectURL(file);
+    setPendingImageFile(file);
+    setPreviewUrl(localUrl);
   };
 
-  const handleRemoveImage = async () => {
+  const handleRemoveImage = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPendingImageFile(null);
+    setPreviewUrl(null);
     setThumbnailUrl(null);
-    await onSave({ thumbnailUrl: "" });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = async (values: FormValues) => {
     try {
       setIsSaving(true);
+      let finalThumbnailUrl: string | undefined = thumbnailUrl || undefined;
+
+      // Only upload to Cloudinary when user clicks Save Changes
+      if (pendingImageFile) {
+        setIsUploadingImage(true);
+        const res = await uploadImage(pendingImageFile);
+        finalThumbnailUrl = res.secureUrl || res.url;
+        setThumbnailUrl(finalThumbnailUrl);
+        setPendingImageFile(null);
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+          setPreviewUrl(null);
+        }
+        setIsUploadingImage(false);
+      } else if (!thumbnailUrl) {
+        finalThumbnailUrl = "";
+      }
+
       await onSave({
         title: values.title.trim(),
         categoryId: values.categoryId,
         level: values.level,
         description: values.description?.trim() || undefined,
-        thumbnailUrl: thumbnailUrl || undefined,
+        thumbnailUrl: finalThumbnailUrl,
       });
       setShowSavedToast(true);
       setTimeout(() => setShowSavedToast(false), 2000);
@@ -97,17 +131,20 @@ export function CourseMetadataEditor({
       // Error handled
     } finally {
       setIsSaving(false);
+      setIsUploadingImage(false);
     }
   };
+
+  const displayThumbnail = previewUrl || thumbnailUrl;
 
   return (
     <div className="rounded-lg border border-hairline bg-surface p-6 shadow-notion-soft">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-ink tracking-tight">
-          Course Information & Metadata
+          {t.teacher.metadataTitle}
         </h2>
         <p className="mt-1 text-xs text-ink-muted">
-          Set up the title, category, target level, and cover image displayed in the public catalog.
+          {t.teacher.metadataSubtitle}
         </p>
       </div>
 
@@ -116,22 +153,23 @@ export function CourseMetadataEditor({
           {/* Thumbnail Uploader */}
           <div>
             <label className="block text-xs font-semibold text-ink">
-              Course Thumbnail
+              {t.teacher.thumbnailLabel}
             </label>
             <p className="mb-2 text-xs text-ink-muted">
-              Recommended: 16:9 ratio (1280x720px, PNG or JPG).
+              {t.teacher.thumbnailHint}
             </p>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="relative aspect-video w-full max-w-70 overflow-hidden rounded-md border border-hairline bg-canvas-soft">
-                {thumbnailUrl ? (
+                {displayThumbnail ? (
                   <>
                     <Image
-                      src={thumbnailUrl}
+                      src={displayThumbnail}
                       alt="Thumbnail preview"
                       fill
                       sizes="280px"
                       className="object-cover"
+                      unoptimized={displayThumbnail.startsWith("blob:")}
                     />
                     <button
                       type="button"
@@ -145,32 +183,29 @@ export function CourseMetadataEditor({
                 ) : (
                   <div className="flex h-full w-full flex-col items-center justify-center text-ink-muted">
                     <ImageIcon className="h-8 w-8 stroke-1" />
-                    <span className="mt-1 text-xs">No cover image</span>
+                    <span className="mt-1 text-xs">{t.teacher.noThumbnail}</span>
                   </div>
                 )}
               </div>
 
               <div>
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-hairline bg-surface px-3 py-2 text-xs font-medium text-ink shadow-2xs hover:bg-canvas-soft transition-colors">
-                  {isUploadingImage ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin text-ink-muted" />
-                      Uploading to Cloudinary...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="h-3.5 w-3.5 text-notion-blue" />
-                      {thumbnailUrl ? "Change Thumbnail" : "Upload Image"}
-                    </>
-                  )}
+                  <Upload className="h-3.5 w-3.5 text-notion-blue" />
+                  {displayThumbnail ? t.teacher.changeThumbnail : t.teacher.uploadThumbnail}
                   <input
+                    ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleImageFileChange}
-                    disabled={isUploadingImage}
+                    disabled={isSaving}
                     className="hidden"
                   />
                 </label>
+                {pendingImageFile && (
+                  <p className="mt-1.5 text-[11px] text-notion-blue font-medium">
+                    {t.teacher.thumbnailPreviewReady}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -180,9 +215,9 @@ export function CourseMetadataEditor({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>{t.teacher.courseTitleLabel}</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Master NestJS and Microservices" className="bg-surface border-hairline" {...field} />
+                  <Input placeholder={t.teacher.courseTitlePlaceholder} className="bg-surface border-hairline" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -195,10 +230,10 @@ export function CourseMetadataEditor({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>{t.teacher.categoryLabel}</FormLabel>
                   <FormControl>
                     <select
-                      aria-label="Category"
+                      aria-label={t.teacher.categoryLabel}
                       className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue [&>option]:bg-surface [&>option]:text-ink"
                       {...field}
                     >
@@ -219,16 +254,16 @@ export function CourseMetadataEditor({
               name="level"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Target Level</FormLabel>
+                  <FormLabel>{t.teacher.targetLevelLabel}</FormLabel>
                   <FormControl>
                     <select
-                      aria-label="Target Level"
+                      aria-label={t.teacher.targetLevelLabel}
                       className="flex h-9 w-full rounded-md border border-hairline bg-surface px-3 py-1 text-sm text-ink shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-notion-blue focus-visible:border-notion-blue [&>option]:bg-surface [&>option]:text-ink"
                       {...field}
                     >
-                      <option value="BEGINNER">Beginner</option>
-                      <option value="INTERMEDIATE">Intermediate</option>
-                      <option value="ADVANCED">Advanced</option>
+                      <option value="BEGINNER">{t.enums.level.BEGINNER}</option>
+                      <option value="INTERMEDIATE">{t.enums.level.INTERMEDIATE}</option>
+                      <option value="ADVANCED">{t.enums.level.ADVANCED}</option>
                     </select>
                   </FormControl>
                   <FormMessage />
@@ -242,10 +277,10 @@ export function CourseMetadataEditor({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Course Description</FormLabel>
+                <FormLabel>{t.teacher.courseDescriptionLabel}</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Provide a detailed overview of the curriculum and learning outcomes..."
+                    placeholder={t.teacher.courseDescriptionPlaceholder}
                     className="resize-none bg-surface border-hairline text-xs"
                     rows={4}
                     {...field}
@@ -259,15 +294,22 @@ export function CourseMetadataEditor({
           <div className="flex items-center justify-end gap-3 pt-4">
             {showSavedToast && (
               <span className="flex items-center gap-1 text-xs font-medium text-sticker-teal">
-                <Check className="h-3.5 w-3.5" /> Saved successfully
+                <Check className="h-3.5 w-3.5" /> {t.teacher.savedSuccess}
               </span>
             )}
             <Button
               type="submit"
               disabled={isSaving}
-              className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs"
+              className="rounded-md bg-notion-blue text-xs font-semibold text-white hover:bg-notion-blue-active shadow-2xs cursor-pointer"
             >
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? (
+                <span className="flex items-center gap-1.5">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  {isUploadingImage ? t.teacher.uploadingCover : t.common.saving}
+                </span>
+              ) : (
+                t.teacher.saveChanges
+              )}
             </Button>
           </div>
         </form>

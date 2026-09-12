@@ -33,12 +33,12 @@ export function DuplicateAssetDialog({
   onUseExisting,
   onUploadAnyway,
 }: DuplicateAssetDialogProps) {
-  const { language } = useTranslation();
+  const { language, t } = useTranslation();
 
   if (!existingAsset) return null;
 
   const formatFileSize = (bytes?: number | null) => {
-    if (!bytes) return "Unknown size";
+    if (!bytes) return t.uploader.externalResource;
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -56,10 +56,10 @@ export function DuplicateAssetDialog({
             </div>
             <div>
               <DialogTitle className="text-base font-bold text-ink">
-                Duplicate File Detected
+                {t.uploader.duplicateDetected}
               </DialogTitle>
               <DialogDescription className="text-xs text-ink-muted mt-0.5">
-                Identical file content (SHA-256 match) was found in your library.
+                {t.uploader.duplicateDetectedDesc}
               </DialogDescription>
             </div>
           </div>
@@ -79,13 +79,13 @@ export function DuplicateAssetDialog({
                   {existingAsset.name}
                 </p>
                 <p className="text-[11px] text-ink-muted truncate font-mono">
-                  Incoming: {newFileName}
+                  {t.uploader.incomingFile.replace("{name}", newFileName)}
                 </p>
               </div>
             </div>
 
             <Badge variant="secondary" className="text-[10px] font-medium shrink-0">
-              {existingAsset.source === "EXTERNAL_URL" ? "External" : "R2 Storage"}
+              {existingAsset.source === "EXTERNAL_URL" ? t.uploader.externalResource : t.uploader.r2Storage}
             </Badge>
           </div>
 
@@ -104,7 +104,7 @@ export function DuplicateAssetDialog({
         </div>
 
         <p className="text-xs text-ink-secondary leading-relaxed">
-          Reusing the existing file saves storage and attaches immediately without waiting for re-upload.
+          {t.uploader.reuseNotice}
         </p>
 
         <DialogFooter className="flex-col sm:flex-row gap-2 pt-2">
@@ -114,7 +114,7 @@ export function DuplicateAssetDialog({
             onClick={onClose}
             className="rounded-full border-hairline text-xs font-medium text-ink hover:bg-canvas-soft px-4"
           >
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button
             type="button"
@@ -125,7 +125,7 @@ export function DuplicateAssetDialog({
             }}
             className="rounded-full border-hairline text-xs font-medium text-ink hover:bg-canvas-soft px-4"
           >
-            Upload Anyway
+            {t.uploader.uploadAnyway}
           </Button>
           <Button
             type="button"
@@ -135,7 +135,7 @@ export function DuplicateAssetDialog({
             }}
             className="rounded-full bg-notion-blue hover:bg-notion-blue-hover text-white text-xs font-medium px-4 shadow-notion-soft"
           >
-            Use Existing Asset
+            {t.uploader.useExistingAsset}
           </Button>
         </DialogFooter>
       </DialogContent>

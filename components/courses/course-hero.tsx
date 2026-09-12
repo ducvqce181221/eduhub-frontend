@@ -72,11 +72,11 @@ export function CourseHero({ course }: CourseHeroProps) {
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-notion-blue hover:underline"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Course Oversight</span>
+              <span>{t.course.backToOversight}</span>
             </Link>
             <span className="inline-flex items-center gap-1 text-[11px] font-medium text-ink-muted bg-canvas-soft border border-hairline px-2 py-0.5 rounded-md">
               <Shield className="w-3 h-3 text-ink-secondary" />
-              Admin Preview
+              {t.course.adminPreview}
             </span>
           </div>
         )}
@@ -84,11 +84,11 @@ export function CourseHero({ course }: CourseHeroProps) {
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-ink-muted">
           <Link href="/" className="hover:text-ink transition-colors">
-            Home
+            {t.nav.home}
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />
           <Link href="/#catalog" className="hover:text-ink transition-colors">
-            Courses
+            {t.nav.courses}
           </Link>
           {course.category?.name && (
             <>
@@ -149,7 +149,7 @@ export function CourseHero({ course }: CourseHeroProps) {
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-xs text-ink-faint">Created by</p>
+              <p className="text-xs text-ink-faint">{t.course.createdBy}</p>
               <p className="font-semibold text-ink leading-none mt-0.5">
                 {course.teacher?.fullName || "EduHub Instructor"}
               </p>
@@ -160,13 +160,25 @@ export function CourseHero({ course }: CourseHeroProps) {
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-ink-secondary">
             <div className="flex items-center gap-1.5">
               <Calendar className="w-4 h-4 text-ink-muted" />
-              <span>Updated {formattedDate}</span>
+              <span>{t.course.updated.replace("{date}", formattedDate)}</span>
             </div>
 
             <div className="flex items-center gap-1.5">
               <Layers className="w-4 h-4 text-ink-muted" />
-              <span>{chapterCount} {chapterCount === 1 ? "chapter" : "chapters"}</span>
-              {lessonCount > 0 && <span className="text-ink-faint">({lessonCount} lessons)</span>}
+              <span>
+                {chapterCount === 1
+                  ? t.course.oneChapter
+                  : t.course.chaptersCount.replace("{count}", String(chapterCount))}
+              </span>
+              {lessonCount > 0 && (
+                <span className="text-ink-faint">
+                  (
+                  {lessonCount === 1
+                    ? t.course.oneLesson
+                    : t.course.totalLessons.replace("{count}", String(lessonCount))}
+                  )
+                </span>
+              )}
             </div>
 
             {totalDuration > 0 && (

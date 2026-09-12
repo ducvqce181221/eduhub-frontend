@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Globe, Loader2 } from "lucide-react";
 import { createExternalAsset } from "@/lib/api/media-assets";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { MediaAsset, MediaType } from "@/types/api";
 
 interface ExternalUrlDialogProps {
@@ -28,6 +29,7 @@ export function ExternalUrlDialog({
   mediaType,
   onAddExternal,
 }: ExternalUrlDialogProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [durationSeconds, setDurationSeconds] = useState<number | "">("");
@@ -99,10 +101,10 @@ export function ExternalUrlDialog({
             </div>
             <div>
               <DialogTitle className="text-base font-bold text-ink">
-                Add External {mediaType === "VIDEO" ? "Video URL" : "Resource Link"}
+                {t.uploader.addExternalTitle.replace("{type}", mediaType === "VIDEO" ? t.uploader.videoUrl : t.uploader.resourceLink)}
               </DialogTitle>
               <DialogDescription className="text-xs text-ink-muted mt-0.5">
-                Link to public documentation, GitHub repositories, Google Drive, or CDN streams.
+                {t.uploader.addExternalDesc}
               </DialogDescription>
             </div>
           </div>
@@ -118,7 +120,7 @@ export function ExternalUrlDialog({
 
           <div>
             <label className="block text-xs font-semibold text-ink mb-1">
-              Display Name <span className="text-destructive">*</span>
+              {t.uploader.displayNameLabel} <span className="text-destructive">*</span>
             </label>
             <Input
               value={name}
@@ -135,7 +137,7 @@ export function ExternalUrlDialog({
 
           <div>
             <label className="block text-xs font-semibold text-ink mb-1">
-              External URL (http/https) <span className="text-destructive">*</span>
+              {t.uploader.externalUrlLabel} <span className="text-destructive">*</span>
             </label>
             <Input
               type="url"
@@ -146,14 +148,14 @@ export function ExternalUrlDialog({
               required
             />
             <p className="text-[11px] text-ink-muted mt-1">
-              EduHub will test reachability before saving. Localhost and private IPs are blocked.
+              {t.uploader.urlReachabilityHint}
             </p>
           </div>
 
           {mediaType === "VIDEO" && (
             <div>
               <label className="block text-xs font-semibold text-ink mb-1">
-                Video Duration (seconds) <span className="text-destructive">*</span>
+                {t.uploader.videoDurationLabel} <span className="text-destructive">*</span>
               </label>
               <Input
                 type="number"
@@ -177,7 +179,7 @@ export function ExternalUrlDialog({
               disabled={isVerifying}
               className="rounded-full border-hairline text-xs font-medium text-ink hover:bg-canvas-soft px-4"
             >
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button
               type="submit"
@@ -187,10 +189,10 @@ export function ExternalUrlDialog({
               {isVerifying ? (
                 <>
                   <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                  Verifying Link...
+                  {t.uploader.verifyingLink}
                 </>
               ) : (
-                "Verify & Attach"
+                t.uploader.verifyAndAttach
               )}
             </Button>
           </DialogFooter>

@@ -38,6 +38,7 @@ describe("VideoUploader (Cloudflare R2 Direct Upload)", () => {
       expect(uploadApi.getPresignedUrl).toHaveBeenCalledWith({
         fileName: "lesson1.mp4",
         fileType: "video/mp4",
+        fileSize: mockFile.size,
         folder: "videos",
       });
       expect(uploadApi.uploadDirectToR2).toHaveBeenCalled();
