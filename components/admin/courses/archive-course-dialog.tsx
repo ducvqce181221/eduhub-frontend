@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Archive, AlertTriangle } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { Course } from "@/types/api";
 
 interface ArchiveCourseDialogProps {
@@ -26,6 +27,7 @@ export function ArchiveCourseDialog({
   onOpenChange,
   onConfirm,
 }: ArchiveCourseDialogProps) {
+  const { t, language } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export function ArchiveCourseDialog({
       await onConfirm(course.id);
       onOpenChange(false);
     } catch (err: any) {
-      setErrorMessage(err.message || "Failed to archive course");
+      setErrorMessage(err.message || t.admin.courseArchiveFailed);
     } finally {
       setIsSubmitting(false);
     }
@@ -54,16 +56,18 @@ export function ArchiveCourseDialog({
             </div>
             <div>
               <DialogTitle className="text-base font-semibold text-ink">
-                Archive Course
+                {language === "vi" ? t.admin.archiveCourseModalTitle : "Archive Course"}
               </DialogTitle>
             </div>
           </div>
           <DialogDescription className="text-xs text-ink-muted pt-1">
-            Retire{" "}
-            <strong className="text-ink font-medium">
-              {course.title}
-            </strong>{" "}
-            from public discovery and new enrollments.
+            {language === "vi" ? (
+              t.admin.archiveCourseDescShort.replace("{title}", course.title)
+            ) : (
+              <>
+                Retire <strong className="text-ink font-medium">{course.title}</strong> from public discovery and new enrollments.
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -76,10 +80,10 @@ export function ArchiveCourseDialog({
         <div className="rounded-md border border-sticker-amber/20 bg-sticker-amber/10 p-3.5 text-xs text-sticker-amber-deep dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 space-y-1">
           <div className="flex items-center gap-2 font-semibold">
             <AlertTriangle className="h-4 w-4 shrink-0 text-sticker-amber-deep dark:text-amber-300" />
-            <span>Terminal State Policy (BR-CRS-04)</span>
+            <span>{language === "vi" ? t.admin.archivePolicyTitle : "Terminal State Policy (BR-CRS-04)"}</span>
           </div>
           <p className="text-[11px] leading-relaxed opacity-90">
-            Archiving a course is a permanent terminal state in MVP. Once archived, the course is hidden from catalog discovery and accepts no new enrollments. Existing enrolled learners will retain read-only access.
+            {language === "vi" ? t.admin.archivePolicyDesc : "Archiving a course is a permanent terminal state in MVP. Once archived, the course is hidden from catalog discovery and accepts no new enrollments. Existing enrolled learners will retain read-only access."}
           </p>
         </div>
 
@@ -90,7 +94,7 @@ export function ArchiveCourseDialog({
             onClick={() => onOpenChange(false)}
             className="rounded-full text-xs font-medium border-hairline text-ink hover:bg-canvas-soft px-4"
           >
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button
             type="button"
@@ -98,7 +102,13 @@ export function ArchiveCourseDialog({
             onClick={handleArchive}
             className="rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium px-4 shadow-notion-soft"
           >
-            {isSubmitting ? "Archiving..." : "Confirm Archive"}
+            {isSubmitting
+              ? language === "vi"
+                ? "Đang lưu trữ..."
+                : "Archiving..."
+              : language === "vi"
+                ? "Xác nhận lưu trữ"
+                : "Confirm Archive"}
           </Button>
         </DialogFooter>
       </DialogContent>

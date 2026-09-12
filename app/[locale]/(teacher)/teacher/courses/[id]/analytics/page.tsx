@@ -19,6 +19,7 @@ import {
   getCourseProgressMetrics,
   getCourseQuizResults,
 } from "@/lib/api/teacher";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type {
   Course,
   EnrolledStudentProgressItem,
@@ -33,6 +34,7 @@ interface PageProps {
 export default function CourseAnalyticsPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const courseId = resolvedParams.id;
+  const { t } = useTranslation();
 
   const [course, setCourse] = useState<Course | null>(null);
   const [students, setStudents] = useState<EnrolledStudentProgressItem[]>([]);
@@ -127,7 +129,7 @@ export default function CourseAnalyticsPage({ params }: PageProps) {
             >
               <Link href={`/teacher/courses/${course.id}/builder`}>
                 <ArrowLeft className="h-4 w-4" />
-                <span className="sr-only">Back to Builder</span>
+                <span className="sr-only">{t.teacher.backToBuilder}</span>
               </Link>
             </Button>
 
@@ -137,11 +139,11 @@ export default function CourseAnalyticsPage({ params }: PageProps) {
                   {course.title}
                 </h1>
                 <span className="rounded bg-sticker-sky/15 px-2 py-0.5 text-[11px] font-semibold text-sticker-sky-deep border border-transparent">
-                  Analytics
+                  {t.teacher.analyticsBadge}
                 </span>
               </div>
               <p className="text-xs text-ink-muted">
-                Track enrolled student progress rates and quiz comprehension.
+                {t.teacher.analyticsSubtitle}
               </p>
             </div>
           </div>
@@ -154,7 +156,7 @@ export default function CourseAnalyticsPage({ params }: PageProps) {
           >
             <Link href={`/teacher/courses/${course.id}/builder`}>
               <Edit3 className="mr-1.5 h-3.5 w-3.5" />
-              Edit Course
+              {t.teacher.editCourse}
             </Link>
           </Button>
         </div>
@@ -174,7 +176,7 @@ export default function CourseAnalyticsPage({ params }: PageProps) {
             }`}
           >
             <Users className="h-4 w-4" />
-            Enrolled Students ({students.length})
+            {t.teacher.tabEnrolledStudents.replace("{count}", String(students.length))}
           </button>
 
           <button
@@ -187,7 +189,7 @@ export default function CourseAnalyticsPage({ params }: PageProps) {
             }`}
           >
             <HelpCircle className="h-4 w-4" />
-            Quiz Results ({quizResults.length})
+            {t.teacher.tabQuizResults.replace("{count}", String(quizResults.length))}
           </button>
         </div>
 

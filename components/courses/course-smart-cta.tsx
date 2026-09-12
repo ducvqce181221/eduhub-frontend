@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import type { User } from "@/types/api";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/language-context";
 
 interface CourseSmartCTAProps {
   courseId: string;
@@ -39,6 +40,8 @@ export function CourseSmartCTA({
   onEnroll,
   className,
 }: CourseSmartCTAProps) {
+  const { t } = useTranslation();
+
   // 1. Guest Visitor (Unauthenticated)
   if (!user) {
     return (
@@ -50,14 +53,14 @@ export function CourseSmartCTA({
           asChild
         >
           <Link href={`/login?redirect=/courses/${courseId}`}>
-            <span>Log in to Enroll</span>
+            <span>{t.course.loginToEnroll}</span>
             <ArrowRight className="w-4 h-4 ml-1.5" />
           </Link>
         </Button>
         <p className="text-xs text-ink-muted text-center leading-relaxed">
-          Don&apos;t have an account yet?{" "}
+          {t.course.signUpFreePrompt}{" "}
           <Link href="/register" className="text-notion-blue font-medium hover:underline">
-            Sign up for free
+            {t.course.signUpFreeLink}
           </Link>
         </p>
       </div>
@@ -77,12 +80,12 @@ export function CourseSmartCTA({
           {isAdmin ? (
             <Badge variant="admin" className="px-2.5 py-0.5 text-xs font-medium flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin Authority</span>
+              <span>{t.course.adminAuthority}</span>
             </Badge>
           ) : (
             <Badge variant="teacher" className="px-2.5 py-0.5 text-xs font-medium flex items-center gap-1">
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>Course Owner</span>
+              <span>{t.course.courseOwner}</span>
             </Badge>
           )}
         </div>
@@ -101,7 +104,7 @@ export function CourseSmartCTA({
             }
           >
             <Edit3 className="w-4 h-4 mr-2" />
-            <span>Edit in Course Builder</span>
+            <span>{t.course.editInCourseBuilder}</span>
           </Link>
         </Button>
 
@@ -114,13 +117,13 @@ export function CourseSmartCTA({
           >
             <Link href="/admin/courses">
               <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-              <span>Back to Course Oversight</span>
+              <span>{t.course.backToOversight}</span>
             </Link>
           </Button>
         )}
 
         <p className="text-xs text-ink-muted text-center leading-relaxed">
-          Manage curriculum, upload lesson videos, and update publish status.
+          {t.course.manageCurriculumHint}
         </p>
       </div>
     );
@@ -132,11 +135,11 @@ export function CourseSmartCTA({
       <div className={cn("flex flex-col gap-2.5 p-3.5 rounded-lg bg-canvas-soft border border-hairline", className)}>
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="px-2 py-0.5 text-xs bg-surface text-ink-secondary border-hairline font-medium">
-            Teacher Preview Mode
+            {t.course.teacherPreviewMode}
           </Badge>
         </div>
         <p className="text-xs text-ink-muted leading-relaxed">
-          You are exploring this course as an instructor. Per platform policy, only enrolled students take quizzes and earn completion credits.
+          {t.course.teacherPreviewNotice}
         </p>
       </div>
     );
@@ -149,7 +152,7 @@ export function CourseSmartCTA({
         <div className="flex items-center gap-2">
           <Badge variant="teal" className="px-2.5 py-0.5 text-xs font-semibold flex items-center gap-1">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Enrolled Student</span>
+            <span>{t.course.enrolledStudentBadge}</span>
           </Badge>
         </div>
 
@@ -160,13 +163,13 @@ export function CourseSmartCTA({
           asChild
         >
           <Link href={`/learn/${courseId}`}>
-            <span>Continue Learning</span>
+            <span>{t.course.continueLearning}</span>
             <ArrowRight className="w-4 h-4 ml-1.5" />
           </Link>
         </Button>
 
         <p className="text-xs text-ink-muted text-center">
-          Track your progress and continue from where you left off.
+          {t.course.continueLearningHint}
         </p>
       </div>
     );
@@ -185,18 +188,18 @@ export function CourseSmartCTA({
         {isLoadingEnrollment ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            <span>Enrolling...</span>
+            <span>{t.course.enrolling}</span>
           </>
         ) : (
           <>
             <GraduationCap className="w-4 h-4 mr-2" />
-            <span>Enroll in Course</span>
+            <span>{t.course.enrollInCourse}</span>
           </>
         )}
       </Button>
 
       <p className="text-xs text-ink-muted text-center leading-relaxed">
-        Instant lifetime access • Video streams & assessments included
+        {t.course.instantLifetimeAccess}
       </p>
     </div>
   );

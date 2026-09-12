@@ -62,12 +62,12 @@ export function LessonDrawer({
   const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
 
   useEffect(() => {
-    if (lesson) {
+    if (lesson && isOpen) {
       setTitle(lesson.title);
       setDescription(lesson.description || "");
       fetchLessonQuiz(lesson.id);
     }
-  }, [lesson]);
+  }, [lesson, isOpen]);
 
   const fetchLessonQuiz = async (lessonId: string) => {
     try {

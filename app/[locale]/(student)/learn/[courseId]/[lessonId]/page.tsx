@@ -30,9 +30,11 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/language-context";
 import type { QuizAttemptResult, SubmitQuizAnswerPayload } from "@/types/api";
 
 export default function LessonLearnPage() {
+  const { t } = useTranslation();
   const routeParams = useParams<{ courseId: string; lessonId: string }>();
   const courseId = routeParams?.courseId || "";
   const lessonId = routeParams?.lessonId || "";
@@ -105,14 +107,14 @@ export default function LessonLearnPage() {
   if (!course || !lesson) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 py-20 px-4 text-center bg-canvas-soft">
-        <h2 className="text-xl font-bold text-ink mb-2">Lesson Not Available</h2>
+        <h2 className="text-xl font-bold text-ink mb-2">{t.learn.lessonNotAvailable}</h2>
         <p className="text-sm text-ink-muted mb-6">
-          Could not load the requested lesson or course.
+          {t.learn.lessonNotFoundDesc}
         </p>
         <Button variant="pill" size="default" asChild>
           <Link href="/courses">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            <span>Back to Courses</span>
+            <span>{t.learn.backToCourses}</span>
           </Link>
         </Button>
       </div>
@@ -140,7 +142,7 @@ export default function LessonLearnPage() {
           className="h-8 text-xs gap-1.5 border-hairline rounded-md"
         >
           <Menu className="w-3.5 h-3.5" />
-          <span>Curriculum ({courseProgress?.completedLessons || 0}/{courseProgress?.totalLessons || 0})</span>
+          <span>{t.learn.curriculumProgress.replace("{completed}", String(courseProgress?.completedLessons || 0)).replace("{total}", String(courseProgress?.totalLessons || 0))}</span>
         </Button>
       </div>
 
@@ -163,12 +165,12 @@ export default function LessonLearnPage() {
               {isLessonCompleted && (
                 <Badge variant="teal" className="text-xs px-2.5 py-0.5 font-semibold flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Lesson Completed</span>
+                  <span>{t.learn.lessonCompletedBadge}</span>
                 </Badge>
               )}
               {lesson.video?.durationSeconds && (
                 <Badge variant="secondary" className="text-xs px-2.5 py-0.5 bg-canvas-soft border-hairline text-ink-muted">
-                  Duration: {Math.floor(lesson.video.durationSeconds / 60)} mins
+                  {t.learn.durationMins.replace("{mins}", String(Math.floor(lesson.video.durationSeconds / 60)))}
                 </Badge>
               )}
             </div>
@@ -189,7 +191,7 @@ export default function LessonLearnPage() {
             <div className="p-5 sm:p-6 rounded-lg bg-surface border border-hairline shadow-notion-soft flex flex-col gap-3.5">
               <h3 className="text-sm sm:text-base font-bold text-ink flex items-center gap-2">
                 <FileText className="w-4 h-4 text-sticker-teal" />
-                <span>Downloadable Lesson Resources</span>
+                <span>{t.learn.downloadableLessonResources}</span>
               </h3>
 
               <div className="divide-y divide-hairline border border-hairline rounded-md overflow-hidden bg-canvas-soft/30">
@@ -210,7 +212,7 @@ export default function LessonLearnPage() {
                         </span>
                         {res.isExternal && (
                           <Badge variant="secondary" className="text-[10px] font-normal py-0 px-1.5 h-4 shrink-0">
-                            External
+                            {t.learn.external}
                           </Badge>
                         )}
                       </div>
@@ -231,12 +233,12 @@ export default function LessonLearnPage() {
                         {res.isExternal ? (
                           <>
                             <ExternalLink className="w-3.5 h-3.5" />
-                            <span>Open Link</span>
+                            <span>{t.learn.openLink}</span>
                           </>
                         ) : (
                           <>
                             <Download className="w-3.5 h-3.5" />
-                            <span>Download</span>
+                            <span>{t.learn.download}</span>
                           </>
                         )}
                       </a>
@@ -281,7 +283,7 @@ export default function LessonLearnPage() {
         <div className="lg:hidden fixed inset-0 z-50 bg-black/40 flex justify-end">
           <div className="w-full max-w-sm h-full bg-surface shadow-2xl flex flex-col">
             <div className="p-3.5 border-b border-hairline flex items-center justify-between">
-              <span className="text-sm font-bold text-ink">Curriculum Navigation</span>
+              <span className="text-sm font-bold text-ink">{t.learn.curriculumNavigation}</span>
               <button
                 type="button"
                 onClick={() => setIsMobileSidebarOpen(false)}

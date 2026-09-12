@@ -1,12 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
-import { ChevronDown, ChevronRight, PlayCircle, Play, FileText, HelpCircle, Clock, BookOpen, Layers } from "lucide-react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import {
+  ChevronDown,
+  ChevronRight,
+  ChevronsDown,
+  ChevronsUp,
+  PlayCircle,
+  Play,
+  FileText,
+  HelpCircle,
+  Clock,
+  BookOpen,
+  Layers,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/lib/i18n/language-context";
 import type { Chapter } from "@/types/api";
 import { cn } from "@/lib/utils";
-
 
 interface CurriculumOutlineProps {
   chapters: Chapter[];
@@ -37,9 +48,13 @@ export function CurriculumOutline({
   previewLessonId,
   onPreviewLesson,
 }: CurriculumOutlineProps) {
+  const { t, language } = useTranslation();
 
   // Sort chapters by order ascending
-  const sortedChapters = [...chapters].sort((a, b) => a.order - b.order);
+  const sortedChapters = useMemo(
+    () => [...chapters].sort((a, b) => a.order - b.order),
+    [chapters],
+  );
 
   // Initialize expanded state for chapters
   const [expandedChapterIds, setExpandedChapterIds] = useState<Set<string>>(() => {
@@ -49,6 +64,20 @@ export function CurriculumOutline({
     // Expand the first chapter by default
     return sortedChapters.length > 0 ? new Set([sortedChapters[0].id]) : new Set();
   });
+
+  // Keep expanded state synchronized if chapters load asynchronously
+  const isInitialSyncRef = useRef(false);
+  useEffect(() => {
+    if (sortedChapters.length > 0 && !isInitialSyncRef.current) {
+      isInitialSyncRef.current = true;
+      setExpandedChapterIds((prev) => {
+        if (prev.size > 0) return prev;
+        return defaultExpanded
+          ? new Set(sortedChapters.map((c) => c.id))
+          : new Set([sortedChapters[0].id]);
+      });
+    }
+  }, [sortedChapters, defaultExpanded]);
 
   const toggleChapter = (chapterId: string) => {
     setExpandedChapterIds((prev) => {
@@ -70,7 +99,10 @@ export function CurriculumOutline({
     setExpandedChapterIds(new Set());
   };
 
-  const { t } = useTranslation();
+  const areAllExpanded =
+    sortedChapters.length > 0 &&
+    sortedChapters.every((c) => expandedChapterIds.has(c.id));
+  const areAllCollapsed = expandedChapterIds.size === 0;
 
   // Summary metrics
   const totalChapters = sortedChapters.length;
@@ -86,7 +118,6 @@ export function CurriculumOutline({
     return acc + chapSeconds;
   }, 0);
 
-
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       {/* Summary Header & Controls */}
@@ -94,31 +125,57 @@ export function CurriculumOutline({
         <div>
           <h3 className="text-lg font-bold text-ink flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-notion-blue" />
-            Course Curriculum
+            <span>{t.course.curriculum}</span>
           </h3>
           {showSummary && (
             <p className="text-xs text-ink-muted mt-0.5">
-              {totalChapters} {totalChapters === 1 ? "chapter" : "chapters"} • {totalLessons}{" "}
-              {totalLessons === 1 ? "lesson" : "lessons"} • {formatDuration(totalDurationSeconds)} total length
+              {language === "vi" ? (
+                <>
+                  {totalChapters} {totalChapters === 1 ? "chương" : "chương"} • {totalLessons}{" "}
+                  {totalLessons === 1 ? "bài học" : "bài học"} • {formatDuration(totalDurationSeconds)} tổng thời lượng
+                </>
+              ) : (
+                <>
+                  {totalChapters} {totalChapters === 1 ? "chapter" : "chapters"} • {totalLessons}{" "}
+                  {totalLessons === 1 ? "lesson" : "lessons"} • {formatDuration(totalDurationSeconds)} total length
+                </>
+              )}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
+        {/* Refined Notion-style Expand/Collapse Segmented Pill */}
+        <div className="inline-flex items-center rounded-lg border border-hairline bg-canvas-soft/70 p-0.5 text-xs shadow-2xs self-start sm:self-auto">
           <button
             type="button"
             onClick={expandAll}
-            className="text-notion-blue hover:text-notion-blue-active font-medium cursor-pointer"
+            disabled={areAllExpanded || sortedChapters.length === 0}
+            title={t.course.expandAll}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-all",
+              areAllExpanded || sortedChapters.length === 0
+                ? "text-ink-muted/40 cursor-not-allowed"
+                : "text-ink hover:text-notion-blue hover:bg-surface shadow-2xs cursor-pointer active:scale-95"
+            )}
           >
-            Expand all
+            <ChevronsDown className="w-3.5 h-3.5" />
+            <span>{t.course.expandAll}</span>
           </button>
-          <span className="text-ink-faint">•</span>
+          <div className="h-3.5 w-px bg-hairline mx-0.5" />
           <button
             type="button"
             onClick={collapseAll}
-            className="text-ink-muted hover:text-ink font-medium cursor-pointer"
+            disabled={areAllCollapsed || sortedChapters.length === 0}
+            title={t.course.collapseAll}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-all",
+              areAllCollapsed || sortedChapters.length === 0
+                ? "text-ink-muted/40 cursor-not-allowed"
+                : "text-ink-secondary hover:text-ink hover:bg-surface shadow-2xs cursor-pointer active:scale-95"
+            )}
           >
-            Collapse all
+            <ChevronsUp className="w-3.5 h-3.5" />
+            <span>{t.course.collapseAll}</span>
           </button>
         </div>
       </div>
@@ -168,7 +225,12 @@ export function CurriculumOutline({
 
                 <div className="flex items-center gap-2.5 shrink-0 text-xs text-ink-muted">
                   <span>
-                    {chapterLessonCount} {chapterLessonCount === 1 ? "lesson" : "lessons"}
+                    {chapterLessonCount}{" "}
+                    {language === "vi"
+                      ? "bài học"
+                      : chapterLessonCount === 1
+                        ? "lesson"
+                        : "lessons"}
                   </span>
                   {chapterDuration > 0 && (
                     <span className="hidden sm:inline text-ink-faint">
@@ -183,7 +245,7 @@ export function CurriculumOutline({
                 <div className="divide-y divide-hairline border-t border-hairline bg-surface">
                   {sortedLessons.length === 0 ? (
                     <div className="p-4 text-xs text-ink-muted text-center italic">
-                      No lessons published in this chapter yet.
+                      {t.course.noLessonsInChapterYet}
                     </div>
                   ) : (
                     sortedLessons.map((lesson) => {
@@ -234,14 +296,16 @@ export function CurriculumOutline({
                             {hasQuiz && (
                               <Badge variant="teal" className="text-[11px] px-2 py-0.5 font-medium flex items-center gap-1">
                                 <HelpCircle className="w-3 h-3" />
-                                <span>Quiz</span>
+                                <span>{t.course.quiz}</span>
                               </Badge>
                             )}
 
                             {resourceCount > 0 && (
                               <Badge variant="secondary" className="text-[11px] px-2 py-0.5 bg-canvas-soft text-ink-secondary border-hairline font-normal hidden sm:inline-flex items-center gap-1">
                                 <FileText className="w-3 h-3" />
-                                <span>{resourceCount} {resourceCount === 1 ? "resource" : "resources"}</span>
+                                <span>
+                                  {resourceCount} {resourceCount === 1 ? t.course.resource : t.course.resources}
+                                </span>
                               </Badge>
                             )}
 

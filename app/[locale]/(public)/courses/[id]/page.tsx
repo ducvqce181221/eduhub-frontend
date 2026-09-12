@@ -35,7 +35,7 @@ export default function CourseDetailPage() {
   const id = (routeParams?.id as string) || "";
   const router = useRouter();
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const {
@@ -114,19 +114,25 @@ export default function CourseDetailPage() {
         </div>
 
         <h1 className="text-xl sm:text-2xl font-bold text-ink mb-2">
-          {isForbidden ? "Unpublished Course Access Restricted" : "Course Not Found"}
+          {isForbidden
+            ? language === "vi"
+              ? "Truy cập khóa học chưa xuất bản bị giới hạn"
+              : "Unpublished Course Access Restricted"
+            : language === "vi"
+              ? "Không tìm thấy khóa học"
+              : "Course Not Found"}
         </h1>
 
         <p className="text-xs sm:text-sm text-ink-muted max-w-md mb-6 leading-relaxed">
           {isForbidden
-            ? "This course is currently in draft status and can only be previewed by its creator or a platform administrator."
-            : "The course you are looking for does not exist, has been removed, or is no longer accessible."}
+            ? t.course.courseDraftNotice
+            : t.course.courseNotFoundNotice}
         </p>
 
         <Button variant="pill" size="default" asChild>
           <Link href="/#catalog">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            <span>Back to Course Catalog</span>
+            <span>{t.course.backToCatalog}</span>
           </Link>
         </Button>
       </div>
@@ -193,19 +199,19 @@ export default function CourseDetailPage() {
             <div className="grid sm:grid-cols-2 gap-3 pt-1 text-xs sm:text-sm text-ink-secondary">
               <div className="flex items-start gap-2.5">
                 <CheckCircle className="w-4 h-4 text-sticker-teal mt-0.5 shrink-0" />
-                <span>Modular curriculum architected for enterprise engineering patterns.</span>
+                <span>{t.course.highlight1}</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle className="w-4 h-4 text-sticker-teal mt-0.5 shrink-0" />
-                <span>High-definition video streams with adaptive bitrate playback.</span>
+                <span>{t.course.highlight2}</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle className="w-4 h-4 text-sticker-teal mt-0.5 shrink-0" />
-                <span>Single-choice mastery assessments graded atomically.</span>
+                <span>{t.course.highlight3}</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle className="w-4 h-4 text-sticker-teal mt-0.5 shrink-0" />
-                <span>Strict 90% progress heartbeat synchronization.</span>
+                <span>{t.course.highlight4}</span>
               </div>
             </div>
           </div>
@@ -268,7 +274,7 @@ export default function CourseDetailPage() {
                   <div className="w-10 h-10 rounded-md bg-surface border border-hairline flex items-center justify-center text-ink-secondary mb-2">
                     <BookOpen className="w-5 h-5" />
                   </div>
-                  <span className="text-xs font-medium text-ink-muted">Course Overview</span>
+                  <span className="text-xs font-medium text-ink-muted">{t.course.courseOverview}</span>
                 </div>
               )}
 

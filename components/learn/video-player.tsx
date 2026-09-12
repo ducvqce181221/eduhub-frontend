@@ -768,7 +768,7 @@ export function VideoPlayer({
               className="text-xs px-2.5 py-0.5 font-medium flex items-center gap-1"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Completed (≥90%)</span>
+              <span>{t?.learn?.completedPercentBadge || "Completed (≥90%)"}</span>
             </Badge>
           ) : (
             <Badge
@@ -776,8 +776,8 @@ export function VideoPlayer({
               className="text-xs px-2.5 py-0.5 bg-canvas-soft text-ink-secondary border-hairline font-medium tabular-nums"
             >
               {effectiveDuration > 0
-                ? `${Math.round((currentSeconds / effectiveDuration) * 100)}% Watched`
-                : "In Progress"}
+                ? `${Math.round((currentSeconds / effectiveDuration) * 100)}% ${t?.learn?.watchedSuffix || "Watched"}`
+                : t?.learn?.inProgress || "In Progress"}
             </Badge>
           )}
         </div>

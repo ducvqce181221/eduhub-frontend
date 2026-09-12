@@ -16,6 +16,8 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Pagination } from "@/components/common/pagination";
+import { useTranslation } from "@/lib/i18n/language-context";
+import { translateCourseLevel, translateCourseStatus } from "@/lib/i18n/formatters";
 import type { Course, PaginationMeta, Category } from "@/types/api";
 
 interface CourseOversightTableProps {
@@ -47,49 +49,53 @@ export function CourseOversightTable({
   onArchiveCourse,
   isLoading = false,
 }: CourseOversightTableProps) {
+  const { t, language } = useTranslation();
+
   const getLevelBadge = (level: string) => {
+    const localizedLevel = language === "vi" ? translateCourseLevel(level as any, t) : level;
     switch (level) {
       case "BEGINNER":
         return (
           <Badge variant="teal" className="text-[10px] px-2 py-0.5 font-medium">
-            BEGINNER
+            {localizedLevel}
           </Badge>
         );
       case "INTERMEDIATE":
         return (
           <Badge variant="sky" className="text-[10px] px-2 py-0.5 font-medium">
-            INTERMEDIATE
+            {localizedLevel}
           </Badge>
         );
       case "ADVANCED":
         return (
           <Badge variant="purple" className="text-[10px] px-2 py-0.5 font-medium">
-            ADVANCED
+            {localizedLevel}
           </Badge>
         );
       default:
         return (
           <Badge variant="secondary" className="text-[10px] px-2 py-0.5 font-medium bg-canvas-soft border-hairline">
-            {level}
+            {localizedLevel}
           </Badge>
         );
     }
   };
 
   const getStatusBadge = (status: string) => {
+    const localizedStatus = language === "vi" ? translateCourseStatus(status as any, t) : status;
     switch (status) {
       case "PUBLISHED":
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-teal/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-teal border border-sticker-teal/20 dark:text-teal-300 dark:border-teal-500/30 dark:bg-teal-500/15">
             <span className="h-1.5 w-1.5 rounded-full bg-sticker-teal dark:bg-teal-400" />
-            PUBLISHED
+            {localizedStatus}
           </span>
         );
       case "DRAFT":
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-sticker-amber/15 px-2.5 py-0.5 text-[11px] font-medium text-sticker-amber-deep border border-sticker-amber/20 dark:text-amber-300 dark:border-amber-500/30 dark:bg-amber-500/15">
             <span className="h-1.5 w-1.5 rounded-full bg-sticker-amber-deep dark:bg-amber-400" />
-            DRAFT
+            {localizedStatus}
           </span>
         );
       case "ARCHIVED":
@@ -97,7 +103,7 @@ export function CourseOversightTable({
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-0.5 text-[11px] font-medium text-ink-muted border border-hairline">
             <Archive className="h-3 w-3 text-ink-muted" />
-            ARCHIVED
+            {localizedStatus}
           </span>
         );
     }
@@ -111,7 +117,7 @@ export function CourseOversightTable({
           <SearchInput
             value={searchQuery}
             onSearch={onSearchChange}
-            placeholder="Search courses by title..."
+            placeholder={t.admin.searchCoursesPlaceholder}
             size="sm"
           />
         </div>
@@ -124,10 +130,10 @@ export function CourseOversightTable({
             className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
             aria-label="Filter by course status"
           >
-            <option value="ALL">All Statuses</option>
-            <option value="PUBLISHED">Published</option>
-            <option value="DRAFT">Draft</option>
-            <option value="ARCHIVED">Archived</option>
+            <option value="ALL">{t.admin.filterAllStatuses}</option>
+            <option value="PUBLISHED">{language === "vi" ? "Đã xuất bản" : "Published"}</option>
+            <option value="DRAFT">{language === "vi" ? "Bản nháp" : "Draft"}</option>
+            <option value="ARCHIVED">{language === "vi" ? "Đã lưu trữ" : "Archived"}</option>
           </select>
 
           {/* Category filter */}
@@ -138,7 +144,7 @@ export function CourseOversightTable({
               className="h-9 rounded-md border border-hairline bg-surface px-3 py-1.5 text-xs text-ink shadow-2xs focus:border-notion-blue focus:outline-none [&>option]:bg-surface [&>option]:text-ink"
               aria-label="Filter by category"
             >
-              <option value="ALL">All Categories</option>
+              <option value="ALL">{t.admin.filterAllCategories}</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
@@ -154,12 +160,12 @@ export function CourseOversightTable({
         <Table className="border-0 rounded-none">
           <TableHeader>
             <TableRow>
-              <TableHead>Course</TableHead>
-              <TableHead>Instructor</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Level</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t.admin.columnCourse}</TableHead>
+              <TableHead>{t.admin.columnInstructor}</TableHead>
+              <TableHead>{t.admin.columnCategory}</TableHead>
+              <TableHead>{t.admin.columnLevel}</TableHead>
+              <TableHead>{t.admin.columnStatus}</TableHead>
+              <TableHead className="text-right">{t.admin.columnActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -169,7 +175,7 @@ export function CourseOversightTable({
                   colSpan={6}
                   className="py-12 text-center text-xs text-ink-muted"
                 >
-                  Loading platform courses...
+                  {t.admin.loadingCourses}
                 </TableCell>
               </TableRow>
             ) : courses.length === 0 ? (
@@ -178,7 +184,7 @@ export function CourseOversightTable({
                   colSpan={6}
                   className="py-12 text-center text-xs text-ink-muted"
                 >
-                  No courses found matching criteria.
+                  {t.admin.noCoursesFound}
                 </TableCell>
               </TableRow>
             ) : (
@@ -238,7 +244,7 @@ export function CourseOversightTable({
                           className="inline-flex h-7 items-center rounded-md border border-hairline bg-surface px-2 text-[11px] font-medium text-ink shadow-2xs hover:bg-canvas-soft"
                         >
                           <ExternalLink className="mr-1 h-3 w-3 text-ink-muted" />
-                          View
+                          {language === "vi" ? "Xem" : "View"}
                         </Link>
 
                         <Button
@@ -254,7 +260,7 @@ export function CourseOversightTable({
                           }`}
                         >
                           <Archive className="mr-1 h-3 w-3" />
-                          Archive
+                          {language === "vi" ? "Lưu trữ" : "Archive"}
                         </Button>
                       </div>
                     </TableCell>
