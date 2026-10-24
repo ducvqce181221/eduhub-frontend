@@ -13,6 +13,7 @@ The modern, responsive web application for **EduHub** — a high-performance Lea
 
 ## 🌐 Live Deployments
 
+- **Backend Repository:** [github.com/ducvqce181221/eduhub-backend](https://github.com/ducvqce181221/eduhub-backend)
 - **Production Web Client:** [https://eduhub-frontend-xi.vercel.app](https://eduhub-frontend-xi.vercel.app)
 - **Backend API Base:** [https://eduhub-backend-d6vk.onrender.com/api/v1](https://eduhub-backend-d6vk.onrender.com/api/v1)
 - **Interactive Swagger Documentation:** [https://eduhub-backend-d6vk.onrender.com/api/docs](https://eduhub-backend-d6vk.onrender.com/api/docs)
